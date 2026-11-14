@@ -157,6 +157,46 @@
     return m ? {race_id: id, label: m.label, office: 'Market', cat: m.cat, state: 'US', winner: m.winner, called_ts: m.called_ts, volume: m.volume, night_usd: m.night_usd} : null;
   }
   const MIDX = () => memo('midx', ['markets_index'], (rows) => new Map(rows.map((m) => [m.id, m])));
+  // One status for the market card and the election-night panel: data/night_races.json (our catalog's close_time and
+  // settlement_ts; tools/build_races_night.py). Control markets: data/night_control.json. Falls back to races.json.
+  dash.load('night_races', 'data/night_races.json');
+  const whenY = (t) => `${when(t)}${new Date(t * 1000).getUTCFullYear() === 2026 ? '' : `, ${new Date(t * 1000).getUTCFullYear()}`}`;
+  function nightOf(id) {
+    const nc = dash.data('night_control');
+    const c = nc.status === 'ok' ? nc.raw.events.find((x) => x.event === id) : null;
+    if (c) return {ev: c, win: nc.raw.window};
+    const ix = dash.data('night_races'), n = ix.status === 'ok' ? ix.raw.races[id] : null;
+    if (!n) return null;
+    const k = `ns:${n.state}`; if (stat(k) === 'idle') dash.load(k, `data/night_state/${n.state}.json`);
+    const d = dash.data(k);
+    return {n, ev: d.status === 'ok' ? d.raw.races[id] : null, win: ix.raw.meta.window};
+  }
+  function marks(id) {
+    const x = nightOf(id), r = raceInfo(id);
+    if (x && x.ev) return {close: x.ev.close_ts, settle: x.ev.settle_ts, result: x.ev.result};
+    if (x && x.n) return {close: x.n.close_ts, settle: x.n.settle_ts, result: x.n.result};
+    return {close: null, settle: r && r.called_ts, result: r && r.winner};
+  }
+  function statusLine(id, t) {
+    const k = marks(id);
+    if (k.settle && t >= k.settle) return `Kalshi settled for ${party(k.result)}, ${whenY(k.settle)}`;
+    if (k.close && t >= k.close) return `Kalshi trading closed ${whenY(k.close)}, not settled yet`;
+    return `Trading at the cursor${k.close ? ` · trading closes ${whenY(k.close)}` : ''}`;
+  }
+  // latest two-sided quote on the Democratic contract observed at or before t (election night only)
+  function quotedMid(id, t) {
+    const x = nightOf(id);
+    if (!x || !x.ev || t < x.win[0] || t > x.win[1]) return null;
+    const q = x.ev.quotes.D, tt = Math.min(t, x.ev.close_ts || t);
+    for (let i = Math.min(Math.floor((tt - x.win[0]) / 60) - 1, q.bid.length - 1); i >= 0; i--)
+      if (q.bid[i] != null && q.ask[i] != null) return {bid: q.bid[i], ask: q.ask[i], t: x.win[0] + (i + 1) * 60, closed: t >= (x.ev.close_ts || Infinity), one: !(q.bid[i] > 0 && q.ask[i] < 1)};
+    return {none: true};
+  }
+  function emptyMsg(s) {
+    const lab = s.r ? s.r.label : s.id, k = marks(s.id);
+    if (k.settle && k.settle < RANGES.campaign[0]) return `${lab}: Kalshi settled this market for ${party(k.result)} on ${whenY(k.settle)}, before Oct 4, when the market card's trade data starts. There are no prices or trades to chart.`;
+    return `${lab}: no trades on file between Oct 4 and Nov 12, the period the market card covers.`;
+  }
   const evOf = (tk) => tk.slice(0, tk.lastIndexOf('-'));
   function raceFor(st, office) {
     const list = (RX().byState.get(st) || []).filter((r) => r.office === office);
@@ -167,7 +207,7 @@
     if (!r) return null;
     if (r.called_ts && t >= r.called_ts && (r.winner === 'D' || r.winner === 'R')) return {p: r.winner === 'D' ? 1 : 0, settled: true};
     const row = lastAt(ODDS().get(r.race_id), t);
-    return row ? {p: row.p_dem, row, settled: false} : null;
+    return row ? {p: row.p_dem, gap: row.p_dem == null, row, settled: false} : null;
   }
   function houseAt(st, t) {
     const hs = (RX().byState.get(st) || []).filter((r) => r.office === 'House');
@@ -215,7 +255,8 @@
       const x = pDem(r, t);
       if (!x) return {fill: C.idle, text: `${r.label} · no price at this time`};
       if (x.settled) return {fill: x.p ? C.dem : C.rep, text: `${r.label} · settled ${r.winner} at ${when(r.called_ts)}`};
-      return {fill: partyScale(x.p), text: `${r.label} · P(D) ${pct1(x.p)}`};
+      if (x.gap) return {fill: C.idle, text: `${r.label} · no two-sided quote at this time (since ${when(x.row.t)})`};
+      return {fill: partyScale(x.p), text: `${r.label} · P(D) ${pct1(x.p)}, quoted mid`};
     }
     if (WF.layer === 'bets') {
       const h = Math.floor(t / 3600) * 3600, b = BST().m.get(`${st}|${h}`);
@@ -248,9 +289,9 @@
   // ------------------------------------------------------------------ state + redraw plumbing
   const CURSOR_DRAWS = ['map', 'feed', 'clock', 'scrub', 'scrub-clock', 'kpi-sen', 'kpi-house', 'kpi-called', 'kpi-bets', 'kpi-reddit', 'kpi-gas',
     'kpi-wti', 'kpi-chat', 'lanes', 'st-races', 'st-spark', 'st-bets', 'st-bets-spark', 'st-social', 'st-gas', 'st-gas-spark', 'st-rain', 'st-turnout',
-    'tape', 'tape-sub', 'mkt-vol', 'mkt-head', 'mkt-chart', 'mkt-table', 'kpi-kalshi', 'kpi-spx', 'moments', 'moment-tabs', 'moment-detail', 'mkt-polls', 'heatmap'];
+    'tape', 'tape-sub', 'mkt-vol', 'mkt-head', 'mkt-chart', 'mkt-table', 'kpi-kalshi', 'kpi-spx', 'moments', 'moment-tabs', 'moment-detail', 'mkt-polls', 'heatmap', 'night'];
   const STATE_DRAWS = ['map', 'st-name', 'st-races', 'st-spark', 'st-bets', 'st-bets-spark', 'st-social', 'st-gas', 'st-gas-spark', 'st-rain', 'st-turnout'];
-  const RACE_DRAWS = ['race-select', 'mkt-vol', 'mkt-q', 'mkt-head', 'mkt-chart', 'mkt-table', 'mkt-polls', 'st-races', 'tape', 'tape-sub'];
+  const RACE_DRAWS = ['race-select', 'mkt-vol', 'mkt-q', 'mkt-head', 'mkt-chart', 'mkt-table', 'mkt-polls', 'st-races', 'tape', 'tape-sub', 'night', 'heatmap'];
   const redraw = (names) => names.forEach((n) => dash.draw(n));
   function setT(t) {
     const [a, b] = WF.range;
@@ -527,9 +568,11 @@
       if (x && x.settled) {
         v.append('span').attr('class', `wf-chip wf-chip-${r.winner.toLowerCase()}`).text(r.winner);
         v.append('span').text(`settled ${when(r.called_ts)}`);
+      } else if (x && x.gap) {
+        v.append('span').text(`no two-sided quote at this time (since ${when(x.row.t)})`);
       } else if (x) {
         v.append('span').attr('class', 'wf-pbar').append('span').style('width', `${x.p * 100}%`);
-        v.append('span').text(`P(D) ${pct1(x.p)}`);
+        v.append('span').text(`P(D) ${pct1(x.p)} · quoted mid`);
       } else {
         v.append('span').text('no price at this time');
       }
@@ -565,17 +608,18 @@
     if (!pts.length) { sparkMsg(el, 'No prices in this window.'); return; }
     if (pts[pts.length - 1].t < b) pts.push({...pts[pts.length - 1], t: Math.min(b, s[s.length - 1].t)});
     const g = spark(el, {xd: [a, b], yd: [0, 1], yticks: [0, 0.5, 1], ref: 0.5, yfmt: (v) => `${v * 100}%`, aria: `${r.label}: chance Democrats win, over the time window`});
-    const area = d3.area().x((d) => g.x(d.t)).y0(g.y(0.5)).y1((d) => g.y(d.p_dem)).curve(d3.curveStepAfter);
+    const has = (d) => d.p_dem != null;   // null = no two-sided quote: drawn as a gap
+    const area = d3.area().defined(has).x((d) => g.x(d.t)).y0(g.y(0.5)).y1((d) => g.y(d.p_dem)).curve(d3.curveStepAfter);
     const id = `wfclip${Math.random().toString(36).slice(2, 8)}`;
     const defs = g.svg.append('defs');
     defs.append('clipPath').attr('id', `${id}d`).append('rect').attr('x', 0).attr('y', 0).attr('width', g.W).attr('height', g.y(0.5));
     defs.append('clipPath').attr('id', `${id}r`).append('rect').attr('x', 0).attr('y', g.y(0.5)).attr('width', g.W).attr('height', g.H);
     g.svg.append('path').datum(pts).attr('d', area).attr('clip-path', `url(#${id}d)`).style('fill', C.dem).style('opacity', 0.35);
     g.svg.append('path').datum(pts).attr('d', area).attr('clip-path', `url(#${id}r)`).style('fill', C.rep).style('opacity', 0.35);
-    g.svg.append('path').datum(pts).attr('d', d3.line().x((d) => g.x(d.t)).y((d) => g.y(d.p_dem)).curve(d3.curveStepAfter)).style('fill', 'none').style('stroke', C.fg).style('stroke-width', 1.4);
+    g.svg.append('path').datum(pts).attr('d', d3.line().defined(has).x((d) => g.x(d.t)).y((d) => g.y(d.p_dem)).curve(d3.curveStepAfter)).style('fill', 'none').style('stroke', C.fg).style('stroke-width', 1.4);
     cursorRule(g, WF.t);
     if (r.called_ts && r.called_ts >= a && r.called_ts <= b) g.svg.append('circle').attr('cx', g.x(r.called_ts)).attr('cy', g.y(r.winner === 'D' ? 1 : 0)).attr('r', 3.5).style('fill', r.winner === 'D' ? C.dem : C.rep);
-    g.svg.append('text').attr('x', g.ml).attr('y', g.H - 3).text(r.label);
+    g.svg.append('text').attr('x', g.ml).attr('y', g.H - 3).text(`${r.label} · quoted mid`);
     g.svg.append('text').attr('x', g.W - g.mr).attr('y', g.H - 3).attr('text-anchor', 'end').text(`${F.md.format(D(a))} – ${F.md.format(D(b))}`);
   });
 
@@ -693,7 +737,14 @@
   });
   function raceData(id) {
     const key = `race:${id}`;
-    if (stat(key) === 'idle') dash.load(key, `data/race/${encodeURIComponent(id)}.json`);
+    if (stat(key) === 'idle') {
+      // races settled before the card's trade data starts (Oct 4) have no file: don't request one
+      const ix = dash.data('night_races');
+      if (ix.status === 'idle' || ix.status === 'loading') return {status: 'loading', data: null, raw: null};
+      const k = marks(id);
+      if (k.settle && k.settle < RANGES.campaign[0]) return {status: 'error', data: null, raw: null, skipped: true};
+      dash.load(key, `data/race/${encodeURIComponent(id)}.json`);
+    }
     return dash.data(key);
   }
   function dayData(id, day) {
@@ -719,7 +770,7 @@
     const id = WF.race, r = raceInfo(id), ds = raceData(id);
     return {id, r, ds, mk: ds.status === 'ok' ? MKT(id) : null};
   };
-  const notReady = (el, s) => { el.textContent = s.ds.status === 'error' ? `No trades on file for ${s.r ? s.r.label : s.id} between Oct 4 and Nov 12.` : 'Loading…'; };
+  const notReady = (el, s) => { el.textContent = s.ds.status === 'error' ? emptyMsg(s) : 'Loading…'; };
 
   dash.draw('mkt-vol', (el) => {
     const r = raceInfo(WF.race);
@@ -733,8 +784,7 @@
       el.textContent = parts.join(' · '); return;
     }
     if (r.volume) parts.push(`${usd(r.volume)} vol`);
-    if (r.winner && r.called_ts && WF.t >= r.called_ts) parts.push(`Settled: ${party(r.winner)}, ${when(r.called_ts)}`);
-    else parts.push('Open at the cursor');
+    parts.push(statusLine(WF.race, WF.t));
     el.textContent = parts.join(' · ');
   });
   dash.draw('mkt-q', (el) => {
@@ -753,7 +803,7 @@
       const box = document.createElement('div'); box.className = 'wf-mkt-lead';
       const v = document.createElement('div'); v.className = 'wf-mkt-lead-v';
       v.textContent = `${Math.round(lead.c.p * 100)}%`;
-      const small = document.createElement('small'); small.textContent = lead.c.settled ? 'settled' : 'chance'; v.append(small);
+      const small = document.createElement('small'); small.textContent = lead.c.settled ? 'settled' : 'last trade'; v.append(small);
       if (lead.s0 && !lead.c.settled) {
         const d = Math.round((lead.c.p - lead.s0.p) * 100);
         if (d) { const ch = document.createElement('span'); ch.className = `wf-chg ${d > 0 ? 'up' : 'down'}`; ch.textContent = `${d > 0 ? '▲' : '▼'} ${Math.abs(d)}`; ch.title = 'Change since the start of the chart window, in points'; v.append(ch); }
@@ -768,6 +818,28 @@
       k.append(dot, document.createTextNode(o.label), b); keys.append(k);
     });
     el.append(keys);
+    const qm = r && r.office !== 'Market' ? quotedMid(WF.race, WF.t) : null, note = document.createElement('p');
+    note.className = 'wf-hint wf-mkt-pricenote';
+    note.textContent = 'Percentages are last trade prices: the last trade at or before the cursor (per minute on election night, per 10 minutes otherwise).'
+      + (!qm ? '' : qm.none ? ' Quoted midpoint: no two-sided quote yet tonight.'
+        : qm.one ? ` Quoted midpoint: none; the book was one-sided at ${F.time.format(D(qm.t))} (bid ${(qm.bid * 100).toFixed(1)}¢ / ask ${(qm.ask * 100).toFixed(1)}¢).`
+        : qm.closed ? ` Quoted midpoint: none after trading closed (last was ${cents((qm.bid + qm.ask) / 2)}, ${F.time.format(D(qm.t))}).`
+          : ` Quoted midpoint, Democratic contract: ${((qm.bid + qm.ask) * 50).toFixed(1)}¢ (bid ${(qm.bid * 100).toFixed(1)}¢ / ask ${(qm.ask * 100).toFixed(1)}¢, observed ${F.time.format(D(qm.t))}, ${Math.round((WF.t - qm.t) / 60)} min before the cursor).`);
+    el.append(note);
+    const k = marks(WF.race), x = nightOf(WF.race);
+    if (x && (x.ev || x.n)) {
+      const go = document.createElement('button'); go.type = 'button'; go.className = 'wf-btn';
+      const inNight = WF.t >= RANGES.night[0] && WF.t <= RANGES.night[1];
+      const target = inNight ? WF.t : Math.max(RANGES.night[0], Math.min(RANGES.night[1], (k.close || RANGES.night[1]) - 900));
+      go.textContent = inNight ? 'Show its election-night quotes, trades and streams' : `Election night: jump to ${F.time.format(D(target))} ET (15 min before trading closed) and show quotes, trades and streams`;
+      go.addEventListener('click', () => {
+        if (WF.playing) stop();
+        if (WF.rangeKey !== 'night') { WF.rangeKey = 'night'; WF.range = RANGES.night.slice(); syncUI(); }
+        setT(target); redraw(['st-spark']);
+        document.querySelector('.wf-night').scrollIntoView({behavior: 'smooth', block: 'start'});
+      });
+      el.append(go);
+    }
   });
 
   dash.draw('mkt-chart', {
@@ -780,7 +852,7 @@
     },
     update(el, m) {
       const s = mktState();
-      if (!s.mk) { m.svg.attr('hidden', ''); m.msg.attr('hidden', null).text(s.ds.status === 'error' ? 'No trades on file for this market in the window.' : 'Loading trades…'); return; }
+      if (!s.mk) { m.svg.attr('hidden', ''); m.msg.attr('hidden', null).text(s.ds.status === 'error' ? emptyMsg(s) : 'Loading trades…'); return; }
       m.msg.attr('hidden', ''); m.svg.attr('hidden', null);
       const {mk, r} = s, [a, b] = WF.range;
       const W = Math.max(280, Math.floor(el.clientWidth || 700)), ml = 6, mr = 44, PT = 10, PH = 214, VB = 236, VH = 34, H = VB + VH + 24;
@@ -803,6 +875,8 @@
         if (pts.length && pts[pts.length - 1].t < b) pts.push({t: b, p: pts[pts.length - 1].p});
         return {o, i, pts};
       });
+      if (!mk.all.some((d) => d.t >= a && d.t <= b)) svg.append('text').attr('x', ml + 6).attr('y', PT + 14).style('fill', C.muted)
+        .text(`No trades between ${F.md.format(D(a))} and ${F.md.format(D(b))}; lines carry the last trade before this view.`);
       for (const ln of lines.slice().reverse()) {
         if (!ln.pts.length) continue;
         svg.append('path').datum(ln.pts).attr('d', d3.line().x((d) => x(d.t)).y((d) => y(d.p)).curve(d3.curveStepAfter))
@@ -841,7 +915,7 @@
         .on('pointermove', (ev) => {
           const [px, py] = d3.pointer(ev, el), t = x.invert(d3.pointer(ev, svg.node())[0]);
           hover.style('display', null).attr('x1', x(t)).attr('x2', x(t)).attr('y1', PT).attr('y2', VB + VH);
-          m.tipB.text(`${F.day.format(D(t))} · ${F.time.format(D(t))}`);
+          m.tipB.text(`${F.day.format(D(t))} · ${F.time.format(D(t))} · last trade`);
           m.tipS.text(mk.outs.map((o, i) => { const c = chanceAt(mk, i, t, r); return `${o.label} ${c ? Math.round(c.p * 100) + '%' : '—'}`; }).join(' · '));
           m.tip.attr('hidden', null).style('left', `${Math.max(0, Math.min(px + 12, el.clientWidth - 270))}px`).style('top', `${Math.max(0, py - 50)}px`);
         })
@@ -922,7 +996,7 @@
   });
   function tapeMarket(ol) {
     const s = mktState();
-    if (s.ds.status !== 'ok') { emptyList(ol, s.ds.status === 'error' ? 'No trades on file for this market.' : 'Loading…'); return; }
+    if (s.ds.status !== 'ok') { emptyList(ol, s.ds.status === 'error' ? emptyMsg(s) : 'Loading…'); return; }
     const days = (s.mk.raw.days || []).filter((d) => d <= etDate(WF.t));
     if (!days.length) { emptyList(ol, 'No bets in this market yet at the cursor time.'); return; }
     const out = [];
@@ -982,7 +1056,7 @@
   dash.draw('tape', (ol) => (WF.tape === 'market' ? tapeMarket(ol) : WF.tape === 'all' ? tapeAll(ol) : tapeMid(ol)));
 
   // ------------------------------------------------------------------ key moments
-  const KIND = {control: 'Control', call: 'Call', swing: 'Swing', bet: 'Big bet', social: 'Reddit surge', stocks: 'Stocks'};
+  const KIND = {control: 'Control', call: 'Settled', swing: 'Swing', bet: 'Big bet', social: 'Reddit surge', stocks: 'Stocks'};
   const periodOf = (t) => (t < N0 ? 'before' : t < N1 ? 'night' : 'after');
   const momPeriod = () => { if (WF.mperiod) return WF.mperiod; const c = currentMoment(); return periodOf(c ? c.t : WF.t); };
   function currentMoment() {
@@ -1095,7 +1169,7 @@
 
   // ------------------------------------------------------------------ time lanes
   const AXIS = 22, TOP = 14;
-  const LANES = [['ctrl', 34, 'Chamber control P(D)'], ['settled', 34, 'Races settled'],
+  const LANES = [['ctrl', 34, 'Control P(D) · quoted mid'], ['settled', 34, 'Races settled'],
     ...CATS.map(([g, , col, long]) => [`cat:${g}`, 24, `Kalshi · ${long}`, col]),
     ['bets', 34, 'Midterm bets $/min · D ▲ R ▼'], ['big', 34, 'Big midterm bets'], ['streams', 34, 'Streams on air'], ['chat', 34, 'Live-chat msgs/min'],
     ['reddit', 34, 'Reddit comments/min'], ['bsky', 34, 'Bluesky top posts'], ['poly', 34, 'Polymarket comments'],
@@ -1140,7 +1214,7 @@
           const called = ok('races') ? RX().calls.filter((r) => r.called_ts <= t).length : 0;
           const kal = ok('kalshi_cats') ? binSum(rowsOf('kalshi_cats'), t, t + 60, 1, (r) => r.n, 3600)[0] : null;
           m.tipB.text(`${F.day.format(D(t))} · ${F.time.format(D(t))}`);
-          m.tipS.text(`Senate P(D) ${sen ? pct1(sen.p_dem) : '—'} · House P(D) ${hou ? pct1(hou.p_dem) : '—'} · ${fmtInt(called)} races settled${kal != null ? ` · ${fmtN(kal)} contracts/min on all of Kalshi` : ''}`);
+          m.tipS.text(`Quoted mid: Senate P(D) ${sen ? pct1(sen.p_dem) : '—'} · House P(D) ${hou ? pct1(hou.p_dem) : '—'} · ${fmtInt(called)} races settled${kal != null ? ` · ${fmtN(kal)} contracts/min on all of Kalshi` : ''}`);
           m.tip.attr('hidden', null).style('left', `${Math.max(0, Math.min(px + 12, el.clientWidth - 270))}px`).style('top', `${Math.max(0, py - 54)}px`);
         })
         .on('pointerleave', () => { m.hover.style('display', 'none'); m.tip.attr('hidden', ''); })
@@ -1324,13 +1398,13 @@
   WF.heat = 'settle';
   const HEAT_COLOR = d3.scaleLinear().domain([0, 0.25, 0.5, 0.75, 1])
     .range(['#c8323f', '#f0959c', '#dde4ec', '#8fbaf5', '#2a6fd6']).interpolate(d3.interpolateLab).clamp(true);
-  const HEAT_NONE = '#1a2430';
+  const HEAT_NONE = '#1a2430', HEAT_GAP = '#4a3d1f', HEAT_CLOSED = '#2c3542';   // 255 = not open yet, 254 = open but no two-sided quote, 253 = trading closed, not settled
   const HEAT_TICKS = [['120d', 172800], ['60d', 86400], ['30d', 43200], ['14d', 20160], ['7d', 10080], ['3d', 4320], ['1d', 1440],
     ['12h', 720], ['6h', 360], ['2h', 120], ['1h', 60], ['30m', 30], ['10m', 10], ['3m', 3], ['1m', 1]];
   const HEAT_OFFICES = ['Senate', 'Governor', 'House'];
   const HM = () => memo('heatmap-m', ['heatmap'], (h) => {
     const lut = new Uint8ClampedArray(256 * 4);
-    for (let k = 0; k < 256; k++) { const c = d3.rgb(k <= 200 ? HEAT_COLOR(k / 200) : HEAT_NONE); lut.set([c.r, c.g, c.b, 255], k * 4); }
+    for (let k = 0; k < 256; k++) { const c = d3.rgb(k <= 200 ? HEAT_COLOR(k / 200) : k === 254 ? HEAT_GAP : k === 253 ? HEAT_CLOSED : HEAT_NONE); lut.set([c.r, c.g, c.b, 255], k * 4); }
     const cols = h.cols, views = {};
     for (const [key, v] of Object.entries(h.views)) {
       const raw = atob(v.v), bytes = new Uint8Array(raw.length);
@@ -1380,8 +1454,8 @@
         const b = V.bytes[p.i * H.h.cols + p.j];
         const settled = race.winner && race.called_ts && t >= race.called_ts;
         m.tipB.text(`${race.label}${race.office === 'House' ? ' · House' : ''}`);
-        m.tipS.text(b === 255 ? 'no market yet' : settled ? `settled · ${race.winner === 'D' ? 'Democrat' : 'Republican'} won`
-          : `${pctD(b / 200)}% chance the Democrat wins`);
+        m.tipS.text(b === 255 ? 'no market yet' : b === 254 ? 'no two-sided quote in this period (gap)' : b === 253 ? 'Kalshi trading closed, not settled yet' : settled ? `settled · ${race.winner === 'D' ? 'Democrat' : 'Republican'} won`
+          : `${pctD(b / 200)}% chance the Democrat wins (quoted mid)`);
         m.tipS2.text(`${when(t)} ET · ${fmtSpan(min)} before ${WF.heat === 'settle' && race.called_ts ? 'Kalshi settled it' : 'Nov 10'}`);
         const [bx, by] = d3.pointer(ev, el);
         m.tip.attr('hidden', null).style('left', `${Math.max(0, Math.min(bx + 14, el.clientWidth - 270))}px`).style('top', `${Math.max(0, by - 10)}px`);
@@ -1433,6 +1507,13 @@
         ctx.fillStyle = C.muted; ctx.font = `500 10.5px ${m.mono}`; ctx.fillText('polls close', xm + 5, bands[0].y0 - 6);
         if (WF.t < V.anchor - 60 && WF.t > V.anchor - H.h.mins[0] * 60) vline(H.xf((V.anchor - WF.t) / 60) * W, C.amber, [], 1.5);
       }
+      for (const b of bands) {                     // the race selected on the map / dropdown: amber brackets on its row
+        const r = b.idx.findIndex((i) => H.h.races[i].id === WF.race);
+        if (r < 0) continue;
+        const rh_ = b.h / b.idx.length, y = b.y0 + r * rh_;
+        ctx.save(); ctx.strokeStyle = C.amber; ctx.lineWidth = 2;
+        ctx.strokeRect(1, y - 1.5, W - 2, Math.max(3, rh_) + 3); ctx.restore();
+      }
       const yb = bands[bands.length - 1].y0 + bands[bands.length - 1].h;
       ctx.strokeStyle = '#2b3a4d'; ctx.fillStyle = C.muted; ctx.font = `500 10.5px ${m.mono}`; ctx.lineWidth = 1;
       let last = -Infinity;
@@ -1445,25 +1526,26 @@
         last = left + w;
       }
       m.note.text(WF.heat === 'settle'
-        ? `Time before Kalshi settled each race, log scale. Rows sorted by the ${V.sort}. Races not settled yet end at Nov 10.`
-        : `Time before Nov 10, 12 AM ET, log scale. Dotted line: first polls close, Nov 3 7 PM ET. Amber line: the page's time cursor. Rows sorted by the ${V.sort}.`);
+        ? `Quoted midpoint of the Democratic contract. Brown cells: open but no two-sided quote (a gap); slate: trading closed, not settled yet; dark: not open yet. Time before Kalshi settled each race, log scale. Rows sorted by the ${V.sort}. Races not settled yet end at Nov 10. Amber outline: the selected race; click a row to open its market card and election-night panel.`
+        : `Quoted midpoint of the Democratic contract. Brown cells: open but no two-sided quote (a gap); slate: trading closed, not settled yet; dark: not open yet. Time before Nov 10, 12 AM ET, log scale. Dotted line: first polls close, Nov 3 7 PM ET. Amber vertical line: the page's time cursor. Amber outline: the selected race. Rows sorted by the ${V.sort}.`);
     },
   });
   dash.draw('heat-ups', (el) => {
     if (!ok('heatmap') || el.childElementCount) return;
-    const H = HM();
+    const H = HM(), ups = H.h.upsets, head = ups.filter((u) => u.headline), rest = ups.length - head.length;
     const lab = document.createElement('span'); lab.className = 'wf-hint';
-    lab.textContent = `${H.h.upsets.length} favorites lost (chance D at 6 PM ET, Nov 3):`;
+    lab.textContent = `${head.length} races where the quoted favorite at 6 PM ET Nov 3 lost (Democratic-contract midpoint; most strongly favored loser first):`;
     el.append(lab);
-    for (const u of H.h.upsets) {
-      const r = H.h.races[u.i];
+    for (const u of head) {
+      const r = H.h.races[u.i], fav = u.fav === 'D' ? 'Democrat' : 'Republican';
       const b = document.createElement('button');
       b.type = 'button'; b.className = `wf-heat-chip ${r.winner === 'D' ? 'is-d' : 'is-r'}`;
-      b.textContent = `${r.label} ${pctD(u.p)}%`;
-      b.title = `${r.label}: ${pctD(u.p)}% chance the Democrat wins at 6 PM ET on Nov 3; the ${r.winner === 'D' ? 'Democrat' : 'Republican'} won. Click to open its market.`;
+      b.textContent = `${r.label} ${pctD(u.p)}% · ${((u.ask - u.bid) * 100).toFixed(1)}¢ spread · ${F.time.format(D(u.t))}`;
+      b.title = `${r.label}: quoted mid ${pctD(u.p)}% that the Democrat wins (bid ${(u.bid * 100).toFixed(1)}¢ / ask ${(u.ask * 100).toFixed(1)}¢, observed ${when(u.t)} ET, the book in effect at 6 PM): the ${fav} was favored; the ${r.winner === 'D' ? 'Democrat' : 'Republican'} won. Click to open its market.`;
       b.addEventListener('click', () => openRace(r.id));
       el.append(b);
     }
+    if (rest) { const n = document.createElement('span'); n.className = 'wf-hint'; n.textContent = `Not listed: ${rest} more where the 6 PM bid and ask straddled 50¢, so the quote favored neither side.`; el.append(n); }
   });
   document.querySelectorAll('.wf [data-heat]').forEach((b) => b.addEventListener('click', () => {
     WF.heat = b.dataset.heat;

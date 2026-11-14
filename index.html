@@ -17,12 +17,13 @@
       <span class="wf-tag">2026 U.S. midterms · Oct 4 – Nov 12 · times ET</span>
     </div>
     <p class="wf-takeaway">Kalshi settled Senate control for <b data-draw="tk-sen-winner">—</b> at <b data-draw="tk-sen-time">—</b> and House control for <b data-draw="tk-house-winner">—</b> at <b data-draw="tk-house-time">—</b>. <span data-draw="tk-bigbet"></span> Drag the timeline to replay where races were settled, where the money moved and when people were posting.</p>
+    <p class="wf-hint wf-credit">Built on <a href="https://github.com/LawrenceLu0904/midterm-watchfloor" target="_blank" rel="noopener noreferrer">Lawrence Lu's Midterm Watchfloor</a>, with election-night stream, poll and Bluesky data from Subhrajit's <a href="https://github.com/subro608/kalshis_eye" target="_blank" rel="noopener noreferrer">kalshis_eye</a>. Kalshi prices, quotes and trades from the Kalshi public API.</p>
   </header>
 
   <div class="wf-ticker" role="group" aria-label="Readings at the cursor time">
     <div class="wf-kpi wf-kpi-clock"><span class="wf-kpi-l">Cursor · ET</span><span class="wf-kpi-v" data-draw="clock">—</span></div>
-    <div class="wf-kpi"><span class="wf-kpi-l">Senate control · P(D)</span><span class="wf-kpi-v" data-draw="kpi-sen">—</span></div>
-    <div class="wf-kpi"><span class="wf-kpi-l">House control · P(D)</span><span class="wf-kpi-v" data-draw="kpi-house">—</span></div>
+    <div class="wf-kpi"><span class="wf-kpi-l">Senate control · quoted mid</span><span class="wf-kpi-v" data-draw="kpi-sen">—</span></div>
+    <div class="wf-kpi"><span class="wf-kpi-l">House control · quoted mid</span><span class="wf-kpi-v" data-draw="kpi-house">—</span></div>
     <div class="wf-kpi"><span class="wf-kpi-l">Races settled</span><span class="wf-kpi-v"><span data-draw="kpi-called">—</span><span class="wf-kpi-u"> of <span data-draw="kpi-total">—</span></span></span></div>
     <div class="wf-kpi"><span class="wf-kpi-l">Midterm bets · past hour</span><span class="wf-kpi-v" data-draw="kpi-bets">—</span></div>
     <div class="wf-kpi"><span class="wf-kpi-l">All Kalshi · contracts past hour</span><span class="wf-kpi-v" data-draw="kpi-kalshi">—</span></div>
@@ -90,7 +91,7 @@
           <ul class="wf-races" data-draw="st-races"></ul>
         </div>
         <div class="wf-st-block">
-          <h3>Statewide race odds, P(D), in the time window</h3>
+          <h3>Statewide race odds, P(D) quoted mid, in the time window</h3>
           <div class="wf-spark" data-draw="st-spark"></div>
         </div>
         <div class="wf-st-block">
@@ -124,6 +125,31 @@
     </aside>
   </div>
 
+  <section class="wf-panel wf-night" aria-label="Election night: control markets, selected race and streams" data-draw="night">
+    <div class="wf-ph">
+      <h2>Election night · control markets, the selected race and what was on air</h2>
+      <span class="wf-ph-sub">Nov 3 6 PM – Nov 4 8 AM ET · follows the cursor · click the chart to move it</span>
+    </div>
+    <p class="wf-hint" data-nt="status"></p>
+    <div data-nt="overview"></div>
+    <p class="wf-hint">Chance Democrats win, from the Democratic contract only (nothing is blended with the Republican contract). Band: best bid to best ask observed at the end of each minute; line: the quoted midpoint; dots: last trade in minutes that had one. Dashed amber: Kalshi stops trading; dotted amber: Kalshi settles. Neither is a media call. Pick a race on the map or in the market dropdown to add it here; the cursor stays where it is.</p>
+    <div class="wf-nt-grid" data-nt="zooms"></div>
+    <p class="wf-hint">Every trade at its execution time, priced as P(Democrats) (a trade on the Republican contract is shown at 1 − its price). Blue backs Democrats, red backs Republicans; dot size grows with contracts. Green and amber lines: bid and ask, each plotted at the time it was observed (the end of its minute), so a trade can sit outside the quote drawn next to it. The readout below uses only a quote observed at or before the cursor.</p>
+    <div class="wf-nt-grid" data-nt="readout"></div>
+    <div class="wf-nt-grid wf-nt-lower">
+      <div>
+        <h3 class="wf-nt-h">Trades near the cursor</h3>
+        <p class="wf-hint" data-nt="nearh"></p>
+        <ol class="wf-feed wf-nt-near" data-nt="near"></ol>
+      </div>
+      <div>
+        <h3 class="wf-nt-h">On air at the cursor <label class="wf-nt-toggle"><input type="checkbox" data-nt="all"> include streams whose clock isn't checked</label></h3>
+        <p class="wf-hint">A stream position is placed at stream start + video offset, and the link opens the original at that position. It shows what was on air at that time, not that the speaker was talking about this market.</p>
+        <div data-nt="air"></div>
+      </div>
+    </div>
+  </section>
+
   <section class="wf-panel" aria-label="Key moments">
     <div class="wf-ph wf-mom-ph"><h2>Key moments</h2><span class="wf-ph-sub">swings, settlements, the largest bets, Reddit surges and big stock days · click one to jump there</span>
       <div class="wf-seg" role="group" aria-label="Key-moment period" data-draw="moment-tabs">
@@ -141,7 +167,7 @@
   <section class="wf-panel wf-heat" aria-label="Every race over 120 days">
     <div class="wf-ph">
       <h2>Every race · 120 days</h2>
-      <span class="wf-ph-sub">chance the Democrat wins · log time: the last day fills most of the width · hover a row, click to open its market</span>
+      <span class="wf-ph-sub">chance the Democrat wins (quoted mid) · log time: the last day fills most of the width · hover a row, click to open its market</span>
       <div class="wf-seg" role="group" aria-label="Heatmap end point">
         <button type="button" class="wf-btn" data-heat="settle" aria-pressed="true">Up to each settlement</button>
         <button type="button" class="wf-btn" data-heat="nov10" aria-pressed="false">Up to Nov 10</button>
@@ -170,7 +196,7 @@
         <span class="wf-hint">Chance = last traded YES price · the amber line is the cursor</span>
       </div>
       <table class="wf-mkt-table">
-        <thead><tr><th scope="col">Outcome</th><th scope="col">Chance</th><th scope="col">Yes</th><th scope="col">No</th><th scope="col">Contracts traded</th></tr></thead>
+        <thead><tr><th scope="col">Outcome</th><th scope="col">Last trade</th><th scope="col">Yes</th><th scope="col">No</th><th scope="col">Contracts traded</th></tr></thead>
         <tbody data-draw="mkt-table"></tbody>
       </table>
       <div class="wf-mkt-polls" data-draw="mkt-polls" aria-live="polite"></div>
@@ -203,11 +229,12 @@
       <li>Turnout markets: at 6 PM ET each day, the vote total Kalshi's ladder puts at 50/50. They are thin (median spread about 10¢), and the comparison is the most recent midterm Senate race in the state, so read direction, not level.</li>
       <li>Streams: eight election-night streams, four left- and four right-leaning. Chat counts come from the four YouTube streams that have a chat replay. Polymarket counts cover comments on its Senate control, House control and balance-of-power events.</li>
       <li>All of Kalshi: every trade on the exchange from Nov 3 5 PM to Nov 4 11 AM ET, by category from Kalshi's series catalog ("Parlays" are Kalshi's combo markets; "Stocks" are its S&amp;P 500, Nasdaq and other index markets). Other hours are an estimate: markets that opened and closed within a week (games, crypto, daily weather and economics) with their settled volume spread evenly over their open hours, plus the midterm trades; longer-running markets are left out there. Volume is in contracts, which is what Kalshi shows as dollar volume.</li>
-      <li>The market card follows Kalshi's layout: each outcome's chance is its last traded YES price; Yes and No show the last trade's prices, not the order book. "This market" lists every bet in the chosen market up to the cursor.</li>
+      <li>Two prices appear on this page and can differ in a thin market. <b>Quoted mid</b> is the midpoint of the best bid and ask (map, reading strip, state panel, timeline, heatmap and the election-night panel; from the Democratic contract of the party event, with no last-trade fallback, so a period with no two-sided quote shows as a gap). <b>Last trade</b> is the price of the most recent trade (the market card). The election-night panel shows both, from the Democratic contract only.</li>
+      <li>The market card follows Kalshi's layout: each outcome's percentage is its last traded YES price; Yes and No show the last trade's prices, not the order book. "This market" lists every bet in the chosen market up to the cursor.</li>
       <li>Beyond the midterms, the market picker has the most-traded Kalshi events in each category: sports games, crypto, stock indexes, other elections, finance, weather and more. They're the events with the most money bet on election night, plus the most-traded events that closed between Oct 4 and Nov 12. Their charts are hourly Kalshi prices (bid/ask midpoint, else the last trade) for up to six markets each. On election night the charts are per minute and include every bet. Clicking a bet in "Big · all Kalshi" opens its market when it's one of these.</li>
       <li>Polls: general-election polls since Aug 1 for 143 races, from Wikipedia (CC BY-SA 4.0) and VoteHub (CC BY 4.0), collected and matched to Kalshi races by a teammate. The market card lists each race's polls up to the cursor and the average D–R margin of the latest five. A pollster marked (D) or (R) was working for that party. Many House races have no public poll.</li>
       <li>Stocks: daily closes of the S&amp;P 500, Nasdaq Composite and VIX from FRED. U.S. stock markets are closed overnight, so on election night the stocks lane shows a Kalshi-implied S&amp;P 500 (30-minute candles: green up, red down) and Nasdaq-100 (dashed line) instead. Every trade in Kalshi's "S&amp;P / Nasdaq-100 at or above K at 10 AM on Nov 4" markets gives the chance the index ends above each strike. The lane plots the level where that chance crosses 50%, every 5 minutes, as a % change from the Nov 3 close. Kalshi settled those markets at the actual 10 AM values (S&amp;P +1.7%).</li>
-      <li>Every race · 120 days: one row per Senate, Governor and House race (all 435 House seats plus DC's delegate; Kentucky's Senate race had no Kalshi market on the winner). Each cell is the Kalshi chance the Democrat wins at that moment, from per-minute prices: the bid/ask midpoint of the Democrat's contract averaged with one minus the Republican's (last trade when the spread is over 25¢). Time runs on a log scale back from each race's settlement, or from Nov 10, 12 AM ET. Once Kalshi settles a race, its row shows the result. "Favorites lost" lists races where the 6 PM ET price on Nov 3 favored the party that lost.</li>
+      <li>Every race · 120 days: one row per Senate, Governor and House race (all 435 House seats plus DC's delegate; Kentucky's Senate race had no Kalshi market on the winner). Each cell is the quoted midpoint of the Democratic contract's best bid and ask at that moment (party event; per minute from Oct 20, hourly before), 1 or 0 after Kalshi settles. Brown cells are gaps: the market was open but had no two-sided quote in that period.</li>
       <li>Not here yet: official vote counts and AP call times. X posts appear only when they were shared in Reddit posts.</li>
     </ul>
   </details>
@@ -222,5 +249,6 @@
 <script src="assets/d3.v7.9.0.min.js"></script>
 <script src="assets/dash.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/night.js"></script>
 </body>
 </html>

@@ -1,3 +1,44 @@
+# Midterm Watchfloor · election-night edition
+
+A replay console for the 2026 U.S. midterms that lines up Kalshi prices, quotes and every trade with what
+political streamers were saying on election night. Static site, no build step.
+
+**Credits.** Built on [Lawrence Lu's Midterm Watchfloor](https://github.com/LawrenceLu0904/midterm-watchfloor)
+(the page, map, timeline, market card, trades and most data layers; his original README follows below), with
+election-night stream, poll and Bluesky data from Subhrajit's
+[kalshis_eye](https://github.com/subro608/kalshis_eye). Kalshi data from the Kalshi public API.
+
+## What this edition adds
+- **Election night panel** (Nov 3 6 PM – Nov 4 8 AM ET), following the page cursor: Senate and House control
+  plus any of the 504 races picked on the map, the dropdown or the heatmap. Bid, ask and quoted midpoint at
+  each minute's end, with the quote's age; every trade at its exact execution time; Kalshi's trading close
+  and settlement shown separately (neither is a media call); the streams on air, each with a link to the
+  original video at that moment and its chat messages per minute.
+- **One price definition** for the map, state panel, timeline and heatmap: the quoted midpoint of the
+  Democratic contract of each race's party event. Periods without a two-sided quote show as gaps. The market
+  card's percentages are last trades and say so, with the quoted midpoint next to them on election night.
+- **One result and settlement time per race** everywhere, from the Democratic contract (this fixes WA-09,
+  whose date came from an eliminated candidate's contract).
+- **Heatmap** row order and upset list from the 6 PM ET Nov 3 quoted midpoint, with quote time and spread.
+- **Race crosswalk and coverage tables** in `crosswalk/`, and a panel-by-panel description in `DASHBOARD.md`.
+
+## What is public and what is not
+Public here: Kalshi market data (trades are anonymous), counts, stream metadata and links to the original
+streams. **Not published:** stream transcripts, chat messages, video files, post text or usernames. Those stay
+in a private research copy (`private/`, git-ignored); the page notes where they would appear.
+
+## Rebuilding the election-night and campaign data
+`tools/` holds the builders. They read our raw Kalshi pull (`KALSHI_RAW`, default `../../raw`) and
+Subhrajit's stream data (`STREAMS_WINDOW`); neither is in this repo.
+`build_crosswalk.py` → `crosswalk/`; `build_races_night.py` → `data/night_state/`, `data/night_races.json`,
+`crosswalk/night_coverage.tsv`; `build_night.py` → control markets and streams; `build_campaign.py` →
+`data/race_odds.json`, `data/heatmap.json`, `data/races.json`; `verify_night.py` checks the built files
+against the raw pull; `walkthrough.py` clicks through every view headless.
+
+---
+
+# Original README (Lawrence Lu)
+
 # Midterm Watchfloor
 
 **Live site: https://lawrencelu0904.github.io/midterm-watchfloor/**

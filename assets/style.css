@@ -239,3 +239,31 @@ html, body { margin: 0; background: #0a0f15; }
 .wf-heat-chip { appearance: none; background: transparent; border: 1px solid var(--wf-line2); font: 500 11.5px/1.2 var(--wf-mono); padding: 4px 8px; cursor: pointer; font-variant-numeric: tabular-nums; }
 .wf-heat-chip:hover { border-color: var(--wf-amber); }
 .wf-heat-chip:focus-visible { outline: 2px solid var(--wf-amber); outline-offset: 1px; }
+
+/* election-night control view (assets/night.js) */
+.wf-nt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; margin: 10px 0 4px; }
+.wf-nt-grid canvas { width: 100%; display: block; }
+.wf-nt-h { font: 600 11px/1.2 var(--wf-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--wf-muted); margin-bottom: 6px; }
+.wf-nt-ax { font: 500 10.5px/1 var(--wf-mono); fill: var(--wf-faint); }
+.wf-nt-lab { font: 600 11px/1 var(--wf-mono); fill: var(--wf-fg); letter-spacing: .08em; text-transform: uppercase; }
+.wf-nt-card { background: var(--wf-panel2); border: 1px solid var(--wf-line); padding: 10px 12px; }
+.wf-nt-card h3 { font: 600 12px/1.2 var(--wf-mono); margin-bottom: 6px; }
+.wf-nt-row { display: grid; grid-template-columns: 96px auto 1fr; gap: 10px; align-items: baseline; padding: 2px 0; }
+.wf-nt-k { font: 500 11px/1.2 var(--wf-mono); color: var(--wf-muted); text-transform: uppercase; letter-spacing: .06em; }
+.wf-nt-v { font: 600 15px/1.2 var(--wf-mono); font-variant-numeric: tabular-nums; }
+.wf-nt-s { font: 500 11.5px/1.3 var(--wf-mono); color: var(--wf-faint); }
+.wf-nt-near { max-height: 300px; }
+.wf-nt-tr { display: grid; grid-template-columns: 118px 104px 52px 96px 1fr; gap: 8px; font: 500 11.5px/1.7 var(--wf-mono); font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--wf-grid); }
+.wf-nt-tt { color: var(--wf-faint); font: 500 11px/1.4 var(--wf-mono); margin-right: 8px; }
+.wf-nt-empty { color: var(--wf-faint); font: 500 12px/1.5 var(--wf-mono); }
+.wf-nt-air { border-top: 1px solid var(--wf-line); padding: 8px 0; }
+.wf-nt-airh { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; margin-bottom: 4px; }
+.wf-nt-badge { font: 500 10.5px/1.2 var(--wf-mono); padding: 2px 6px; border: 1px solid var(--wf-line2); color: var(--wf-muted); }
+.wf-nt-badge.is-chat-verified { color: var(--wf-ok); border-color: var(--wf-ok); }
+.wf-nt-badge.is-upload, .wf-nt-badge.is-unverified { color: var(--wf-amber); border-color: var(--wf-amber); }
+.wf-nt-tx { color: var(--wf-muted); max-width: 80ch; margin: 3px 0; max-height: 9em; overflow-y: auto; }
+.wf-nt-tx.is-now { color: var(--wf-fg); }
+.wf-nt-chat { color: var(--wf-faint); font-size: 12.5px; max-width: 80ch; }
+.wf-nt-toggle { text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--wf-faint); margin-left: 8px; }
+.wf-nt-lower [data-nt="air"], .wf-nt-near { max-height: 520px; overflow-y: auto; overscroll-behavior: contain; }
+.wf-nt-links { font: 500 12px/1.5 var(--wf-mono); margin: 2px 0 4px; }

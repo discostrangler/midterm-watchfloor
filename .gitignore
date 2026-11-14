@@ -1,0 +1,5 @@
+private/
+__pycache__/
+tools/*.log
+.ipynb_checkpoints/
+tools/*.sbatch
