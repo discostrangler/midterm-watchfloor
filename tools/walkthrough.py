@@ -21,6 +21,8 @@ def run(mode):
         b = p.chromium.launch(); pg = b.new_page(viewport={"width": 1500, "height": 1000})
         if mode == "public": pg.route("**/private/**", lambda r: r.fulfill(status=404, body="not published"))
         pg.on("pageerror", lambda e: errs.append(f"pageerror {e}"))
+        # errors that dash.draw catches and logs (a failed resource is already counted by the response listener)
+        pg.on("console", lambda m: m.type == "error" and "Failed to load resource" not in m.text and errs.append(f"console {m.text[:160]}"))
         pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
         pg.goto(BASE); pg.wait_for_timeout(9000)
         ev = pg.evaluate
@@ -63,6 +65,22 @@ def run(mode):
             pg.click(f"[data-tape={tape}]"); pg.wait_for_timeout(1500)
             check(f"trades tape {tape}", pg.locator("[data-draw=tape] li").count() > 1)
         pg.click("[data-tape=market]")
+        # audit fixes: no look-ahead on the card; closed is its own state; moments land on settled; stock note follows the cursor
+        ev(setT, 1793754120); pg.wait_for_timeout(800)          # 8:02 PM: the 8:01 minute ended at 83c; the 8:02 minute (90.8c) has not
+        check("market card shows no trade after the cursor", "83%" in txt("[data-draw=mkt-head]"), txt("[data-draw=mkt-head]").split("\n")[0])
+        ev(setT, 1793768460); pg.wait_for_timeout(500)          # 12:01 AM: Senate trading closed 11:46 PM, settled 12:46 AM
+        check("control tile: closed, not a stale quote", txt("[data-draw=kpi-sen]") == "closed", txt("[data-draw=kpi-sen]"))
+        ev(setT, 1793754000); pg.wait_for_timeout(500)          # 8 PM ET
+        s8 = pg.locator(".wf-lanes-svg text", has_text="Kalshi-implied S&P").first.text_content()
+        ev(setT, 1793761200); pg.wait_for_timeout(500)          # 10 PM ET
+        s10 = pg.locator(".wf-lanes-svg text", has_text="Kalshi-implied S&P").first.text_content()
+        check("stock note follows the cursor", s8 != s10 and "−0.2%" in s8, f"8 PM: {s8[-30:]} | 10 PM: {s10[-30:]}")
+        ev(pick, "GOVPARTYCA-26"); ev(setT, 1793765340); pg.wait_for_timeout(1500)   # 11:09 PM: CA Governor closed 11:08 PM
+        check("state panel: CA Governor closed, no carried quote", "trading closed" in txt("[data-draw=st-races]"), txt("[data-draw=st-races]").replace("\n", " ")[:120])
+        pg.click("[data-mperiod=night]"); pg.wait_for_timeout(400)
+        pg.locator("[data-draw=moments] li.wf-feed-i", has_text="TX Senate settles").first.click(); pg.wait_for_timeout(1500)
+        check("settlement moment lands on settled", "Kalshi settled for" in txt("[data-draw=mkt-vol]"), txt("[data-draw=mkt-vol]")[:100])
+        ev(pick, "SENATETX-26"); ev(setT, 1793754360); pg.wait_for_timeout(1500)
         # night panel: quotes, trades, on air
         pg.wait_for_timeout(1500)
         cards = pg.locator(".wf-nt-card").count(); links = pg.locator(".wf-nt-links a").count(); tx = pg.locator(".wf-nt-tx").count()
@@ -91,6 +109,10 @@ def run(mode):
         pg.click("[data-play-btn]"); t0 = ev("WF.t"); pg.wait_for_timeout(1500); pg.click("[data-play-btn]")
         check("play advances the cursor", ev("WF.t") > t0)
         pg.screenshot(path=f"{out}/{mode}_04_full.png", full_page=True)
+        pg.set_viewport_size({"width": 320, "height": 800}); pg.wait_for_timeout(1500)
+        sw = ev("document.documentElement.scrollWidth")
+        check("no sideways scroll at 320 px", sw <= 320, f"page width {sw} px")
+        pg.screenshot(path=f"{out}/{mode}_05_320px.png", full_page=True)
         b.close()
     check("no page errors / failed requests", not errs, "; ".join(errs[:5]))
 
@@ -99,5 +121,8 @@ for mode in ["public", "private"]:
     for attempt in range(4):             # the headless shell sometimes dies on this page; retry
         try: run(mode); break
         except Exception as e: print(f"  [{mode}] retry: {str(e)[:150]}", flush=True)
+    else:
+        fails += 1; print(f"  [{mode}] FAIL walkthrough never completed (4 crashes)", flush=True)
 srv.shutdown()
 print("WALKTHROUGH", "PASSED" if not fails else f"{fails} FAILED")
+sys.exit(1 if fails else 0)

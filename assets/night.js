@@ -57,12 +57,14 @@
   // ---------------------------------------------------------------- whole-night chart (built once per width)
   function overview(box, N, evs) {
     const W = box.clientWidth || 900, RH = 118, ml = 64, mr = 12, [A, B] = N.window;
-    const svg = d3.select(box).html('').append('svg').attr('viewBox', `0 0 ${W} ${RH * evs.length + 22}`).attr('width', '100%').style('display', 'block');
+    const svg = d3.select(box).html('').append('svg').attr('viewBox', `0 0 ${W} ${RH * evs.length + 22}`).attr('width', '100%').style('display', 'block')
+      .attr('role', 'img').attr('aria-label', `Election night, 6 PM to 8 AM ET, Democratic contract of ${evs.map((e) => e.label).join(', ')}: bid-ask band, quoted mid line and last-trade dots, with trading-stop and settlement marks. The readout below gives the values at the cursor; move the cursor with the time slider.`);
     const x = d3.scaleLinear([A, B], [ml, W - mr]);
     evs.forEach((e, k) => {
       const q = e.quotes.D, n = q.bid.length, T = (i) => A + (i + 1) * 60, top = k * RH + 8, bot = top + RH - 18;
       const two = (i) => q.bid[i] != null && q.ask[i] != null && q.bid[i] > 0 && q.ask[i] < 1, ii = d3.range(n).filter(two);
-      const lo = d3.min(ii, (i) => q.bid[i]) ?? 0, hi = d3.max(ii, (i) => q.ask[i]) ?? 1;
+      const ls = q.last.filter((v) => v != null);   // last trades can sit outside the book (TX-21: 48¢ trades, 19¢ asks)
+      const lo = d3.min([d3.min(ii, (i) => q.bid[i]), d3.min(ls)]) ?? 0, hi = d3.max([d3.max(ii, (i) => q.ask[i]), d3.max(ls)]) ?? 1;
       const y = d3.scaleLinear([Math.max(0, lo - 0.03), Math.min(1, hi + 0.03)], [bot, top]);
       const g = svg.append('g'), idx = d3.range(n), has = two;
       y.ticks(4).forEach((v) => { g.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', y(v)).attr('y2', y(v)).attr('stroke', css('--wf-grid'));
@@ -77,7 +79,7 @@
         g.append('text').attr('x', x(e[f]) + 3).attr('y', f === 'close_ts' ? top + 9 : top + 20).attr('class', 'wf-nt-ax').style('fill', css('--wf-amber')).text(`${lab} ${fT.format(D(e[f]))}`); });
     });
     const ax = svg.append('g');
-    for (let t = A; t <= B; t += 7200) ax.append('text').attr('x', x(t)).attr('y', RH * evs.length + 16).attr('text-anchor', 'middle').attr('class', 'wf-nt-ax').text(fT.format(D(t)));
+    for (let t = A; t <= B; t += 7200) ax.append('text').attr('x', x(t)).attr('y', RH * evs.length + 16).attr('text-anchor', t + 7200 > B ? 'end' : 'middle').attr('class', 'wf-nt-ax').text(fT.format(D(t)));
     const cur = svg.append('line').attr('y1', 4).attr('y2', RH * evs.length).attr('stroke', css('--wf-amber')).attr('stroke-width', 1.5).style('pointer-events', 'none');
     svg.style('cursor', 'crosshair').on('click', (ev) => setT(x.invert(d3.pointer(ev, svg.node())[0])));
     return {W, x, cur, key: evs.map((e) => e.event).join()};
@@ -90,9 +92,10 @@
     const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
     const a = t - ZOOM, b = t + ZOOM, X = (v) => ml + ((v - a) / (b - a)) * (W - ml - mr), rows = tradesOf(e) || [], q = e.quotes.D, A = N.window[0];
     const i0 = lowerBound(rows, a), i1 = lowerBound(rows, b), pts = [];
-    for (let i = Math.max(0, qi(N, a)); i <= qi(N, b) && i < q.bid.length; i++) if (q.bid[i] != null && q.ask[i] != null && q.bid[i] > 0 && q.ask[i] < 1) pts.push([A + (i + 1) * 60, q.bid[i], q.ask[i]]);
+    for (let i = Math.max(0, qi(N, a)); i <= qi(N, b) && i < q.bid.length; i++) if (q.bid[i] != null && q.ask[i] != null)
+      pts.push(q.bid[i] > 0 && q.ask[i] < 1 ? [A + (i + 1) * 60, q.bid[i], q.ask[i]] : [A + (i + 1) * 60, null, null]);   // null = one-sided: lines break
     let lo = Infinity, hi = -Infinity;
-    for (const p of pts) { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[2]); }
+    for (const p of pts) if (p[1] != null) { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[2]); }
     for (let i = i0; i < i1; i++) { const v = pD(rows[i]); lo = Math.min(lo, v); hi = Math.max(hi, v); }
     g.font = `500 10.5px ${css('--wf-mono')}`; g.fillStyle = css('--wf-faint');
     if (!isFinite(lo)) { g.fillText('no quotes or trades within 10 min of the cursor', ml, H / 2); return 0; }
@@ -108,8 +111,10 @@
     g.globalAlpha = 1;
     [[1, css('--wf-ok')], [2, css('--wf-amber')]].forEach(([j, col]) => {   // bid and ask at each candle end
       g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 1.3; g.beginPath();
-      pts.forEach((p, n) => (n ? g.lineTo(X(p[0]), Y(p[j])) : g.moveTo(X(p[0]), Y(p[j])))); g.stroke();
-      pts.forEach((p) => g.fillRect(X(p[0]) - 1.5, Y(p[j]) - 1.5, 3, 3));
+      let pen = false;
+      for (const p of pts) { if (p[j] == null) { pen = false; continue; } pen ? g.lineTo(X(p[0]), Y(p[j])) : g.moveTo(X(p[0]), Y(p[j])); pen = true; }
+      g.stroke();
+      pts.forEach((p) => p[j] != null && g.fillRect(X(p[0]) - 1.5, Y(p[j]) - 1.5, 3, 3));
     });
     g.strokeStyle = css('--wf-amber'); g.lineWidth = 1; g.beginPath(); g.moveTo(X(t), mt); g.lineTo(X(t), H - mb); g.stroke();
     return i1 - i0;

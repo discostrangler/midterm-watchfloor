@@ -34,10 +34,10 @@ reads, how the numbers are derived and how they are drawn. Written 2026-11-14 fr
 | File | Rows | Source | What a row is |
 |---|---|---|---|
 | `races.json` | 504 | ours: `winner`/`called_ts` = result and settlement of the party event's **Democratic contract**, `p_dem_eve` = its quoted mid at 6 PM ET Nov 3 (`tools/build_campaign.py`); label/volume from Watchfloor. Original in `private/races.lawrence.json` | one race: `race_id, office, state, district, special, label, winner, called_ts, volume, p_dem_eve, has_odds`. 34 Senate, 34 Governor, 436 House (435 + DC). 482 have odds |
-| `race_odds.json` | 191,315 | **rebuilt from ours** (`tools/build_campaign.py`): quoted midpoint of the **Democratic contract of the party event**, hourly from Oct 4 and per minute Nov 3 5 PM – Nov 4 11 AM ET, a row only when it changes; `p_dem` null = the observed book was one-sided (a gap, 394 rows); 1/0 at settlement. Lawrence's original (D/R blend, last-trade fallback) is kept in `private/race_odds.lawrence.json` | `t, race_id, p_dem` |
-| `control.json` | 2,693 | **ours** 1-min candles of `CONTROLH-2026-D` / `CONTROLS-2026-D`: mid of YES bid/ask, empty books skipped; 1-minute in the detail window, hourly otherwise; before Oct 20 hourly last trade from our trades; 1 after settlement | `t, chamber, p_dem` |
+| `race_odds.json` | 191,796 | **rebuilt from ours** (`tools/build_campaign.py`): quoted midpoint of the **Democratic contract of the party event**, hourly from Oct 4 and per minute Nov 3 5 PM – Nov 4 11 AM ET, a row only when it changes; `p_dem` null = the observed book was one-sided (a gap, 394 rows), or `closed: 1` = Kalshi stopped trading and has not settled yet (481 rows), so a last quote is never carried past the close; 1/0 at settlement. Lawrence's original (D/R blend, last-trade fallback) is kept in `private/race_odds.lawrence.json` | `t, race_id, p_dem` |
+| `control.json` | 576 | **rebuilt from ours** (`tools/build_campaign.py`, same definition as `race_odds`): quoted midpoint of `CONTROLH-2026-D` / `CONTROLS-2026-D` from our hourly + 1-minute candles, hourly from Oct 4 and per minute in the detail window, a row only when it changes; null = gap, `closed: 1` from trading close to settlement; 1 after settlement. Lawrence's version (last trade before Oct 20, last mid carried past the close) is in `private/control.lawrence.json` | `t, chamber, p_dem, closed?` |
 | `milestones.json` | 2 | ours (catalog) | chamber control: `event, chamber, winner, settled_ts, volume` |
-| `race/<id>.json` | 551 files | Kalshi trades | per market: `px` = last YES trade price per outcome per bin (1 min in the detail window, 10 min otherwise) with contracts; `rows` = 10-min/1-min bet totals; `bets` = largest bets; `days` with trades; `question`; `outcomes` |
+| `race/<id>.json` | 551 files | Kalshi trades | per market: `px` = last YES trade price per outcome per bin (1 min in the detail window, 10 min otherwise; for the 54 non-midterm events, hourly bid/ask mid else last trade) with contracts. Rows are stamped at the bin START; the page re-stamps each at the bin END so the card never shows a price from a bin the cursor is still inside; `rows` = 10-min/1-min bet totals; `bets` = largest bets; `days` with trades; `question`; `outcomes` |
 | `trades/<id>/<day>.json` | ~10k files | Kalshi trades grouped into **bets** (one taker order = all fills of the same contract and side at the same instant) | `[time (whole s), outcome index, bought YES=1/NO=0, price, contracts, $ paid]`, one file per ET day |
 | `bets_flow.json` | 6,535 | Kalshi trades, every race + control market | 10-min (1-min on the night) totals: `d` $ backing D, `rr` $ backing R, `o` other, `bets` |
 | `bets_state.json` | 28,196 | Kalshi trades, race markets only | per state per hour: `usd, bets` |
@@ -54,12 +54,12 @@ reads, how the numbers are derived and how they are drawn. Written 2026-11-14 fr
 | `reddit_hourly.json` | 58,968 | Arctic Shift archive | per subreddit per hour: posts, comments (national subs as `US`, one main sub per state) |
 | `reddit_night.json` | 5,672 | Arctic Shift | per minute, national subs, detail window |
 | `polymarket.json` | 343 | Polymarket Gamma API | comments per hour on 3 control events |
-| `moments.json` | 57 | derived from all of the above | key moments: 21 calls, 16 swings, 10 big bets, 4 stocks, 3 Reddit surges, 3 control; each with links to public posts |
+| `moments.json` | 57 | Lawrence's selection; the numbers in the 16 swing titles are restated from `race_odds` / `control` by `tools/build_campaign.py` (original in `private/moments.lawrence.json`) | key moments: 21 calls, 16 swings, 10 big bets, 4 stocks, 3 Reddit surges, 3 control; each with links to public posts |
 | `stocks.json` | 206 | FRED | daily closes S&P 500, Nasdaq, Dow, VIX |
 | `gas.json`, `oil.json` | 2,029 / 50 | Kalshi AAA gas and WTI/Brent markets (settlement value = the day's price) | per state per day / per series per day |
 | `weather_state.json`, `weather_grid.json` | 1,683 / 2,994 | NOAA GHCN-Daily | state daily rain, wet share, high temp / election-day rain on a 0.5° grid |
 | `turnout_races.json`, `turnout_daily.json` | 502 / 20,080 | Kalshi turnout ladders + MEDSL baseline | ladder metadata / implied median votes per day at 6 PM ET |
-| `states_geo.json` | 56 features | us-atlas 3.0.1 | state outlines |
+| `states_geo.json` | 51 features | us-atlas 3.0.1 | state outlines |
 | **`night_control.json`** (ours) | — | **ours**: 1-min candles + catalog of both control markets; Subhrajit's stream metadata and chat **timing** | see §11 |
 | **`night_trades/<event>.json`** (ours) | 80,082 Senate, 30,653 House | **ours**: raw trades, deduped on `trade_id` | `[exact time (ms), outcome 0=D 1=R, bought YES=1/NO=0, YES price, contracts]`, Nov 3 6 PM – Nov 4 8 AM ET |
 | **`private/night_private.json`** (ours, git-ignored) | 8 transcripts, 4 chats | Subhrajit's Whisper transcripts and chat **text** | see §11 |
@@ -129,14 +129,15 @@ non-midterm Kalshi events by category (`markets_index`). Loads `race/<id>.json` 
 |---|---|---|
 | Volume line | `races` / `markets_index` | $ volume (midterms) or $ on election night + contracts (other markets); "Settled: … at …" or "Open at the cursor" |
 | Question | `race/<id>.question` | |
-| Headline number | `race/<id>.px` | leading outcome's chance at the cursor = **last traded YES price** in its bin; ▲/▼ points since the window start; "settled" once past settlement |
+| Headline number | `race/<id>.px` | leading outcome's chance at the cursor = **last traded YES price** in the last bin that ENDED at or before the cursor (never a later trade); ▲/▼ points since the window start; "settled" once past settlement |
 | Chart | `race/<id>.px` | one step line per outcome over the time window (D blue, R red, others from a 5-colour set), y 0–100%. Faint bars underneath = contracts traded per bin (30–200 bins). Dashed "settled" rule. Amber cursor with each outcome's % labelled. Hover tooltip; click moves the cursor |
 | Table | `race/<id>` | per outcome: chance, Yes ¢ / No ¢ (or Won/Lost), contracts traded up to the cursor |
 | Polls | `polls` | polls with field end date ≤ cursor: "average of the latest 5" margin (D − R) and the last 8 polls (date, pollster, party tag, D–R, sample, margin). Not shown for control or non-midterm markets |
 
 **Price labels and status (consistency pass, 2026-11-14).** The card's percentages are **last trade**
 prices, and every place shows it ("last trade" under the headline number, the "Last trade" table column,
-the chart tooltip, a note under the outcome keys). On election night the note adds the **quoted midpoint**
+the chart tooltip, a note under the outcome keys). Non-midterm events say "price" instead: their files hold hourly
+bid/ask midpoints, else last trade. On election night the note adds the **quoted midpoint**
 of the Democratic contract with its bid, ask and observation time, so a reader sees why the two differ
 (e.g. NC-11 at 8:30 PM: last trade 97¢, quoted mid 92.5¢). Everywhere else (map, reading strip, state panel,
 timeline, heatmap, night panel) is labelled "quoted mid".
@@ -180,7 +181,8 @@ quote. Races whose 6 PM bid and ask straddle 50¢ are kept in the data but left 
 (none this year). Result: **21 upsets**, all Republican favourites that lost, led by MS Senate (13.5¢),
 NC-06 (14.5¢), IN-05 (21.5¢), NC-14, TX-09, OH-10, SC Senate, TX Governor.
 
-Hover shows race, % and time; click opens the race's market card. Chips below: the 20 races where the
+Hover shows race, % and time; click opens the race's market card. Keyboard: focus the heatmap, Up/Down pick a race,
+Left/Right step through time, Enter opens it; each cell is read out. Chips below: the 21 races where the
 6 PM ET Nov 3 favourite lost.
 
 ## 10. Timeline lanes (shared cursor)
@@ -225,9 +227,9 @@ cursor; clicking its chart moves the cursor. Each source keeps its own clock.
   - Coverage of every race in the actual window: `crosswalk/night_coverage.tsv` (see §15).
 - **Price definition here:** the **Democratic contract's YES side only**. Bid, ask and quoted midpoint come
   from its 1-minute candles; nothing is blended with the Republican contract. Trades on the Republican
-  contract are shown at 1 − price and labelled so. Other views differ (§7 note, §1): the map, tiles and
-  lanes use Lawrence's midpoint files (for races: D mid averaged with 1 − R mid, last trade if the spread
-  is over 25¢); the heatmap uses the same blend; the market card uses last trade.
+  contract are shown at 1 − price and labelled so. The map, tiles, state panel, lanes and heatmap use the same
+  quoted mid, rebuilt from our pull (`race_odds.json`, `control.json`, `heatmap.json`); only the market card
+  uses last trade (§7).
 - **Quote timing and gaps:** a book is stamped with the end of its minute candle. Kalshi omits candles for
   quiet minutes (NY-06 has 10 rows in the window, with the same 99¢ / 99.9¢ book on both sides of a 75-minute
   hole), so the last observed book stands until the next candle. The readout uses the latest book observed
@@ -278,15 +280,17 @@ the public site) the "On air" block says so instead of showing text.
 
 ## 13. What is and isn't on each copy
 
-| | Lawrence's public site | Our private claude.ai copy |
+| | Public edition (GitHub Pages, discostrangler/midterm-watchfloor) | Private research copy (claude.ai) |
 |---|---|---|
 | Panels §2–§10, §12 | yes | yes |
-| Our night panel §11 | no | yes |
-| Transcripts and chat text | no (never published) | yes, private file |
-| Night panel for individual races (§11) | no | all 504 races |
-| Lawrence's market card files `race/<id>`, `trades/<id>` | all 551 races / ~10k day files | the two control markets, TX Senate and NC-03 (other market cards say "No trades on file") |
+| Night panel §11, all 504 races | yes | yes |
+| Stream timeline, links to the original streams, chat counts | yes | yes |
+| Transcripts and chat text | no (`private/` is not published) | yes, private file |
+| Market card files `race/<id>`, `trades/<id>` | all 551 markets / ~10k day files | the two control markets, TX Senate and NC-03 (other market cards say "no trades on file": the files are not uploaded there) |
 | Bluesky / Reddit / X embeds | yes, on click | blocked by the hosting |
 | Videos | no | no |
+
+Lawrence's original site (LawrenceLu0904.github.io/midterm-watchfloor) is unchanged and has none of §11.
 
 ## 14. Known gaps
 
@@ -297,7 +301,9 @@ the public site) the "On air" block says so instead of showing text.
   not total volume.
 - Stream clocks for Hasan (Twitch), Crowder and Daily Wire have no chat to check against; Hasan's YouTube
   video is an upload.
-- Lawrence's `build_site_data.py` is not in the repo, so his files can't be rebuilt from here.
+- Lawrence's `build_site_data.py` is not in the repo, so his files can't be rebuilt from here. In particular the
+  key moments keep his selection (only the swing numbers are restated), and the hourly rows of the non-midterm
+  market files are assumed to start at their stamp (if they are candle ends, those cards are an hour late, never early).
 
 ## 15. Race crosswalk and election-night coverage (`crosswalk/`)
 
@@ -354,4 +360,26 @@ that closed early; prefer the open-minute shares.
   the fraction of a second).
 - **CA-37 and the other June-settled districts:** the market card no longer requests a file it does not have
   (status from the shared index); the page loads with no errors.
-- **Credits** in the page header: Lawrence Lu's Midterm Watchfloor and Subhrajit's kalshis_eye.
+- **Credits** in the page header: Lawrence Lu's Midterm Watchfloor and Subhrajit's kalshis_eye. The footer links
+  this edition's repo and, separately, Lawrence's.
+
+## 17. Audit fixes (2026-11-14)
+
+An outside read-only audit of the live site listed 26 findings; each was checked against the code and data first.
+- **No look-ahead at the cursor.** Market card prices, totals and tooltips use bins that ended by the cursor;
+  reading-strip counts, Bluesky and chat counts use finished bins; per-state bets and subreddit counts exist only
+  hourly and say "full hour".
+- **Closed is its own state.** `race_odds` and `control` carry a `closed` marker from trading close to
+  settlement; the map, state panel, tiles and lanes say "trading closed, not settled yet" instead of a last quote.
+  Control is quoted mid for the whole campaign (it was last trade before Oct 20).
+- **Moments:** swing numbers restated from the plotted series (SC Governor 9% → 38%, NE Senate to 0.4%);
+  a jump to a moment rounds up to the minute, so settlement moments show as settled.
+- **Charts:** stock-lane note follows the cursor; state sparkline holds its last value to the window end;
+  zoom bid/ask lines break at one-sided books; night overview scales include last trades; last axis label fits.
+- **Failures:** a market file that fails to download says so and offers Retry (a 404 still means no trades);
+  trade-day files that fail are listed under the tape and retried.
+- **Layout and access:** night grid fits 320 px; nearby-trade rows wrap; faint text 5.1:1 contrast (was 3.5:1);
+  cursor time never truncates; heatmap keyboard access; night overview labelled.
+- **Text:** first note (prices, no media-call claim), 3–97¢ filter scope, latest-120 tape, 148 races / 1,146
+  polls, "Before election night" tab, footer link, jump-button reason.
+- `tools/walkthrough.py` now fails on a crash, exits non-zero on failure, and counts errors caught by `dash.draw`.
