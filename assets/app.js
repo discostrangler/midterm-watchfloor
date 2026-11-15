@@ -1043,9 +1043,14 @@
       : WF.tape === 'mid' ? 'The largest midterm bets (priced 3–97¢) up to the cursor, newest first.'
         : 'The largest bets anywhere on Kalshi (priced 3–97¢) up to the cursor. Covers Nov 3 5 PM – Nov 4 11 AM ET.';
   });
+  // the warning lives in 'tape-sub', which drawAll runs BEFORE 'tape' (registration order): redraw it whenever it changes
   function tapeMarket(ol) {
-    const s = mktState();
+    const prev = WF.tapeNote;
     WF.tapeNote = '';
+    try { tapeMarketList(ol); } finally { if (WF.tapeNote !== prev) dash.draw('tape-sub'); }
+  }
+  function tapeMarketList(ol) {
+    const s = mktState();
     if (s.ds.status !== 'ok') { emptyList(ol, s.ds.status === 'error' ? emptyMsg(s) : 'Loading…'); return; }
     const days = (s.mk.raw.days || []).filter((d) => d <= etDate(WF.t));
     if (!days.length) { emptyList(ol, 'No bets in this market yet at the cursor time.'); return; }

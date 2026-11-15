@@ -21,10 +21,11 @@ def run(mode):
         b = p.chromium.launch(); pg = b.new_page(viewport={"width": 1500, "height": 1000})
         if mode == "public": pg.route("**/private/**", lambda r: r.fulfill(status=404, body="not published"))
         pg.route("**/data/race/KXHOUSERACE-NC02-26.json", lambda r: r.fulfill(status=404, body="missing"))   # a copy without this file
+        pg.route("**/data/trades/SENATETX-26/2026-11-02.json", lambda r: r.fulfill(status=503, body="down"))   # one trade day fails
         pg.on("pageerror", lambda e: errs.append(f"pageerror {e}"))
         # errors that dash.draw catches and logs (a failed resource is already counted by the response listener)
         pg.on("console", lambda m: m.type == "error" and "Failed to load resource" not in m.text and errs.append(f"console {m.text[:160]}"))
-        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
+        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and "SENATETX-26/2026-11-02" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
         pg.goto(BASE); pg.wait_for_timeout(9000)
         ev = pg.evaluate
         txt = lambda sel: pg.locator(sel).first.inner_text()
@@ -62,6 +63,9 @@ def run(mode):
         ev(pick, "SENATETX-26"); pg.wait_for_timeout(2500)
         head = txt("[data-draw=mkt-head]")
         check("market card labels last trade + quoted mid", "last trade" in head and "Quoted midpoint" in head, txt("[data-draw=mkt-vol]"))
+        pg.click("[data-range=week]"); ev(setT, 1793682060); pg.wait_for_timeout(2500)   # 12:01 AM Nov 3: the list reaches back into the failed Nov 2 file
+        check("failed trade day is announced under the tape", "did not load" in txt("[data-draw=tape-sub]") and "2026-11-02" in txt("[data-draw=tape-sub]"), txt("[data-draw=tape-sub]")[:110])
+        pg.click("[data-range=night]"); ev(setT, 1793754360); pg.wait_for_timeout(1500)
         for tape in ["market", "mid", "all"]:
             pg.click(f"[data-tape={tape}]"); pg.wait_for_timeout(1500)
             check(f"trades tape {tape}", pg.locator("[data-draw=tape] li").count() > 1)
