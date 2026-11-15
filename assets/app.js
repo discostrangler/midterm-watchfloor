@@ -56,6 +56,13 @@
     return lo;
   }
   function sumBetween(s, a, b, f) { let x = 0; for (let i = firstIdx(s, a); i < s.length && s[i].t < b; i++) x += f(s[i]); return x; }
+  // sum of rows whose bin [t, t + r) ENDED in (b - span, b]: replay readouts never count activity after the cursor (bins <= 1 h)
+  function sumDone(s, b, span, f, defR) {
+    let x = 0;
+    for (let i = firstIdx(s, b - span - 3600); i < s.length && s[i].t < b; i++) { const e = s[i].t + (s[i].r || defR); if (e > b - span && e <= b) x += f(s[i]); }
+    return x;
+  }
+  const fullHour = (h) => `${F.time.format(D(h))}–${F.time.format(D(h + 3600))} ET, full hour`;
   // spread each row's value over the bins its [t, t + r) interval overlaps
   function binSum(rows, a, b, nb, val, defR) {
     const bw = (b - a) / nb, out = new Float64Array(nb);
@@ -260,15 +267,15 @@
     }
     if (WF.layer === 'bets') {
       const h = Math.floor(t / 3600) * 3600, b = BST().m.get(`${st}|${h}`);
-      return b ? {fill: betsScale()(Math.max(1e3, b.usd)), text: `${usd(b.usd)} in ${fmtInt(b.bets)} bets on this state's races, ${F.time.format(D(h))}–${F.time.format(D(h + 3600))}`}
-        : {fill: C.none, text: `No bets on this state's races, ${F.time.format(D(h))}–${F.time.format(D(h + 3600))}`};
+      return b ? {fill: betsScale()(Math.max(1e3, b.usd)), text: `${usd(b.usd)} in ${fmtInt(b.bets)} bets on this state's races, ${fullHour(h)}`}
+        : {fill: C.none, text: `No bets on this state's races, ${fullHour(h)}`};
     }
     if (WF.layer === 'social') {
-      const s = socialAt(st, t), bs = bskyAt(st, t);
-      const bText = bs && bs.t > t - 600 ? ` · Bluesky: ${bs.posts} top posts in 10 min` : '';
+      const s = socialAt(st, t), bs = bskyAt(st, t - 600);   // last 10-min Bluesky bin that ended by the cursor
+      const bText = bs && bs.t > t - 1200 ? ` · Bluesky: ${bs.posts} top posts in the 10 min to ${F.time.format(D(bs.t + 600))}` : '';
       if (!s || !s.row) return {fill: C.none, text: `${s && s.sub ? `r/${s.sub}: no count for this hour` : 'No subreddit tracked'}${bText}`};
       return {fill: s.ratio == null ? C.idle : socialScale(Math.max(0.5, s.ratio)),
-        text: `r/${s.sub}: ${fmtInt(s.row.comments)} comments, ${fmtInt(s.row.posts)} posts this hour${s.ratio != null ? ` (${s.ratio.toFixed(1)}× its usual hour)` : ''}${bText}`};
+        text: `r/${s.sub}: ${fmtInt(s.row.comments)} comments, ${fmtInt(s.row.posts)} posts, ${fullHour(s.row.t)}${s.ratio != null ? ` (${s.ratio.toFixed(1)}× its usual hour)` : ''}${bText}`};
     }
     if (WF.layer === 'gas') {
       const g = GAS().m.get(`${st}|${etDate(t)}`);
@@ -400,9 +407,8 @@
   dash.draw('kpi-total', (el) => { el.textContent = ok('races') ? fmtInt(rowsOf('races').length) : '—'; });
   dash.draw('kpi-bets', (el) => {
     if (!ok('bets_flow')) { el.textContent = stat('bets_flow') === 'error' ? 'n/a' : '—'; return; }
-    const s = FLOW(), a = WF.t - 3600;
-    let d = 0, r = 0, o = 0;
-    for (let i = firstIdx(s, a); i < s.length && s[i].t < WF.t; i++) { d += s[i].d; r += s[i].rr; o += s[i].o; }
+    const s = FLOW(), sum = (f) => sumDone(s, WF.t, 3600, f, 600);
+    const d = sum((x) => x.d), r = sum((x) => x.rr), o = sum((x) => x.o);
     const tot = d + r + o;
     el.textContent = usd(tot);
     el.classList.toggle('is-d', tot > 0 && d > r);
@@ -411,7 +417,7 @@
   });
   dash.draw('kpi-kalshi', (el) => {
     if (!ok('kalshi_cats')) { el.textContent = stat('kalshi_cats') === 'error' ? 'n/a' : '—'; return; }
-    el.textContent = fmtN(binSum(rowsOf('kalshi_cats'), WF.t - 3600, WF.t, 1, (r) => r.n, 3600)[0]);
+    el.textContent = fmtN(sumDone(rowsOf('kalshi_cats'), WF.t, 3600, (r) => r.n, 3600));   // last full hour ended by the cursor
   });
   dash.draw('kpi-spx', (el) => {
     const s = ok('stocks') ? STK().get('SP500') : null, r = s ? lastAt(s, WF.t) : null;
@@ -423,9 +429,9 @@
   });
   dash.draw('kpi-reddit', (el) => {
     if (!ok('reddit_hourly')) { el.textContent = stat('reddit_hourly') === 'error' ? 'n/a' : '—'; return; }
-    const s = RED_US(), inNight = ok('reddit_night') && WF.t >= N0 && WF.t < N1;
-    const span = inNight ? 600 : 3600, a = inNight ? WF.t - 600 : Math.floor(WF.t / 3600) * 3600;
-    const c = sumBetween(s, a, a + span, (r) => r.c);
+    const s = RED_US(), inNight = ok('reddit_night') && WF.t >= N0 + 600 && WF.t < N1;
+    const span = inNight ? 600 : 3600;   // per-minute bins on election night, else the last full hour
+    const c = sumDone(s, WF.t, span, (r) => r.c, 3600);
     el.textContent = `${fmtInt(Math.round(c / (span / 60)))}`;
   });
   dash.draw('kpi-gas', (el) => {
@@ -439,7 +445,7 @@
   dash.draw('kpi-chat', (el) => {
     const [a, b] = ok('chat') ? CHATSPAN() : [null, null];
     if (a == null || WF.t < a || WF.t > b + 60) { el.textContent = '—'; return; }
-    el.textContent = fmtInt(CHAT().get(Math.floor(WF.t / 60) * 60) || 0);
+    el.textContent = fmtInt(CHAT().get(Math.floor(WF.t / 60) * 60 - 60) || 0);   // last full minute before the cursor
   });
   dash.draw('leg-gas-min', (el) => { el.textContent = ok('gas') && GAS().ext[0] != null ? `$${GAS().ext[0].toFixed(2)}` : '—'; });
   dash.draw('leg-gas-max', (el) => { el.textContent = ok('gas') && GAS().ext[1] != null ? `$${GAS().ext[1].toFixed(2)}` : '—'; });
@@ -628,10 +634,10 @@
     if (!ok('bets_state')) { el.textContent = stat('bets_state') === 'error' ? 'Bet data is not available.' : 'Loading…'; return; }
     const s = BST().byState.get(WF.state) || [];
     const h = Math.floor(WF.t / 3600) * 3600, row = BST().m.get(`${WF.state}|${h}`);
-    const tot = sumBetween(s, RANGES.campaign[0], WF.t, (r) => r.usd);
+    const tot = sumBetween(s, RANGES.campaign[0], h, (r) => r.usd);   // completed hours only
     const big = ok('big_bets') && ok('races') ? BIG().filter((b) => b.t <= WF.t && (raceInfo(b.race_id) || {}).state === WF.state).reduce((x, y) => (!x || y.usd > x.usd ? y : x), null) : null;
     const br = big && raceInfo(big.race_id);
-    el.textContent = `${row ? usd(row.usd) : '$0'} in the hour to ${F.time.format(D(h + 3600))} · ${usd(tot)} since Oct 4${big ? ` · largest so far: ${usd(big.usd)} backing ${big.backs} in ${br.label} at ${cents(big.price)}` : ''}`;
+    el.textContent = `${row ? usd(row.usd) : '$0'} in ${fullHour(h)} (per-state bets are hourly, so this includes bets after the cursor) · ${usd(tot)} from Oct 4 to ${F.time.format(D(h))}${big ? ` · largest so far: ${usd(big.usd)} backing ${big.backs} in ${br.label} at ${cents(big.price)}` : ''}`;
   });
   dash.draw('st-bets-spark', (el) => {
     if (!WF.state || !ok('bets_state')) { d3.select(el).selectAll('*').remove(); return; }
@@ -653,13 +659,13 @@
       const s = socialAt(WF.state, WF.t);
       if (!s || !s.sub) parts.push('No state subreddit tracked.');
       else if (!s.row) parts.push(`r/${s.sub}: no count for this hour.`);
-      else parts.push(`r/${s.sub}: ${fmtInt(s.row.comments)} comments and ${fmtInt(s.row.posts)} posts in the hour from ${F.time.format(D(s.row.t))}${s.ratio != null ? `, ${s.ratio.toFixed(1)}× its usual hour (${fmtInt(Math.round(s.usual))})` : ''}.`);
+      else parts.push(`r/${s.sub}: ${fmtInt(s.row.comments)} comments and ${fmtInt(s.row.posts)} posts in ${fullHour(s.row.t)} (state subreddit counts are hourly)${s.ratio != null ? `, ${s.ratio.toFixed(1)}× its usual hour (${fmtInt(Math.round(s.usual))})` : ''}.`);
     }
     if (ok('bluesky')) {
       const s = BSKY().byState.get(WF.state) || [];
-      const n = sumBetween(s, WF.t - 3600, WF.t, (r) => r.posts), likes = sumBetween(s, WF.t - 3600, WF.t, (r) => r.likes);
+      const n = sumDone(s, WF.t, 3600, (r) => r.posts, 600), likes = sumDone(s, WF.t, 3600, (r) => r.likes, 600), end = Math.floor(WF.t / 600) * 600;
       const inWin = s.length && WF.t >= s[0].t && WF.t <= s[s.length - 1].t + 3600;
-      parts.push(inWin ? `Bluesky: ${n} top posts about the state's races in the past hour (${fmtInt(likes)} likes).` : 'Bluesky sample covers Nov 3 11 AM – Nov 4 3 PM ET.');
+      parts.push(inWin ? `Bluesky: ${n} top posts about the state's races in the hour to ${F.time.format(D(end))} (${fmtInt(likes)} likes).` : 'Bluesky sample covers Nov 3 11 AM – Nov 4 3 PM ET.');
     }
     el.textContent = parts.join(' ');
   });

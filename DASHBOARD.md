@@ -79,10 +79,10 @@ All values are **at the cursor**.
 | Cursor · ET | `WF.t` | day + time |
 | Senate / House control · P(D) | `control` | last row at or before the cursor (bid/ask mid of the D contract, 1 after settlement); blue if ≥ 50% |
 | Races settled | `races` | count with `called_ts ≤ cursor`, of 504 |
-| Midterm bets · past hour | `bets_flow` | $ of all midterm bets in the hour before the cursor; colour = side with more money; tooltip = % D / % R |
-| All Kalshi · contracts past hour | `kalshi_cats` | contracts traded in all categories in the hour before the cursor (estimated outside the detail window) |
-| Reddit · comments/min | `reddit_hourly` + `reddit_night` | national subs; per-minute average over the last 10 min in the detail window, otherwise over the cursor's hour |
-| Stream chat · msgs/min | `chat` | messages in the cursor's minute, summed over all streams |
+| Midterm bets · past hour | `bets_flow` | $ of all midterm bets in the 10-min bins that ended in the hour before the cursor; colour = side with more money; tooltip = % D / % R |
+| All Kalshi · contracts past hour | `kalshi_cats` | contracts traded in the last full hourly bin that ended by the cursor |
+| Reddit · comments/min | `reddit_hourly` + `reddit_night` | national subs; per-minute average over the 10 one-minute bins that ended by the cursor in the detail window, otherwise over the last full hour |
+| Stream chat · msgs/min | `chat` | messages in the last full minute before the cursor, summed over all streams |
 | US gas · AAA | `gas` | US price on the cursor's ET date |
 | WTI crude | `oil` | last WTI settlement on or before that date |
 | S&P 500 · last close | `stocks` | last close before the cursor; tooltip = % vs the day before |
@@ -97,8 +97,8 @@ state panel and picks its Senate race, else Governor). Hover shows the same text
 | **Races · Senate / Governor** | `races`, `race_odds` | P(D) of the state's race (non-special first) at the cursor on a red–grey–blue scale (`partyScale`, 0 → 0.5 → 1). Solid blue/red once the cursor passes `called_ts`. Grey = no price yet |
 | **Races · House** | `races` | share of the state's House seats settled D vs R by the cursor: fill = 0.5 + (D − R) / (2·seats); grey until any seat settles |
 | Rings | `races` | a ring at the state centroid for each race (current office) settled in the last 30 min, coloured by winner |
-| **Bets** | `bets_state` | $ bet on the state's races in the cursor's hour, log scale $1K → max |
-| **Social** | `reddit_hourly` (+ `bluesky` in the tooltip) | comments in the state's subreddit this hour ÷ its median hour, log scale ½× → 4×+ |
+| **Bets** | `bets_state` | $ bet on the state's races in the cursor's clock hour (full hour, labelled so: per-state bets are hourly), log scale $1K → max |
+| **Social** | `reddit_hourly` (+ `bluesky` in the tooltip) | comments in the state's subreddit in the cursor's clock hour (full hour, labelled) ÷ its median hour; Bluesky = last 10-min bin ended by the cursor, log scale ½× → 4×+ |
 | **Gas price** | `gas` | AAA regular in the state on the cursor's date |
 | **Rain** | `weather_state`, `weather_grid` | station-average rain that day (sqrt scale, 0–25 mm); on Nov 3 also dots per 0.5° cell sized by rain |
 | **Turnout markets** | `turnout_races`, `turnout_daily` | implied median votes (Senate ladder, else Governor) ÷ last midterm Senate total, −20% → +20% |
@@ -109,8 +109,8 @@ state panel and picks its Senate race, else Governor). Hover shows the same text
 |---|---|---|
 | Races at the cursor | `races`, `race_odds` | each statewide race: P(D) bar + %, or "settled D/R at …"; contracts traded. A House line: seats, D/R settled, open. Click a race → market card |
 | Statewide race odds sparkline | `race_odds` | primary race's P(D) over the time window, step line, area above 50% blue and below red, amber cursor rule, dot at settlement |
-| Bets on this state's races | `bets_state`, `big_bets` | text: $ in the cursor's hour, $ since Oct 4, largest bet so far. Bar sparkline: $ per hour over the window (up to 160 bars) |
-| Social activity | `reddit_hourly`, `bluesky` | text only: subreddit comments/posts this hour and ratio to usual; Bluesky top posts and likes in the past hour |
+| Bets on this state's races | `bets_state`, `big_bets` | text: $ in the cursor's clock hour, labelled "6:00–7:00 PM ET, full hour" because it includes bets after the cursor; $ from Oct 4 through completed hours only; largest bet so far. Bar sparkline: $ per hour over the window (up to 160 bars) |
+| Social activity | `reddit_hourly`, `bluesky` | text only: subreddit comments/posts in the cursor's clock hour, labelled "full hour" (only hourly counts exist per state) and ratio to usual; Bluesky top posts and likes in the 10-min bins that ended in the hour before the cursor |
 | Gas | `gas` | state price that day; sparkline Oct 1 – Nov 12, state solid vs US dashed |
 | Weather | `weather_state` | text: rain mm, % wet stations, average high |
 | Turnout market | `turnout_races`, `turnout_daily` | text: implied median votes, comparison year, strikes, volume, eve spread, settled bucket |

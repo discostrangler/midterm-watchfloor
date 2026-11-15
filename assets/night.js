@@ -147,10 +147,10 @@
     box.replaceChildren();
     const P = dash.data('night_private');
     if (P.status === 'loading') box.append(el('p', 'wf-hint', 'Loading transcripts…'));
-    else if (P.status !== 'ok') box.append(el('p', 'wf-hint', 'Transcripts and chat messages are kept in the private research version. Here: each stream on air, a link to the original video at this moment, and how many chat messages were sent this minute.'));
+    else if (P.status !== 'ok') box.append(el('p', 'wf-hint', 'Transcripts and chat messages are kept in the private research version. Here: each stream on air, a link to the original video at this moment, and how many chat messages were sent in the last full minute before the cursor.'));
     const SR = dash.data('streams'), urls = new Map(SR.status === 'ok' ? SR.data.map((x) => [x.stream_id, x.url]) : []);
     const CH = dash.data('chat'), chat = new Map(), hasChat = new Set();
-    if (CH.status === 'ok') for (const r of CH.data) { hasChat.add(r.stream_id); if (r.t === Math.floor(t / 60) * 60) chat.set(r.stream_id, r.messages); }
+    if (CH.status === 'ok') for (const r of CH.data) { hasChat.add(r.stream_id); if (r.t === Math.floor(t / 60) * 60 - 60) chat.set(r.stream_id, r.messages); }
     for (const s of N.streams) {
       if (t < s.start || t > s.start + s.dur) continue;
       if (s.clock !== 'chat-verified' && !all) continue;
@@ -164,7 +164,7 @@
         const a = el('a', null, `Watch the original at ${fT.format(D(t))} ↗`); a.href = url + at; a.target = '_blank'; a.rel = 'noopener noreferrer';
         line.append(a);
       }
-      line.append(el('span', 'wf-nt-s', hasChat.has(s.stream_id) ? ` · chat: ${(chat.get(s.stream_id) || 0).toLocaleString()} messages sent in this minute` : ' · no chat replay for this stream'));
+      line.append(el('span', 'wf-nt-s', hasChat.has(s.stream_id) ? ` · chat: ${(chat.get(s.stream_id) || 0).toLocaleString()} messages in the minute to ${fT.format(new Date(Math.floor(t / 60) * 60 * 1000))}` : ' · no chat replay for this stream'));
       row.append(line);
       if (P.status === 'ok') {
         const tx = (P.raw.transcripts[s.stream_id] || []).filter((g) => g[0] <= t + 20 && g[1] >= t - 45);

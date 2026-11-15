@@ -50,6 +50,11 @@ def run(mode):
         ev(setT, 1793754360); pg.wait_for_timeout(500)
         pg.locator('path.wf-st[aria-label^="Texas:"]').click(force=True); pg.wait_for_timeout(1500)
         check("map click -> state panel", txt("[data-draw=st-name]") == "Texas", txt("[data-draw=st-races]").replace("\n", " ")[:120])
+        # hourly bins that run past the cursor are labelled as full hours (Kentucky at 6:18 PM ET, Nov 3)
+        ev(setT, 1793747880); pg.locator('path.wf-st[aria-label^="Kentucky:"]').click(force=True); pg.wait_for_timeout(1200)
+        kb, ks = txt("[data-draw=st-bets]"), txt("[data-draw=st-social]")
+        check("state panel labels full-hour bins", "6:00 PM–7:00 PM ET, full hour" in kb and ("full hour" in ks or "no count" in ks or "No state" in ks), f"{kb[:90]} | {ks[:90]}")
+        ev(setT, 1793754360); pg.wait_for_timeout(500)   # back to 8:26 PM for the checks below
         # market card + trades tape
         ev(pick, "SENATETX-26"); pg.wait_for_timeout(2500)
         head = txt("[data-draw=mkt-head]")
@@ -62,7 +67,7 @@ def run(mode):
         pg.wait_for_timeout(1500)
         cards = pg.locator(".wf-nt-card").count(); links = pg.locator(".wf-nt-links a").count(); tx = pg.locator(".wf-nt-tx").count()
         check("night panel rows (2 control + TX Senate)", cards == 3)
-        check("on air: original-stream links + chat counts", links >= 4 and "messages sent in this minute" in txt("[data-nt=air]"), f"{links} links, e.g. {pg.locator('.wf-nt-links a').first.get_attribute('href')}")
+        check("on air: original-stream links + chat counts", links >= 4 and "messages in the minute to" in txt("[data-nt=air]"), f"{links} links, e.g. {pg.locator('.wf-nt-links a').first.get_attribute('href')}")
         if mode == "public": check("public build shows no transcript or chat text", tx == 0 and pg.locator(".wf-nt-chat").count() == 0)
         else: check("private build shows transcripts", tx > 0, f"{tx} transcript lines")
         pg.locator(".wf-night").screenshot(path=f"{out}/{mode}_02_night.png")
