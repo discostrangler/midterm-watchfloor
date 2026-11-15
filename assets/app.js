@@ -202,8 +202,8 @@
   function emptyMsg(s) {
     const lab = s.r ? s.r.label : s.id, k = marks(s.id);
     if (k.settle && k.settle < RANGES.campaign[0]) return `${lab}: Kalshi settled this market for ${party(k.result)} on ${whenY(k.settle)}, before Oct 4, when the market card's trade data starts. There are no prices or trades to chart.`;
-    if (s.ds && s.ds.error && !/HTTP 404/.test(s.ds.error)) return `${lab}: the market data did not load (${s.ds.error}). This is a download problem, not a lack of trades: use Retry.`;
-    return `${lab}: no trades on file between Oct 4 and Nov 12, the period the market card covers.`;
+    if (s.ds && s.ds.error && /HTTP 404/.test(s.ds.error)) return `${lab}: this copy of the site does not include its market file (HTTP 404), so the card cannot show its prices or trades. That says nothing about whether it traded.`;
+    return `${lab}: the market data did not load (${s.ds && s.ds.error ? s.ds.error : 'unknown error'}). This is a download problem, not a lack of trades: use Retry.`;
   }
   const raceUrl = (id) => `data/race/${encodeURIComponent(id)}.json`;
   const failedDays = new Map();   // day files that did not load: listed under the tape, re-requested when "This market" is clicked
@@ -302,7 +302,7 @@
     'kpi-wti', 'kpi-chat', 'lanes', 'st-races', 'st-spark', 'st-bets', 'st-bets-spark', 'st-social', 'st-gas', 'st-gas-spark', 'st-rain', 'st-turnout',
     'tape', 'tape-sub', 'mkt-vol', 'mkt-head', 'mkt-chart', 'mkt-table', 'kpi-kalshi', 'kpi-spx', 'moments', 'moment-tabs', 'moment-detail', 'mkt-polls', 'heatmap', 'night'];
   const STATE_DRAWS = ['map', 'st-name', 'st-races', 'st-spark', 'st-bets', 'st-bets-spark', 'st-social', 'st-gas', 'st-gas-spark', 'st-rain', 'st-turnout'];
-  const RACE_DRAWS = ['race-select', 'mkt-vol', 'mkt-q', 'mkt-th', 'mkt-head', 'mkt-chart', 'mkt-table', 'mkt-polls', 'st-races', 'tape', 'tape-sub', 'night', 'heatmap'];
+  const RACE_DRAWS = ['race-select', 'mkt-vol', 'mkt-q', 'mkt-th', 'mkt-chart-hint', 'mkt-head', 'mkt-chart', 'mkt-table', 'mkt-polls', 'st-races', 'tape', 'tape-sub', 'night', 'heatmap'];
   const redraw = (names) => names.forEach((n) => dash.draw(n));
   function setT(t) {
     const [a, b] = WF.range;
@@ -821,6 +821,10 @@
     el.textContent = parts.join(' · ');
   });
   dash.draw('mkt-th', (el) => { const s = mktState(); el.textContent = s.mk && s.mk.hourly ? 'Price' : 'Last trade'; });
+  dash.draw('mkt-chart-hint', (el) => {
+    const s = mktState();
+    el.textContent = `${s.mk && s.mk.hourly ? 'Chance = hourly bid/ask midpoint, else last trade (per minute on election night)' : 'Chance = last traded YES price'} · the amber line is the cursor`;
+  });
   dash.draw('mkt-q', (el) => {
     const s = mktState();
     el.textContent = (s.mk && s.mk.raw.question) || (s.r ? s.r.label : '—');
@@ -830,7 +834,7 @@
     const s = mktState();
     if (!s.mk) {
       notReady(el, s);
-      if (s.ds.error) { const b = document.createElement('button'); b.type = 'button'; b.className = 'wf-btn'; b.textContent = 'Retry';
+      if (s.ds.error && !/HTTP 404/.test(s.ds.error)) { const b = document.createElement('button'); b.type = 'button'; b.className = 'wf-btn'; b.textContent = 'Retry';
         b.addEventListener('click', () => dash.load(`race:${s.id}`, raceUrl(s.id))); el.append(' ', b); }
       return;
     }
@@ -919,7 +923,8 @@
         return {o, i, pts};
       });
       if (!mk.all.some((d) => d.t >= a && d.t <= b)) svg.append('text').attr('x', ml + 6).attr('y', PT + 14).style('fill', C.muted)
-        .text(`No trades between ${F.md.format(D(a))} and ${F.md.format(D(b))}; lines carry the last trade before this view.`);
+        .text(mk.hourly ? `No prices between ${F.md.format(D(a))} and ${F.md.format(D(b))}; lines carry the last price before this view.`
+          : `No trades between ${F.md.format(D(a))} and ${F.md.format(D(b))}; lines carry the last trade before this view.`);
       for (const ln of lines.slice().reverse()) {
         if (!ln.pts.length) continue;
         svg.append('path').datum(ln.pts).attr('d', d3.line().x((d) => x(d.t)).y((d) => y(d.p)).curve(d3.curveStepAfter))
@@ -1519,8 +1524,13 @@
         ev.preventDefault();
         r = Math.max(0, Math.min(rows.length - 1, r)); m.kj = j = Math.max(0, Math.min(m.lay.cols - 1, j));
         if (H.h.races[rows[r]].id !== WF.race) pickRace(H.h.races[rows[r]].id);
-        m.live.text(describe({i: rows[r], j}).join(' · '));
-      });
+        const d = describe({i: rows[r], j}), band = m.lay.bands.find((b) => b.idx.includes(rows[r]));
+        const cr = cv.node().getBoundingClientRect(), er = el.getBoundingClientRect();
+        const cx = cr.left - er.left + ((j + 0.5) / m.lay.cols) * m.lay.W, cy = cr.top - er.top + band.y0 + band.idx.indexOf(rows[r]) * (band.h / band.idx.length);
+        m.tipB.text(`${d[0]} · keyboard`); m.tipS.text(d[1]); m.tipS2.text(d[2]);   // visible, at the selected cell
+        m.tip.attr('hidden', null).style('left', `${Math.max(0, Math.min(cx - 6, el.clientWidth - 270))}px`).style('top', `${cy + 10}px`);
+        m.live.text(d.join(' · '));
+      }).on('blur', () => m.tip.attr('hidden', ''));
       cv.on('pointermove', (ev) => {
         const p = hit(ev);
         if (!p) { m.tip.attr('hidden', ''); cv.style('cursor', null); return; }

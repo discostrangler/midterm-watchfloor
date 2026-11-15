@@ -231,6 +231,7 @@ html, body { margin: 0; background: #0a0f15; }
 /* Every race · 120 days heatmap */
 .wf-heat-box { position: relative; }
 .wf-heat-cv { display: block; touch-action: pan-y; }
+.wf-heat-cv:focus-visible { outline: 2px solid var(--wf-amber); outline-offset: 2px; }
 .wf-heat-note { margin-top: 6px; }
 .wf-heat-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 8px; font: 500 11.5px/1.3 var(--wf-mono); color: var(--wf-muted); }
 .wf-heat-ramp { display: block; width: 160px; height: 9px; background: linear-gradient(90deg, #c8323f, #f0959c 25%, #dde4ec 50%, #8fbaf5 75%, #2a6fd6); }

@@ -20,10 +20,11 @@ def run(mode):
     with sync_playwright() as p:
         b = p.chromium.launch(); pg = b.new_page(viewport={"width": 1500, "height": 1000})
         if mode == "public": pg.route("**/private/**", lambda r: r.fulfill(status=404, body="not published"))
+        pg.route("**/data/race/KXHOUSERACE-NC02-26.json", lambda r: r.fulfill(status=404, body="missing"))   # a copy without this file
         pg.on("pageerror", lambda e: errs.append(f"pageerror {e}"))
         # errors that dash.draw catches and logs (a failed resource is already counted by the response listener)
         pg.on("console", lambda m: m.type == "error" and "Failed to load resource" not in m.text and errs.append(f"console {m.text[:160]}"))
-        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
+        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
         pg.goto(BASE); pg.wait_for_timeout(9000)
         ev = pg.evaluate
         txt = lambda sel: pg.locator(sel).first.inner_text()
@@ -97,6 +98,16 @@ def run(mode):
         chips.first.click(); pg.wait_for_timeout(2000)
         check("upset chip opens race (card + night panel)", ev("WF.race") != "SENATETX-26" and pg.locator(".wf-nt-card").count() == 3, f"{chips.count()} chips; first '{first}' -> {ev('WF.race')}")
         pg.locator(".wf-heat").screenshot(path=f"{out}/{mode}_03_heatmap.png")
+        pg.locator(".wf-heat-cv").focus(); pg.keyboard.press("ArrowDown"); pg.keyboard.press("ArrowLeft"); pg.wait_for_timeout(600)
+        tipv = pg.locator(".wf-heat .wf-tip")
+        check("heatmap keyboard shows a visible tip", tipv.is_visible() and "keyboard" in tipv.inner_text(), tipv.inner_text().replace("\n", " ")[:120] if tipv.is_visible() else "hidden")
+        pg.locator(".wf-heat").screenshot(path=f"{out}/{mode}_03b_heatmap_keyboard.png")
+        ev(pick, "KXHOUSERACE-NC02-26"); pg.wait_for_timeout(1500)
+        h404 = txt("[data-draw=mkt-head]")
+        check("missing market file is not reported as no trades", "does not include its market file" in h404 and "no trades" not in h404.lower(), h404[:110])
+        ev(pick, "KXNCAAFGAME-26NOV03BUFFMOH"); pg.wait_for_timeout(2000)
+        check("non-midterm card: price labels, not last trade", "hourly bid/ask midpoint" in txt("[data-draw=mkt-chart-hint]") and pg.locator("[data-draw=mkt-th]").text_content() == "Price"
+              and "last traded" not in txt("[data-draw=mkt-chart-hint]"), txt("[data-draw=mkt-chart-hint]"))
         # early-settled race and key moments
         ev(pick, "KXHOUSERACE-CA37-26"); pg.wait_for_timeout(1500)
         check("CA-37: settled status, no file request", "settled for Democrats, Jun 30" in txt("[data-draw=mkt-vol]"))

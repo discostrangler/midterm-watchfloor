@@ -182,7 +182,7 @@ quote. Races whose 6 PM bid and ask straddle 50¢ are kept in the data but left 
 NC-06 (14.5¢), IN-05 (21.5¢), NC-14, TX-09, OH-10, SC Senate, TX Governor.
 
 Hover shows race, % and time; click opens the race's market card. Keyboard: focus the heatmap, Up/Down pick a race,
-Left/Right step through time, Enter opens it; each cell is read out. Chips below: the 21 races where the
+Left/Right step through time, Enter opens it; the cell's value and time show in a tip at the cell and are read out. Chips below: the 21 races where the
 6 PM ET Nov 3 favourite lost.
 
 ## 10. Timeline lanes (shared cursor)
@@ -286,7 +286,7 @@ the public site) the "On air" block says so instead of showing text.
 | Night panel §11, all 504 races | yes | yes |
 | Stream timeline, links to the original streams, chat counts | yes | yes |
 | Transcripts and chat text | no (`private/` is not published) | yes, private file |
-| Market card files `race/<id>`, `trades/<id>` | all 551 markets / ~10k day files | the two control markets, TX Senate and NC-03 (other market cards say "no trades on file": the files are not uploaded there) |
+| Market card files `race/<id>`, `trades/<id>` | all 551 markets / ~10k day files | the two control markets, TX Senate and NC-03 (other market cards say the copy does not include their market file) |
 | Bluesky / Reddit / X embeds | yes, on click | blocked by the hosting |
 | Videos | no | no |
 
@@ -376,7 +376,8 @@ An outside read-only audit of the live site listed 26 findings; each was checked
   a jump to a moment rounds up to the minute, so settlement moments show as settled.
 - **Charts:** stock-lane note follows the cursor; state sparkline holds its last value to the window end;
   zoom bid/ask lines break at one-sided books; night overview scales include last trades; last axis label fits.
-- **Failures:** a market file that fails to download says so and offers Retry (a 404 still means no trades);
+- **Failures:** a market file that fails to download says so and offers Retry; a 404 says the copy lacks the file
+  (every market with trades has one; the nine June-settled districts are never requested), never "no trades";
   trade-day files that fail are listed under the tape and retried.
 - **Layout and access:** night grid fits 320 px; nearby-trade rows wrap; faint text 5.1:1 contrast (was 3.5:1);
   cursor time never truncates; heatmap keyboard access; night overview labelled.
