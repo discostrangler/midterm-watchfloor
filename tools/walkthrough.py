@@ -94,6 +94,17 @@ def run(mode):
         if mode == "public": check("public build shows no transcript or chat text", tx == 0 and pg.locator(".wf-nt-chat").count() == 0)
         else: check("private build shows transcripts", tx > 0, f"{tx} transcript lines")
         pg.locator(".wf-night").screenshot(path=f"{out}/{mode}_02_night.png")
+        # polls vs Kalshi: TX Senate polls + trades on one timeline; added-date toggle; national view for control
+        pg.wait_for_timeout(1500)
+        npolls = pg.locator(".wf-pk svg circle").count(); rd = txt("[data-pk=read]")
+        check("polls vs Kalshi panel: TX Senate polls and trades", npolls > 10 and "Kalshi trades" in rd and "Up to" in rd, f"{npolls} polls drawn; {rd[:140]}")
+        pg.click("[data-pkmode=added]"); pg.wait_for_timeout(800)
+        check("poll date toggle: added to VoteHub", "added" in txt("[data-pk=read]") or "hidden" in txt("[data-pk=sub]"), txt("[data-pk=sub]")[:140])
+        pg.click("[data-pkmode=end]")
+        pg.locator(".wf-pk").screenshot(path=f"{out}/{mode}_02b_polls_kalshi.png")
+        ev(pick, "CONTROLS-2026"); pg.wait_for_timeout(1500)
+        check("polls vs Kalshi panel: national view for control", "generic ballot" in txt("[data-pk=sub]") and pg.locator(".wf-pk svg circle").count() > 50, txt("[data-pk=sub]")[:120])
+        ev(pick, "SENATETX-26"); pg.wait_for_timeout(1000)
         # heatmap, upsets, selection link
         for hv in ["nov10", "settle"]:
             pg.click(f"[data-heat={hv}]"); pg.wait_for_timeout(1200)

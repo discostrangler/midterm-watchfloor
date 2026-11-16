@@ -270,3 +270,7 @@ html, body { margin: 0; background: #0a0f15; }
 .wf-nt-toggle { text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--wf-faint); margin-left: 8px; }
 .wf-nt-lower [data-nt="air"], .wf-nt-near { max-height: 520px; overflow-y: auto; overscroll-behavior: contain; }
 .wf-nt-links { font: 500 12px/1.5 var(--wf-mono); margin: 2px 0 4px; }
+
+/* polls vs Kalshi (assets/polls.js) */
+.wf-pk-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0; }
+.wf-pk [data-pk=read] { color: var(--wf-fg); margin-top: 6px; }

@@ -150,6 +150,23 @@
     </div>
   </section>
 
+  <section class="wf-panel wf-pk" aria-label="Polls and Kalshi on one timeline" data-draw="pk">
+    <div class="wf-ph">
+      <h2>Polls vs Kalshi · whole cycle</h2>
+      <span class="wf-ph-sub" data-pk="sub">Loading…</span>
+    </div>
+    <div class="wf-pk-ctl" role="group" aria-label="Poll date">
+      <span class="wf-hint">Poll date:</span>
+      <button type="button" class="wf-btn" data-pkmode="end" aria-pressed="true">Field end</button>
+      <button type="button" class="wf-btn" data-pkmode="added" aria-pressed="false">Added to VoteHub</button>
+    </div>
+    <div data-pk="chart"></div>
+    <div class="wf-tip" hidden><b></b><span></span></div>
+    <p class="wf-hint" data-pk="read"></p>
+    <p class="wf-hint" data-pk="note"></p>
+    <p class="wf-hint">Top: each nominee head-to-head poll's D − R margin (hollow = sponsored by a party), line = average of the latest five. Then polls, Kalshi trades and dollars per day or week on the same bins (bar heights on a square-root scale), and the quoted midpoint of the Democratic contract at the end of each day. A poll's field end date is the earliest it could have been public; the date VoteHub added it is the latest (median 5 days later), so a lead or lag shorter than that is inside the uncertainty. Kalshi counts every trade in all of the race's events (party and candidate markets). Click to move the page cursor (Oct 4 – Nov 12, 2026).</p>
+  </section>
+
   <section class="wf-panel" aria-label="Key moments">
     <div class="wf-ph wf-mom-ph"><h2>Key moments</h2><span class="wf-ph-sub">swings, settlements, the largest bets, Reddit surges and big stock days · click one to jump there</span>
       <div class="wf-seg" role="group" aria-label="Key-moment period" data-draw="moment-tabs">
@@ -232,6 +249,7 @@
       <li>Two prices appear on this page and can differ in a thin market. <b>Quoted mid</b> is the midpoint of the best bid and ask (map, reading strip, state panel, timeline, heatmap and the election-night panel; from the Democratic contract of the party event, with no last-trade fallback, so a period with no two-sided quote shows as a gap). <b>Last trade</b> is the price of the most recent trade (the market card). The election-night panel shows both, from the Democratic contract only.</li>
       <li>The market card follows Kalshi's layout: each outcome's percentage is its last traded YES price in the last complete minute before the cursor on election night (the last complete 10 minutes otherwise), so it never includes a trade made after the cursor; Yes and No show the last trade's prices, not the order book. "This market" lists the latest 120 bets in the chosen market up to the cursor, from its last three trading days at most.</li>
       <li>Beyond the midterms, the market picker has the most-traded Kalshi events in each category: sports games, crypto, stock indexes, other elections, finance, weather and more. They're the events with the most money bet on election night, plus the most-traded events that closed between Oct 4 and Nov 12. Their charts are hourly Kalshi prices (bid/ask midpoint, else the last trade) for up to six markets each, shown once the hour has ended. On election night the charts are per minute and include every bet. Clicking a bet in "Big · all Kalshi" opens its market when it's one of these.</li>
+      <li>Polls vs Kalshi panel: every head-to-head poll of the two nominees since Nov 5, 2024 (Wikipedia race pages and VoteHub, collected by Subhrajit; the same poll in both kept once) and VoteHub's national generic-ballot polls, beside every Kalshi trade in the race's events and the end-of-day quoted midpoint, per day or week.</li>
       <li>Polls: 1,146 general-election polls since Aug 1 for 148 races, from Wikipedia (CC BY-SA 4.0) and VoteHub (CC BY 4.0), collected and matched to Kalshi races by a teammate. The market card lists each race's polls up to the cursor and the average D–R margin of the latest five. A pollster marked (D) or (R) was working for that party. Many House races have no public poll.</li>
       <li>Stocks: daily closes of the S&amp;P 500, Nasdaq Composite and VIX from FRED. U.S. stock markets are closed overnight, so on election night the stocks lane shows a Kalshi-implied S&amp;P 500 (30-minute candles: green up, red down) and Nasdaq-100 (dashed line) instead. Every trade in Kalshi's "S&amp;P / Nasdaq-100 at or above K at 10 AM on Nov 4" markets gives the chance the index ends above each strike. The lane plots the level where that chance crosses 50%, every 5 minutes, as a % change from the Nov 3 close. Kalshi settled those markets at the actual 10 AM values (S&amp;P +1.7%).</li>
       <li>Every race · 120 days: one row per Senate, Governor and House race (all 435 House seats plus DC's delegate; Kentucky's Senate race had no Kalshi market on the winner). Each cell is the quoted midpoint of the Democratic contract's best bid and ask at that moment (party event; per minute from Oct 20, hourly before), 1 or 0 after Kalshi settles. Brown cells are gaps: the market was open but had no two-sided quote in that period.</li>
@@ -250,5 +268,6 @@
 <script src="assets/dash.js"></script>
 <script src="assets/app.js"></script>
 <script src="assets/night.js"></script>
+<script src="assets/polls.js"></script>
 </body>
 </html>

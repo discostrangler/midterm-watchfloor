@@ -384,3 +384,35 @@ An outside read-only audit of the live site listed 26 findings; each was checked
 - **Text:** first note (prices, no media-call claim), 3–97¢ filter scope, latest-120 tape, 148 races / 1,146
   polls, "Before election night" tab, footer link, jump-button reason.
 - `tools/walkthrough.py` now fails on a crash, exits non-zero on failure, and counts errors caught by `dash.draw`.
+
+## 18. Polls vs Kalshi · whole cycle (`assets/polls.js`, `tools/build_polls_kalshi.py`)
+
+One daily timeline, Nov 5 2024 – Nov 12 2026 (ET days), for the selected race; for chamber control (or a
+non-midterm market) a national view.
+
+| Row | Reads | How |
+|---|---|---|
+| Poll margin D − R | `polls_kalshi/<ST>.json` `polls` | one dot per nominee head-to-head poll (blue D lead, red R lead, hollow = party-sponsored); line = mean of the latest five |
+| Polls | same | polls per bin |
+| Kalshi trades / Kalshi $ | `k` = `[day, trades, dollars]` | every trade in **all** the race's Kalshi events (party + candidate markets, from `crosswalk/race_crosswalk.tsv`); dollars = what the taker paid |
+| Quoted mid P(D) | `mid` | quoted mid of the party event's Democratic contract at the end of each ET day (same reader as `race_odds`); gaps = one-sided book; stops at trading close; 1/0 after settlement |
+
+- **Polls:** from Subhrajit's `collect/polls_full.py` (Wikipedia race pages, CC BY-SA 4.0; VoteHub, CC BY 4.0).
+  Only general-election polls that name **both** actual nominees (names from our catalog's D/R contracts).
+  The same poll in both sources (same race, pollster, field end within a day) is kept once. Result: 1,593
+  polls in 171 of 504 races (1,389 from Wikipedia, 903 from VoteHub, 699 in both). NBC exit polls are not used
+  (research only, not for republication).
+- **National:** 422 VoteHub generic-ballot polls (likely voters over registered over adults when a pollster
+  released several for the same dates), against the Senate and House control markets (trades summed; two
+  quoted-mid lines). Kalshi's own generic-ballot series (`KXVHGCB`, daily markets on an aggregator's margin)
+  covers only Oct–Nov 2026 and is not used.
+- **Poll date toggle:** field **end** date (earliest it could be public) or the date VoteHub **added** it
+  (latest bound; median 5 days after the end). Wikipedia-only polls have no added date and are hidden in that
+  mode, with the count shown. Any lead/lag shorter than the end→added gap is inside the release uncertainty.
+- **Bins:** daily if the shown span is ≤ 150 days, else weekly; the same bins for polls and Kalshi. Bars use a
+  square-root scale. The x-axis starts a week before the race's first poll, trade or quote.
+- **Readout under the chart** uses only whole days **before** the cursor's day: polls so far, the latest five's
+  average, the last 7 days' polls / trades / dollars, and the quoted mid at the end of the previous day.
+- **Click** moves the page cursor when the day is inside Oct 4 – Nov 12, 2026 (the dashboard's campaign window).
+- Spot-check: TX Senate, Oct 20 2026: 3,004 trades, $717,593 in both the built file and a recount from raw.
+- Rebuild: `POLLS_FULL=<polls_full output dir> python3 tools/build_polls_kalshi.py` (pandas + pyarrow; ~25 s).
