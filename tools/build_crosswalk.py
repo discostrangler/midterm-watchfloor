@@ -41,6 +41,16 @@ def text_state(ms):
     return named.pop() if len(named) == 1 else None
 
 
+def refreshed(m, _cache={}):
+    """a catalog market with any later status / result / settlement / close from raw/catalog/markets_refresh.jsonl
+    (written by tools/audit_races.py --write-refresh from Kalshi's live API; the crawl itself is from Nov 12)"""
+    if "o" not in _cache:
+        f = f"{RAW}/catalog/markets_refresh.jsonl"
+        _cache["o"] = {d["ticker"]: d for d in map(json.loads, open(f))} if os.path.exists(f) else {}
+    o = _cache["o"].get(m.get("ticker"))
+    return {**m, **{k: v for k, v in o.items() if not k.startswith("_") and k not in ("ticker", "event_ticker")}} if o else m
+
+
 def key_of(event):
     for office, p in PATS:
         m = p.match(event)
@@ -61,7 +71,7 @@ def main():
     for ln in open(f"{RAW}/catalog/markets.jsonl"):
         if '"event_ticker": "' not in ln: continue
         e = ln.split('"event_ticker": "', 1)[1].split('"', 1)[0]
-        if key_of(e)[0]: ev[e].append(json.loads(ln))
+        if key_of(e)[0]: ev[e].append(refreshed(json.loads(ln)))
     I = lambda t, f: int(float(cov.get(t, {}).get(f) or 0))
     contracts, events = [], {}
     fixed = []

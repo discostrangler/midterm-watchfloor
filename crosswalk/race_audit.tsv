@@ -1,0 +1,508 @@
+race_id	label	office	state	district	special	kalshi_title	names_in_text	contracts	results	state_ok	office_ok	year_ok	special_ok	live_matches_stored
+KXGOVPARTYAK-26	AK Governor	Governor	AK		0	Alaska Governor winner? (Party)	AK	D: Democratic party | R: Republican party	D=yes R=no	1	1	1	1	1
+GOVPARTYAL-26	AL Governor	Governor	AL		0	Alabama Governor winner?	AL	D: Doug Jones | R: Tommy Tuberville	R=yes D=no	1	1	1	1	1
+GOVPARTYAR-26	AR Governor	Governor	AR		0	Arkansas Governor winner?	AR	D: Fred Love | R: Sarah Huckabee Sanders	R=yes D=no	1	1	1	1	1
+GOVPARTYAZ-26	AZ Governor	Governor	AZ		0	Arizona Governor winner?	AZ	D: Katie Hobbs | R: Andy Biggs	D=yes R=no	1	1	1	1	1
+GOVPARTYCA-26	CA Governor	Governor	CA		0	California Governor winner?	CA	D: Xavier Becerra | R: Steve Hilton	D=yes R=no	1	1	1	1	1
+GOVPARTYCO-26	CO Governor	Governor	CO		0	Colorado Governor winner?	CO	D: Phil Weiser | R: Victor Marx	R=no D=yes	1	1	1	1	1
+GOVPARTYCT-26	CT Governor	Governor	CT		0	Connecticut Governor winner?	CT	D: Ned Lamont | R: Ryan Fazio	R=no D=yes	1	1	1	1	1
+GOVPARTYFL-26	FL Governor	Governor	FL		0	Florida Governor winner?	FL	D: David Jolly | R: Byron Donalds	D=no R=yes	1	1	1	1	1
+GOVPARTYGA-26	GA Governor	Governor	GA		0	Georgia Governor winner?	GA	D: Keisha Lance Bottoms | R: Rick Jackson	D=yes R=no	1	1	1	1	1
+GOVPARTYHI-26	HI Governor	Governor	HI		0	Hawaii Governor winner?	HI	D: Josh Green | R: Gary Cordery	D=yes R=no	1	1	1	1	1
+GOVPARTYIA-26	IA Governor	Governor	IA		0	Iowa Governor winner?	IA	D: Rob Sand | R: Zach Lahn	R=no D=yes	1	1	1	1	1
+GOVPARTYID-26	ID Governor	Governor	ID		0	Idaho Governor winner?	ID	D: Terri Pickens | R: Brad Little	D=no R=yes	1	1	1	1	1
+GOVPARTYIL-26	IL Governor	Governor	IL		0	Illinois Governor winner?	IL	D: JB Pritzker | R: Darren Bailey	D=yes R=no	1	1	1	1	1
+GOVPARTYMA-26	MA Governor	Governor	MA		0	Massachusetts Governor winner?	MA	D: Maura Healey | R: Mike Minogue	D=yes R=no	1	1	1	1	1
+GOVPARTYMD-26	MD Governor	Governor	MD		0	Maryland Governor winner?	MD	D: Wes Moore | R: Dan Cox	R=no D=yes	1	1	1	1	1
+GOVPARTYME-26	ME Governor	Governor	ME		0	Maine Governor winner?	ME	D: Hannah Pingree | R: Robert Charles | RBEN: Rick Bennett	D=yes R=no RBEN=no	1	1	1	1	1
+GOVPARTYMI-26	MI Governor	Governor	MI		0	Michigan Governor winner?	MI	D: Jocelyn Benson | MD: Mike Duggan | R: John James	D=yes MD=no R=no	1	1	1	1	1
+GOVPARTYMN-26	MN Governor	Governor	MN		0	Minnesota Governor winner?	MN	D: Amy Klobuchar | R: Lisa Demuth	D=yes R=no	1	1	1	1	1
+GOVPARTYNE-26	NE Governor	Governor	NE		0	Nebraska Governor winner?	NE	D: Lynne Walz | R: Jim Pillen	D=no R=yes	1	1	1	1	1
+GOVPARTYNM-26	NM Governor	Governor	NM		0	New Mexico Governor winner?	NM	D: Deb Haaland | R: Greggory D. Hull	D=yes R=no	1	1	1	1	1
+GOVPARTYNV-26	NV Governor	Governor	NV		0	Nevada Governor winner?	NV	D: Aaron Ford | R: Joe Lombardo	D=yes R=no	1	1	1	1	1
+GOVPARTYNY-26	NY Governor	Governor	NY		0	New York Governor winner?	NY	D: Kathy Hochul | R: Bruce Blakeman	R=no D=yes	1	1	1	1	1
+GOVPARTYOH-26	OH Governor	Governor	OH		0	Ohio Governor winner?	OH	D: Amy Acton | R: Vivek Ramaswamy	D=yes R=no	1	1	1	1	1
+GOVPARTYOK-26	OK Governor	Governor	OK		0	Oklahoma Governor winner?	OK	D: Cyndi Munson | R: Mike Mazzei	D=no R=yes	1	1	1	1	1
+GOVPARTYOR-26	OR Governor	Governor	OR		0	Oregon Governor winner?	OR	D: Tina Kotek | R: Christine Drazan	R=no D=yes	1	1	1	1	1
+GOVPARTYPA-26	PA Governor	Governor	PA		0	Pennsylvania Governor winner?	PA	D: Josh Shapiro | R: Stacy Garrity	D=yes R=no	1	1	1	1	1
+GOVPARTYRI-26	RI Governor	Governor	RI		0	Rhode Island Governor winner?	RI	D: Helena Foulkes | KBLO: Ken Block | R: Aaron Guckian	R=no D=yes KBLO=no	1	1	1	1	1
+GOVPARTYSC-26	SC Governor	Governor	SC		0	South Carolina Governor winner?	SC	D: Jermaine Johnson | R: Alan Wilson	D=no R=yes	1	1	1	1	1
+GOVPARTYSD-26	SD Governor	Governor	SD		0	South Dakota Governor winner?	SD	D: Dan Ahlers | R: Larry Rhoden	D=no R=yes	1	1	1	1	1
+GOVPARTYTN-26	TN Governor	Governor	TN		0	Tennessee Governor winner?	TN	D: Jerri Green | DHAT: David Hatley | R: Marsha Blackburn	D=no DHAT=no R=yes	1	1	1	1	1
+GOVPARTYTX-26	TX Governor	Governor	TX		0	Texas Governor winner?	TX	D: Gina Hinojosa | R: Greg Abbott	D=yes R=no	1	1	1	1	1
+GOVPARTYVT-26	VT Governor	Governor	VT		0	Vermont Governor winner?	VT	D: Amanda Janoo | R: Phil Scott	D=no R=yes	1	1	1	1	1
+GOVPARTYWI-26	WI Governor	Governor	WI		0	Wisconsin Governor winner?	WI	D: David Crowley | R: Tom Tiffany	D=yes R=no	1	1	1	1	1
+GOVPARTYWY-26	WY Governor	Governor	WY		0	Wyoming Governor winner?	WY	D: Kenneth Casner | R: Eric Barlow	D=no R=yes	1	1	1	1	1
+HOUSEAKAL-26	AK-AL	House	AK	AK-AL	0	Alaska House winner?	AK-AL	BHIL: Bill Hill | D: Eric Hafner | R: Nick Begich III	D=- BHIL=- R=-	1	1	1	1	1
+KXHOUSERACE-AL01-26	AL-01	House	AL	AL-01	0	AL-01 House winner?	AL-01	D: Clyde Jones | R: Jerry Carl	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-AL02-26	AL-02	House	AL	AL-02	0	AL-02 House winner?	AL-02	D: Shomari Figures | R: Rhett Marques	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-AL03-26	AL-03	House	AL	AL-03	0	AL-03 House winner?	AL-03	D: Lee McInnis | R: Mike Rogers	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-AL04-26	AL-04	House	AL	AL-04	0	AL-04 House winner?	AL-04	D: Amanda Pusczek | R: Robert Aderholt	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-AL05-26	AL-05	House	AL	AL-05	0	AL-05 House winner?	AL-05	D: Andrew Sneed | R: Dale Strong	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-AL06-26	AL-06	House	AL	AL-06	0	AL-06 House winner?	AL-06	D: Maurice Mercer | R: Gary Palmer	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-AL07-26	AL-07	House	AL	AL-07	0	AL-07 House winner?	AL-07	D: Terri Sewell | R: Ammie Akin	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-AR01-26	AR-01	House	AR	AR-01	0	AR-01 House winner?	AR-01	D: Terri Yarbrough Green | R: Rick Crawford	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-AR02-26	AR-02	House	AR	AR-02	0	AR-02 House winner?	AR-02	D: Chris Jones | R: French Hill	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-AR03-26	AR-03	House	AR	AR-03	0	AR-03 House winner?	AR-03	D: Robb Ryerse | R: Steve Womack	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-AR04-26	AR-04	House	AR	AR-04	0	AR-04 House winner?	AR-04	D: James Russell | R: Bruce Westerman	D=no R=yes	1	1	1	1	1
+HOUSEAZ1-26	AZ-01	House	AZ	AZ-01	0	AZ-01 House winner?	AZ-01 AZ-1	D: Amish Shah | R: Jay Feely	D=yes R=no	1	1	1	1	1
+HOUSEAZ2-26	AZ-02	House	AZ	AZ-02	0	AZ-02 House winner?	AZ-02 AZ-2	D: Jonathan Nez | R: Eli Crane	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-AZ03-26	AZ-03	House	AZ	AZ-03	0	AZ-03 House winner?	AZ-03	D: Yassamin Ansari | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-AZ04-26	AZ-04	House	AZ	AZ-04	0	AZ-04 House winner?	AZ-04	D: Greg Stanton | R: Zuhdi Jasser	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-AZ05-26	AZ-05	House	AZ	AZ-05	0	AZ-05 House winner?	AZ-05	D: Elizabeth Lee | R: Mark Lamb	R=yes D=no	1	1	1	1	1
+HOUSEAZ6-26	AZ-06	House	AZ	AZ-06	0	AZ-06 House winner?	AZ-06 AZ-6	D: JoAnna Mendoza | R: Juan Ciscomani	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-AZ07-26	AZ-07	House	AZ	AZ-07	0	AZ-07 House winner?	AZ-07	D: Adelita Grijalva | R: Daniel Francis Butierez Sr.	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-AZ08-26	AZ-08	House	AZ	AZ-08	0	AZ-08 House winner?	AZ-08	D: Bernadette Greene-Placentia | R: Abe Hamadeh	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-AZ09-26	AZ-09	House	AZ	AZ-09	0	AZ-09 House winner?	AZ-09	D: Dani Sterbinsky | R: Paul Gosar	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-CA01-26	CA-01	House	CA	CA-01	0	CA-01 House winner?	CA-01	D: Mike McGuire | R: James Gallagher	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA02-26	CA-02	House	CA	CA-02	0	CA-02 House winner?	CA-02	D: Jared Huffman | R: Robin Littau	R=no D=yes	1	1	1	1	1
+HOUSECA3-26	CA-03	House	CA	CA-03	0	CA-03 House winner?	CA-03 CA-3	D: Ami Bera | R: Robb Tucker	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA04-26	CA-04	House	CA	CA-04	0	CA-04 House winner?	CA-04	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA05-26	CA-05	House	CA	CA-05	0	CA-05 House winner?	CA-05	D: Michael Masuda | R: Tom McClintock	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-CA06-26	CA-06	House	CA	CA-06	0	CA-06 House winner?	CA-06	D: Richard Pan | KKIL: Kevin Kiley | R: Republican party	R=no KKIL=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA07-26	CA-07	House	CA	CA-07	0	CA-07 House winner?	CA-07	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA08-26	CA-08	House	CA	CA-08	0	CA-08 House winner?	CA-08	D: John Garamendi | R: Rudy Recile	D=yes R=no	1	1	1	1	1
+HOUSECA9-26	CA-09	House	CA	CA-09	0	CA-09 House winner?	CA-09 CA-9	D: Josh Harder | R: John McBride	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA10-26	CA-10	House	CA	CA-10	0	CA-10 House winner?	CA-10	D: Mark DeSaulnier | R: Jeff Frese	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA11-26	CA-11	House	CA	CA-11	0	CA-11 House winner?	CA-11	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA12-26	CA-12	House	CA	CA-12	0	CA-12 House winner?	CA-12	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+HOUSECA13-26	CA-13	House	CA	CA-13	0	CA-13 House winner?	CA-13	D: Adam Gray | R: Kevin Lincoln	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA14-26	CA-14	House	CA	CA-14	0	CA-14 House winner?	CA-14	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA15-26	CA-15	House	CA	CA-15	0	CA-15 House winner?	CA-15	D: Kevin Mullin | R: Charles Hoelter	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA16-26	CA-16	House	CA	CA-16	0	CA-16 House winner?	CA-16	D: Sam Liccardo | R: Peter Sundin Soulé	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA17-26	CA-17	House	CA	CA-17	0	CA-17 House winner?	CA-17	D: Ro Khanna | R: Ritesh Tandon	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA18-26	CA-18	House	CA	CA-18	0	CA-18 House winner?	CA-18	D: Zoe Lofgren | R: Shane Lewis	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA19-26	CA-19	House	CA	CA-19	0	CA-19 House winner?	CA-19	D: Jimmy Panetta | R: Peter Verbica	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA20-26	CA-20	House	CA	CA-20	0	CA-20 House winner?	CA-20	D: Sandra Van Scotter | R: Vince Fong	D=no R=yes	1	1	1	1	1
+HOUSECA21-26	CA-21	House	CA	CA-21	0	CA-21 House winner?	CA-21	D: Jim Costa | R: Kyle Kirkland	D=yes R=no	1	1	1	1	1
+HOUSECA22-26	CA-22	House	CA	CA-22	0	CA-22 House winner?	CA-22	D: Randy Villegas | R: David Valadao	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA23-26	CA-23	House	CA	CA-23	0	CA-23 House winner?	CA-23	D: Tessa Lynn Hodge | R: Jay Obernolte	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-CA24-26	CA-24	House	CA	CA-24	0	CA-24 House winner?	CA-24	D: Salud Carbajal | R: Bob Smith	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA25-26	CA-25	House	CA	CA-25	0	CA-25 House winner?	CA-25	D: Raul Ruiz | R: Joe Males	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA26-26	CA-26	House	CA	CA-26	0	CA-26 House winner?	CA-26	D: Jacqui Irwin | R: Sam Gallucci	D=yes R=no	1	1	1	1	1
+HOUSECA27-26	CA-27	House	CA	CA-27	0	CA-27 House winner?	CA-27	D: George Whitesides | R: Jason Gibbs	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA28-26	CA-28	House	CA	CA-28	0	CA-28 House winner?	CA-28	D: Judy Chu | R: April Verlato	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA29-26	CA-29	House	CA	CA-29	0	CA-29 House winner?	CA-29	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA30-26	CA-30	House	CA	CA-30	0	CA-30 House winner?	CA-30	D: Laura Friedman | R: Scott Meyers	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA31-26	CA-31	House	CA	CA-31	0	CA-31 House winner?	CA-31	D: Gil Cisneros | R: Eric Ching	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA32-26	CA-32	House	CA	CA-32	0	CA-32 House winner?	CA-32	D: Brad Sherman | R: Larry Thompson	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA33-26	CA-33	House	CA	CA-33	0	CA-33 House winner?	CA-33	D: Pete Aguilar | R: Stephanie Vargas	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA34-26	CA-34	House	CA	CA-34	0	CA-34 House winner?	CA-34	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA35-26	CA-35	House	CA	CA-35	0	CA-35 House winner?	CA-35	D: Norma Torres | R: Mike Cargile	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA36-26	CA-36	House	CA	CA-36	0	CA-36 House winner?	CA-36	D: Ted Lieu | R: Houston Brignano	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA37-26	CA-37	House	CA	CA-37	0	CA-37 House winner?	CA-37	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA38-26	CA-38	House	CA	CA-38	0	CA-38 House winner?	CA-38	D: Hilda Solis | R: Pedro Antonio Casas	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA39-26	CA-39	House	CA	CA-39	0	CA-39 House winner?	CA-39	D: Mark Takano | R: Steve Manos	D=yes R=no	1	1	1	1	1
+HOUSECA40-26	CA-40	House	CA	CA-40	0	CA-40 House winner?	CA-40	D: Democratic party | R: Republican party	R=yes D=no	1	1	1	1	1
+HOUSECA41-26	CA-41	House	CA	CA-41	0	CA-41 House winner?	CA-41	D: Linda Sánchez | R: Mitch Clemmons	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA42-26	CA-42	House	CA	CA-42	0	CA-42 House winner?	CA-42	D: Robert Garcia | R: Brian Burley	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA43-26	CA-43	House	CA	CA-43	0	CA-43 House winner?	CA-43	D: Maxine Waters | R: Cristian Morales	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA44-26	CA-44	House	CA	CA-44	0	CA-44 House winner?	CA-44	D: Nanette Barragán | R: Genevieve Angel	D=yes R=no	1	1	1	1	1
+HOUSECA45-26	CA-45	House	CA	CA-45	0	CA-45 House winner?	CA-45	D: Derek Tran | R: Chuong Vo	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA46-26	CA-46	House	CA	CA-46	0	CA-46 House winner?	CA-46	D: Lou Correa | R: David Pan	R=no D=yes	1	1	1	1	1
+HOUSECA47-26	CA-47	House	CA	CA-47	0	CA-47 House winner?	CA-47	D: Dave Min | R: Jenny Le Roux	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA48-26	CA-48	House	CA	CA-48	0	CA-48 House winner?	CA-48	D: Marni von Wilpert | R: Jim Desmond	D=yes R=no	1	1	1	1	1
+HOUSECA49-26	CA-49	House	CA	CA-49	0	CA-49 House winner?	CA-49	D: Mike Levin | R: Armen Kurdian	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA50-26	CA-50	House	CA	CA-50	0	CA-50 House winner?	CA-50	D: Scott Peters | R: Stephen Cohen	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CA51-26	CA-51	House	CA	CA-51	0	CA-51 House winner?	CA-51	D: Sara Jacobs | R: Ricardo Cabrera	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CA52-26	CA-52	House	CA	CA-52	0	CA-52 House winner?	CA-52	D: Juan Vargas | R: Jeff Belle	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CO01-26	CO-01	House	CO	CO-01	0	CO-01 House winner?	CO-01	D: Melat Kiros | R: Christy Peterson	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CO02-26	CO-02	House	CO	CO-02	0	CO-02 House winner?	CO-02	D: Joe Neguse | R: Kelley Dennison	R=no D=yes	1	1	1	1	1
+HOUSECO3-26	CO-03	House	CO	CO-03	0	CO-03 House winner?	CO-03 CO-3	D: Dwayne Romero | R: Jeff Hurd	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-CO04-26	CO-04	House	CO	CO-04	0	CO-04 House winner?	CO-04	D: Eileen Laubacher | R: Lauren Boebert	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CO05-26	CO-05	House	CO	CO-05	0	CO-05 House winner?	CO-05	D: Jessica Killin | R: Jeff Crank	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CO06-26	CO-06	House	CO	CO-06	0	CO-06 House winner?	CO-06	D: Jason Crow | R: Jason Clark	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CO07-26	CO-07	House	CO	CO-07	0	CO-07 House winner?	CO-07	D: Brittany Pettersen | R: Tim Bennett	D=yes R=no	1	1	1	1	1
+HOUSECO8-26	CO-08	House	CO	CO-08	0	CO-08 House winner?	CO-08 CO-8	D: Manny Rutinel | R: Gabe Evans	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CT01-26	CT-01	House	CT	CT-01	0	CT-01 House winner?	CT-01	D: Luke Bronin | R: Amy Chai	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CT02-26	CT-02	House	CT	CT-02	0	CT-02 House winner?	CT-02	D: Joe Courtney | R: George Austin	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-CT03-26	CT-03	House	CT	CT-03	0	CT-03 House winner?	CT-03	D: Rosa DeLauro | R: Christopher Lancia	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-CT04-26	CT-04	House	CT	CT-04	0	CT-04 House winner?	CT-04	D: Jim Himes | R: Michael Goldstein	R=no D=yes	1	1	1	1	1
+HOUSECT5-26	CT-05	House	CT	CT-05	0	CT-05 House winner?	CT-05 CT-5	D: Jahana Hayes | R: Chris Shea	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-DCAL-26	DC-AL	House	DC	DC-AL	0	DC-AL House winner?	DC-AL	D: Democratic party | R: Republican party	D=- R=-	1	1	1	1	1
+KXHOUSERACE-DEAL-26	DE-AL	House	DE	DE-AL	0	DE-AL House winner?	DE-AL	D: Sarah McBride | R: Joseph Arminio	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-FL01-26	FL-01	House	FL	FL-01	0	FL-01 House winner?	FL-01	D: Gay Valimont | R: Jimmy Patronis	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL02-26	FL-02	House	FL	FL-02	0	FL-02 House winner?	FL-02	D: Amanda Green | R: Austin Rogers	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL03-26	FL-03	House	FL	FL-03	0	FL-03 House winner?	FL-03	D: Seth Harp | R: Kat Cammack	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL04-26	FL-04	House	FL	FL-04	0	FL-04 House winner?	FL-04	D: LaShonda Holloway | R: Aaron Bean	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL05-26	FL-05	House	FL	FL-05	0	FL-05 House winner?	FL-05	D: Rachel Grage | R: John Rutherford	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL06-26	FL-06	House	FL	FL-06	0	FL-06 House winner?	FL-06	D: Eric Yonce | R: Randy Fine	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL07-26	FL-07	House	FL	FL-07	0	FL-07 House winner?	FL-07	D: Bale Dalton | R: Ryan Elijah	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-FL08-26	FL-08	House	FL	FL-08	0	FL-08 House winner?	FL-08	D: Jennifer Jenkins | R: Mike Haridopolos	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-FL09-26	FL-09	House	FL	FL-09	0	FL-09 House winner?	FL-09	D: Darren Soto | R: Dan Green	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-FL10-26	FL-10	House	FL	FL-10	0	FL-10 House winner?	FL-10	D: Maxwell Frost | R: Republican party	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-FL11-26	FL-11	House	FL	FL-11	0	FL-11 House winner?	FL-11	D: James Pericola | R: Joe Strada	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-FL12-26	FL-12	House	FL	FL-12	0	FL-12 House winner?	FL-12	D: Kimberly Overman | R: Gus Bilirakis	R=yes D=no	1	1	1	1	1
+HOUSEFL13-26	FL-13	House	FL	FL-13	0	FL-13 House winner?	FL-13	D: Leela Gray | R: Anna Paulina Luna	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL14-26	FL-14	House	FL	FL-14	0	FL-14 House winner?	FL-14	D: Kathy Castor | R: Mike Beltran	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-FL15-26	FL-15	House	FL	FL-15	0	FL-15 House winner?	FL-15	D: Robert People | R: Laurel Lee	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL16-26	FL-16	House	FL	FL-16	0	FL-16 House winner?	FL-16	D: Kelly Kirschner | R: Sydney Gruters	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL17-26	FL-17	House	FL	FL-17	0	FL-17 House winner?	FL-17	D: Matthew Montavon | R: Greg Steube	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL18-26	FL-18	House	FL	FL-18	0	FL-18 House winner?	FL-18	D: Curtis Gibson | R: Scott Franklin	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL19-26	FL-19	House	FL	FL-19	0	FL-19 House winner?	FL-19	D: Victor Arias | R: Jim Schwartzel	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-FL20-26	FL-20	House	FL	FL-20	0	FL-20 House winner?	FL-20	D: Debbie Wasserman Schultz | R: Brent Andersen	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-FL21-26	FL-21	House	FL	FL-21	0	FL-21 House winner?	FL-21	D: James Martin | R: Brian Mast	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL22-26	FL-22	House	FL	FL-22	0	FL-22 House winner?	FL-22	D: Pia Dandiya | R: Casey Askar	D=yes R=no	1	1	1	1	1
+HOUSEFL23-26	FL-23	House	FL	FL-23	0	FL-23 House winner?	FL-23	D: Lois Frankel | R: Deborah Adeimy	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-FL24-26	FL-24	House	FL	FL-24	0	FL-24 House winner?	FL-24	D: Oliver Gilbert | R: Mayonna Te Brown	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-FL25-26	FL-25	House	FL	FL-25	0	FL-25 House winner?	FL-25	D: Jared Moskowitz | R: Scott Singer	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-FL26-26	FL-26	House	FL	FL-26	0	FL-26 House winner?	FL-26	D: Nicole Locklin | R: Mario Díaz-Balart	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL27-26	FL-27	House	FL	FL-27	0	FL-27 House winner?	FL-27	D: Eliott Rodriguez | R: Maria Elvira Salazar	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-FL28-26	FL-28	House	FL	FL-28	0	FL-28 House winner?	FL-28	D: Phil Ehr | R: Carlos Giménez	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-GA01-26	GA-01	House	GA	GA-01	0	GA-01 House winner?	GA-01	D: Amanda Hollowell | R: Jim Kingston	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-GA02-26	GA-02	House	GA	GA-02	0	GA-02 House winner?	GA-02	D: Sanford Bishop | R: Matt Day	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-GA03-26	GA-03	House	GA	GA-03	0	GA-03 House winner?	GA-03	D: Maura Keller | R: Brian Jack	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-GA04-26	GA-04	House	GA	GA-04	0	GA-04 House winner?	GA-04	D: Hank Johnson | R: James Duffie	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-GA05-26	GA-05	House	GA	GA-05	0	GA-05 House winner?	GA-05	D: Nikema Williams | R: John Salvesen	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-GA06-26	GA-06	House	GA	GA-06	0	GA-06 House winner?	GA-06	D: Lucy McBath | R: Kevin Martin	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-GA07-26	GA-07	House	GA	GA-07	0	GA-07 House winner?	GA-07	D: Anthony Kozycki | R: Rich McCormick	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-GA08-26	GA-08	House	GA	GA-08	0	GA-08 House winner?	GA-08	D: Kelly Esti | R: Austin Scott	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-GA09-26	GA-09	House	GA	GA-09	0	GA-09 House winner?	GA-09	D: Caitlyn Gegen | R: Andrew Clyde	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-GA10-26	GA-10	House	GA	GA-10	0	GA-10 House winner?	GA-10	D: Pamela DeLancy | R: Houston Gaines	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-GA11-26	GA-11	House	GA	GA-11	0	GA-11 House winner?	GA-11	D: Chris Harden | R: John Cowan	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-GA12-26	GA-12	House	GA	GA-12	0	GA-12 House winner?	GA-12	D: Ceretta Smith | R: Rick Allen	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-GA13-26	GA-13	House	GA	GA-13	0	GA-13 House winner?	GA-13	D: Jasmine Clark | R: Jonathan Chavez	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-GA14-26	GA-14	House	GA	GA-14	0	GA-14 House winner?	GA-14	D: Shawn Harris | R: Clay Fuller	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-HI01-26	HI-01	House	HI	HI-01	0	HI-01 House winner?	HI-01	D: Ed Case | R: Adriel Lam	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-HI02-26	HI-02	House	HI	HI-02	0	HI-02 House winner?	HI-02	D: Jill Tokuda | R: Brenton Awa	D=yes R=no	1	1	1	1	1
+HOUSEIA1-26	IA-01	House	IA	IA-01	0	IA-01 House winner?	IA-01 IA-1	D: Christina Bohannan | I: Michael Bridgford | R: Mariannette Miller-Meeks	D=yes R=no I=no	1	1	1	1	1
+KXHOUSERACE-IA02-26	IA-02	House	IA	IA-02	0	IA-02 House winner?	IA-02	D: Lindsay James | R: Joe Mitchell	R=no D=yes	1	1	1	1	1
+HOUSEIA3-26	IA-03	House	IA	IA-03	0	IA-03 House winner?	IA-03 IA-3	D: Sarah Trone Garriott | R: Zach Nunn	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IA04-26	IA-04	House	IA	IA-04	0	IA-04 House winner?	IA-04	D: Dave Dawson | R: Chris McGowan	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-ID01-26	ID-01	House	ID	ID-01	0	ID-01 House winner?	ID-01	D: Kaylee Peterson | R: Russ Fulcher	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-ID02-26	ID-02	House	ID	ID-02	0	ID-02 House winner?	ID-02	D: Elinor Gilbreath | R: Mike Simpson	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-IL01-26	IL-01	House	IL	IL-01	0	IL-01 House winner?	IL-01	D: Jonathan Jackson | R: Christian Maxwell	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IL02-26	IL-02	House	IL	IL-02	0	IL-02 House winner?	IL-02	D: Donna Miller | R: Michael Noack	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IL03-26	IL-03	House	IL	IL-03	0	IL-03 House winner?	IL-03	D: Delia Ramirez | R: Angel Oakley	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IL04-26	IL-04	House	IL	IL-04	0	IL-04 House winner?	IL-04	CGET: Chris Getty | D: Patty Garcia | MMAC: Mayra Macías | R: Lupe Castillo	D=yes CGET=no MMAC=no R=no	1	1	1	1	1
+KXHOUSERACE-IL05-26	IL-05	House	IL	IL-05	0	IL-05 House winner?	IL-05	D: Mike Quigley | R: Tommy Hanson	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-IL06-26	IL-06	House	IL	IL-06	0	IL-06 House winner?	IL-06	D: Sean Casten | R: Niki Conforti	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IL07-26	IL-07	House	IL	IL-07	0	IL-07 House winner?	IL-07	D: La Shawn Ford | R: Chad Koppie	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IL08-26	IL-08	House	IL	IL-08	0	IL-08 House winner?	IL-08	D: Melissa Bean | R: Jennifer Davis	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IL09-26	IL-09	House	IL	IL-09	0	IL-09 House winner?	IL-09	D: Daniel Biss | R: John Elleson	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-IL10-26	IL-10	House	IL	IL-10	0	IL-10 House winner?	IL-10	D: Brad Schneider | R: Carl Lambrecht	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-IL11-26	IL-11	House	IL	IL-11	0	IL-11 House winner?	IL-11	D: Bill Foster | R: Jeff Walter	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IL12-26	IL-12	House	IL	IL-12	0	IL-12 House winner?	IL-12	D: Julie Fortier | R: Mike Bost	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-IL13-26	IL-13	House	IL	IL-13	0	IL-13 House winner?	IL-13	D: Nikki Budzinski | R: Jeff Wilson	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-IL14-26	IL-14	House	IL	IL-14	0	IL-14 House winner?	IL-14	D: Lauren Underwood | R: James Marter	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IL15-26	IL-15	House	IL	IL-15	0	IL-15 House winner?	IL-15	D: Jennifer Todd | R: Mary Miller	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-IL16-26	IL-16	House	IL	IL-16	0	IL-16 House winner?	IL-16	D: Paul Nolley | R: Darin LaHood	R=yes D=no	1	1	1	1	1
+HOUSEIL17-26	IL-17	House	IL	IL-17	0	IL-17 House winner?	IL-17	D: Eric Sorensen | R: Dillan Vancil	D=yes R=no	1	1	1	1	1
+HOUSEIN1-26	IN-01	House	IN	IN-01	0	IN-01 House winner?	IN-01 IN-1	D: Frank Mrvan | R: Barb Regnitz	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IN02-26	IN-02	House	IN	IN-02	0	IN-02 House winner?	IN-02	D: Jamee Decio | R: Rudy Yakym	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-IN03-26	IN-03	House	IN	IN-03	0	IN-03 House winner?	IN-03	D: Kelly Thompson | R: Marlin Stutzman	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-IN04-26	IN-04	House	IN	IN-04	0	IN-04 House winner?	IN-04	D: Drew Cox | R: Jim Baird	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-IN05-26	IN-05	House	IN	IN-05	0	IN-05 House winner?	IN-05	D: J.D. Ford | R: Victoria Spartz	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-IN06-26	IN-06	House	IN	IN-06	0	IN-06 House winner?	IN-06	D: Cynthia Wirth | R: Jefferson Shreve	D=no R=yes	1	1	1	1	1
+KXHOUSEIN7-26	IN-07	House	IN	IN-07	0	IN-07 House winner?	IN-07	D: André Carson | R: Patrick McAuley	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-IN08-26	IN-08	House	IN	IN-08	0	IN-08 House winner?	IN-08	D: Mary Allen | R: Mark Messmer	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-IN09-26	IN-09	House	IN	IN-09	0	IN-09 House winner?	IN-09	D: Brad Meyer | R: Erin Houchin	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-KS01-26	KS-01	House	KS	KS-01	0	KS-01 House winner?	KS-01	D: Lauren Reinhold | R: Tracey Mann	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-KS02-26	KS-02	House	KS	KS-02	0	KS-02 House winner?	KS-02	D: Don Coover | R: Derek Schmidt	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-KS03-26	KS-03	House	KS	KS-03	0	KS-03 House winner?	KS-03	D: Sharice Davids | R: Eric Jenkins	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-KS04-26	KS-04	House	KS	KS-04	0	KS-04 House winner?	KS-04	D: Katy Tyndell | R: Ron Estes	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-KY01-26	KY-01	House	KY	KY-01	0	KY-01 House winner?	KY-01	D: Drew Williams | R: James Comer	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-KY02-26	KY-02	House	KY	KY-02	0	KY-02 House winner?	KY-02	D: Megan Wingfield | R: Brett Guthrie	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-KY03-26	KY-03	House	KY	KY-03	0	KY-03 House winner?	KY-03	D: Morgan McGarvey | R: Maria Rodriguez	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-KY04-26	KY-04	House	KY	KY-04	0	KY-04 House winner?	KY-04	D: Melissa Claire Strange | R: Ed Gallrein	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-KY05-26	KY-05	House	KY	KY-05	0	KY-05 House winner?	KY-05	D: Ned Pillersdorf | R: Hal Rogers	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-KY06-26	KY-06	House	KY	KY-06	0	KY-06 House winner?	KY-06	D: Zach Dembo | R: Ralph Alvarado	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-LA01-26	LA-01	House	LA	LA-01	0	LA-01 House winner?	LA-01	D: Democratic party | R: Republican party	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-LA02-26	LA-02	House	LA	LA-02	0	LA-02 House winner?	LA-02	D: Democratic party | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-LA03-26	LA-03	House	LA	LA-03	0	LA-03 House winner?	LA-03	D: Democratic party | R: Republican party	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-LA04-26	LA-04	House	LA	LA-04	0	LA-04 House winner?	LA-04	D: Democratic party | R: Republican party	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-LA05-26	LA-05	House	LA	LA-05	0	LA-05 House winner?	LA-05	D: Pat Moore | R: Gabe Firment	D=- R=-	1	1	1	1	1
+KXHOUSERACE-LA06-26	LA-06	House	LA	LA-06	0	LA-06 House winner?	LA-06	D: Chauna Banks | R: Blake Miguez	R=- D=-	1	1	1	1	1
+KXHOUSERACE-MA01-26	MA-01	House	MA	MA-01	0	MA-01 House winner?	MA-01	D: Richard Neal | R: Republican party	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MA02-26	MA-02	House	MA	MA-02	0	MA-02 House winner?	MA-02	D: Jim McGovern | R: Republican party	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MA03-26	MA-03	House	MA	MA-03	0	MA-03 House winner?	MA-03	D: Lori Trahan | R: Gary Grossi	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MA04-26	MA-04	House	MA	MA-04	0	MA-04 House winner?	MA-04	D: Jake Auchincloss | R: Tom Stalcup	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MA05-26	MA-05	House	MA	MA-05	0	MA-05 House winner?	MA-05	D: Katherine Clark | R: Republican party	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MA06-26	MA-06	House	MA	MA-06	0	MA-06 House winner?	MA-06	D: Dan Koh | R: Micah Jones	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MA07-26	MA-07	House	MA	MA-07	0	MA-07 House winner?	MA-07	D: Ayanna Pressley | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-MA08-26	MA-08	House	MA	MA-08	0	MA-08 House winner?	MA-08	D: Stephen Lynch | R: Robert Burke	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-MA09-26	MA-09	House	MA	MA-09	0	MA-09 House winner?	MA-09	D: Bill Keating | R: Tyler MacAllister	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MD01-26	MD-01	House	MD	MD-01	0	MD-01 House winner?	MD-01	D: Dan Schwartz | R: Andy Harris	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-MD02-26	MD-02	House	MD	MD-02	0	MD-02 House winner?	MD-02	D: Johnny Olszewski | R: Dave Wallace	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MD03-26	MD-03	House	MD	MD-03	0	MD-03 House winner?	MD-03	D: Sarah Elfreth | R: Berney Flowers	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MD04-26	MD-04	House	MD	MD-04	0	MD-04 House winner?	MD-04	D: Glenn Ivey | R: George McDermott	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MD05-26	MD-05	House	MD	MD-05	0	MD-05 House winner?	MD-05	D: Adrian Boafo | R: Chris Chaffee	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MD06-26	MD-06	House	MD	MD-06	0	MD-06 House winner?	MD-06	D: April McClain Delaney | R: Robin Ficker	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MD07-26	MD-07	House	MD	MD-07	0	MD-07 House winner?	MD-07	D: Kweisi Mfume | R: Scott Collier	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MD08-26	MD-08	House	MD	MD-08	0	MD-08 House winner?	MD-08	D: Jamie Raskin | R: Cheryl Riley	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-ME01-26	ME-01	House	ME	ME-01	0	ME-01 House winner?	ME-01	D: Chellie Pingree | R: Ronald Russell	R=no D=yes	1	1	1	1	1
+HOUSEME2-26	ME-02	House	ME	ME-02	0	ME-02 House winner?	ME-02 ME-2	D: Matt Dunlap | R: Paul LePage	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-MI01-26	MI-01	House	MI	MI-01	0	MI-01 House winner?	MI-01	D: Callie Barr | R: Jack Bergman	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-MI02-26	MI-02	House	MI	MI-02	0	MI-02 House winner?	MI-02	D: Benjamin Ambrose | R: John Moolenaar	D=no R=yes	1	1	1	1	1
+HOUSEMI3-26	MI-03	House	MI	MI-03	0	MI-03 House winner?	MI-03 MI-3	D: Hillary Scholten | R: Terri DeBoer	R=no D=yes	1	1	1	1	1
+HOUSEMI4-26	MI-04	House	MI	MI-04	0	MI-04 House winner?	MI-04 MI-4	D: Sean McCann | R: Bill Huizenga	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-MI05-26	MI-05	House	MI	MI-05	0	MI-05 House winner?	MI-05	D: Christian Vukasovich | R: Tim Walberg	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-MI06-26	MI-06	House	MI	MI-06	0	MI-06 House winner?	MI-06	D: Debbie Dingell | R: Heather Smiley	D=yes R=no	1	1	1	1	1
+HOUSEMI7-26	MI-07	House	MI	MI-07	0	MI-07 House winner?	MI-07 MI-7	D: William Lawrence | R: Tom Barrett	D=yes R=no	1	1	1	1	1
+HOUSEMI8-26	MI-08	House	MI	MI-08	0	MI-08 House winner?	MI-08 MI-8	D: Kristen McDonald Rivet | R: Thomas J. Smith	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-MI09-26	MI-09	House	MI	MI-09	0	MI-09 House winner?	MI-09	D: Ray Pooley | R: Lisa McClain	D=no R=yes	1	1	1	1	1
+HOUSEMI10-26	MI-10	House	MI	MI-10	0	MI-10 House winner?	MI-10	D: Christina Hines | R: Michael Bouchard Jr.	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MI11-26	MI-11	House	MI	MI-11	0	MI-11 House winner?	MI-11	D: Jeremy Moss | R: Ethan Baker	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MI12-26	MI-12	House	MI	MI-12	0	MI-12 House winner?	MI-12	D: Rashida Tlaib | R: James Hooper	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MI13-26	MI-13	House	MI	MI-13	0	MI-13 House winner?	MI-13	D: Donavan McKinney | R: T.P. Nykoriak	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MN01-26	MN-01	House	MN	MN-01	0	MN-01 House winner?	MN-01	D: Jake Johnson | R: Brad Finstad	R=- D=-	1	1	1	1	1
+HOUSEMN2-26	MN-02	House	MN	MN-02	0	MN-02 House winner?	MN-02 MN-2	D: Matt Little | R: Eric Pratt	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MN03-26	MN-03	House	MN	MN-03	0	MN-03 House winner?	MN-03	D: Kelly Morrison | R: Tyler Bass	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MN04-26	MN-04	House	MN	MN-04	0	MN-04 House winner?	MN-04	D: Betty McCollum | R: Paul Wikstrom	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MN05-26	MN-05	House	MN	MN-05	0	MN-05 House winner?	MN-05	D: Ilhan Omar | DJAC: DeVelle Jackson | R: John Nagel	DJAC=no R=no D=yes	1	1	1	1	1
+KXHOUSERACE-MN06-26	MN-06	House	MN	MN-06	0	MN-06 House winner?	MN-06	D: Doug Chapin | R: Tom Emmer	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-MN07-26	MN-07	House	MN	MN-07	0	MN-07 House winner?	MN-07	D: Erik Osberg | R: Michelle Fischbach	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-MN08-26	MN-08	House	MN	MN-08	0	MN-08 House winner?	MN-08	D: Trina Swanson | R: Pete Stauber	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-MO01-26	MO-01	House	MO	MO-01	0	MO-01 House winner?	MO-01	D: Wesley Bell | R: Paul Berry	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MO02-26	MO-02	House	MO	MO-02	0	MO-02 House winner?	MO-02	D: Fred Wellman | R: Ann Wagner	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MO03-26	MO-03	House	MO	MO-03	0	MO-03 House winner?	MO-03	D: Bethany Mann | R: Bob Onder	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-MO04-26	MO-04	House	MO	MO-04	0	MO-04 House winner?	MO-04	D: Jordan Herrera | R: Mark Alford	D=no R=yes	1	1	1	1	1
+KXHOUSEMO5-26	MO-05	House	MO	MO-05	0	MO-05 House winner?	MO-05	D: Emanuel Cleaver | R: Rick Brattin	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MO06-26	MO-06	House	MO	MO-06	0	MO-06 House winner?	MO-06	D: Josh Smead | R: Chris Stigall	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-MO07-26	MO-07	House	MO	MO-07	0	MO-07 House winner?	MO-07	D: Missi Hesketh | R: Eric Burlison	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-MO08-26	MO-08	House	MO	MO-08	0	MO-08 House winner?	MO-08	D: Chris Reichard | R: Jason Smith	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-MS01-26	MS-01	House	MS	MS-01	0	MS-01 House winner?	MS-01	D: Cliff Johnson | R: Trent Kelly	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-MS02-26	MS-02	House	MS	MS-02	0	MS-02 House winner?	MS-02	D: Bennie Thompson | R: Ron Eller	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-MS03-26	MS-03	House	MS	MS-03	0	MS-03 House winner?	MS-03	D: Michael Chiaradio | R: Michael Guest	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-MS04-26	MS-04	House	MS	MS-04	0	MS-04 House winner?	MS-04	D: Jeffrey Hulum III | R: Mike Ezell	D=no R=yes	1	1	1	1	1
+HOUSEMT1-26	MT-01	House	MT	MT-01	0	MT-01 House winner?	MT-01 MT-1	D: Sam Forstag | R: Aaron Flint	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-MT02-26	MT-02	House	MT	MT-02	0	MT-02 House winner?	MT-02	D: Brian Miller | R: Troy Downing	D=no R=yes	1	1	1	1	1
+HOUSENC1-26	NC-01	House	NC	NC-01	0	NC-01 House winner?	NC-01 NC-1	D: Don Davis | R: Laurie Buckhout	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NC02-26	NC-02	House	NC	NC-02	0	NC-02 House winner?	NC-02	D: Deborah Ross | R: Gene Douglass	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NC03-26	NC-03	House	NC	NC-03	0	NC-03 House winner?	NC-03	D: Raymond Smith Jr. | R: Greg Murphy	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NC04-26	NC-04	House	NC	NC-04	0	NC-04 House winner?	NC-04	D: Valerie Foushee | R: Max Ganorkar	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NC05-26	NC-05	House	NC	NC-05	0	NC-05 House winner?	NC-05	D: Chuck Hubbard | R: Virginia Foxx	D=- R=-	1	1	1	1	1
+KXHOUSERACE-NC06-26	NC-06	House	NC	NC-06	0	NC-06 House winner?	NC-06	D: Cyril Jefferson | R: Addison McDowell	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NC07-26	NC-07	House	NC	NC-07	0	NC-07 House winner?	NC-07	D: Kim Hardy | R: David Rouzer	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-NC08-26	NC-08	House	NC	NC-08	0	NC-08 House winner?	NC-08	D: Colby Watson | R: Mark Harris	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-NC09-26	NC-09	House	NC	NC-09	0	NC-09 House winner?	NC-09	D: Richard Ojeda | R: Richard Hudson	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NC10-26	NC-10	House	NC	NC-10	0	NC-10 House winner?	NC-10	D: Ashley Bell | R: Pat Harrigan	D=- R=-	1	1	1	1	1
+KXHOUSENC11-26	NC-11	House	NC	NC-11	0	NC-11 House winner?	NC-11	DEM: Jamie Ager | GOP: Jennifer Balkcom	GOP=no DEM=yes	1	1	1	1	1
+KXHOUSERACE-NC12-26	NC-12	House	NC	NC-12	0	NC-12 House winner?	NC-12	D: Alma Adams | R: Jack Codiga	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NC13-26	NC-13	House	NC	NC-13	0	NC-13 House winner?	NC-13	D: Paul Barringer | R: Brad Knott	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NC14-26	NC-14	House	NC	NC-14	0	NC-14 House winner?	NC-14	D: LaKesha Womack | R: Tim Moore	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NDAL-26	ND-AL	House	ND	ND-AL	0	ND-AL House winner?	ND-AL	D: Trygve Hammer | R: Julie Fedorchak	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-NE01-26	NE-01	House	NE	NE-01	0	NE-01 House winner?	NE-01	AAHL: Austin Ahlman | D: Chris Backemeyer | R: Mike Flood	AAHL=no R=yes D=no	1	1	1	1	1
+HOUSENE2-26	NE-02	House	NE	NE-02	0	NE-02 House winner?	NE-02 NE-2	D: Denise Powell | R: Brinker Harding	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NE03-26	NE-03	House	NE	NE-03	0	NE-03 House winner?	NE-03	D: Becky Stille | R: Adrian Smith	R=yes D=no	1	1	1	1	1
+HOUSENH1-26	NH-01	House	NH	NH-01	0	NH-01 House winner?	NH-01 NH-1	D: Stefany Shaheen | R: Anthony DiLorenzo	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NH02-26	NH-02	House	NH	NH-02	0	NH-02 House winner?	NH-02	D: Maggie Goodlander | R: Lily Tang Williams	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NJ01-26	NJ-01	House	NJ	NJ-01	0	NJ-01 House winner?	NJ-01	D: Donald Norcross | R: Damon Galdo	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NJ02-26	NJ-02	House	NJ	NJ-02	0	NJ-02 House winner?	NJ-02	D: Zack Mullock | R: Jeff Van Drew	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NJ03-26	NJ-03	House	NJ	NJ-03	0	NJ-03 House winner?	NJ-03	D: Herb Conaway | R: Michael McGuire	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NJ04-26	NJ-04	House	NJ	NJ-04	0	NJ-04 House winner?	NJ-04	D: Rachel Peace | R: Chris Smith	D=no R=yes	1	1	1	1	1
+HOUSENJ5-26	NJ-05	House	NJ	NJ-05	0	NJ-05 House winner?	NJ-05 NJ-5	D: Josh Gottheimer | R: Sean Kirrane	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NJ06-26	NJ-06	House	NJ	NJ-06	0	NJ-06 House winner?	NJ-06	D: Frank Pallone | R: Hillary Herzig	D=yes R=no	1	1	1	1	1
+HOUSENJ7-26	NJ-07	House	NJ	NJ-07	0	NJ-07 House winner?	NJ-07 NJ-7	D: Rebecca Bennett | R: Thomas Kean Jr.	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NJ08-26	NJ-08	House	NJ	NJ-08	0	NJ-08 House winner?	NJ-08	D: Rob Menendez | R: Republican party	R=no D=yes	1	1	1	1	1
+HOUSENJ9-26	NJ-09	House	NJ	NJ-09	0	NJ-09 House winner?	NJ-09 NJ-9	D: Nellie Pou | R: Rosie Pino	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NJ10-26	NJ-10	House	NJ	NJ-10	0	NJ-10 House winner?	NJ-10	D: LaMonica McIver | R: Carmen Bucco	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NJ11-26	NJ-11	House	NJ	NJ-11	0	NJ-11 House winner?	NJ-11	D: Analilia Mejia | R: Joe Hathaway	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NJ12-26	NJ-12	House	NJ	NJ-12	0	NJ-12 House winner?	NJ-12	D: Adam Hamawy | R: Gregg Mele	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NM01-26	NM-01	House	NM	NM-01	0	NM-01 House winner?	NM-01	D: Melanie Stansbury | R: Didi Okpareke	D=yes R=no	1	1	1	1	1
+HOUSENM2-26	NM-02	House	NM	NM-02	0	NM-02 House winner?	NM-02 NM-2	D: Gabe Vasquez | R: Greg Cunningham	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NM03-26	NM-03	House	NM	NM-03	0	NM-03 House winner?	NM-03	D: Teresa Leger Fernández | R: Martin Zamora	D=yes R=no	1	1	1	1	1
+HOUSENV1-26	NV-01	House	NV	NV-01	0	NV-01 House winner?	NV-01 NV-1	D: Dina Titus | R: Carrie Buck	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NV02-26	NV-02	House	NV	NV-02	0	NV-02 House winner?	NV-02	D: Teresa Benitez-Thompson | R: David Flippo	D=yes R=no	1	1	1	1	1
+HOUSENV3-26	NV-03	House	NV	NV-03	0	NV-03 House winner?	NV-03 NV-3	D: Susie Lee | R: Martin O'Donnell	D=yes R=no	1	1	1	1	1
+HOUSENV4-26	NV-04	House	NV	NV-04	0	NV-04 House winner?	NV-04 NV-4	D: Steven Horsford | R: Cody Whipple	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY01-26	NY-01	House	NY	NY-01	0	NY-01 House winner?	NY-01	D: Chris Gallant | R: Nick LaLota	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-NY02-26	NY-02	House	NY	NY-02	0	NY-02 House winner?	NY-02	D: Patrick Halpin | R: Andrew Garbarino	D=no R=yes	1	1	1	1	1
+HOUSENY3-26	NY-03	House	NY	NY-03	0	NY-03 House winner?	NY-03 NY-3	D: Tom Suozzi | R: Mike LiPetri	D=yes R=no	1	1	1	1	1
+HOUSENY4-26	NY-04	House	NY	NY-04	0	NY-04 House winner?	NY-04 NY-4	D: Laura Gillen | R: Jeanine Driscoll	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NY05-26	NY-05	House	NY	NY-05	0	NY-05 House winner?	NY-05	D: Gregory Meeks | R: George Marsh	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY06-26	NY-06	House	NY	NY-06	0	NY-06 House winner?	NY-06	D: Grace Meng | R: Joseph Chou	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY07-26	NY-07	House	NY	NY-07	0	NY-07 House winner?	NY-07	D: Claire Valdez | R: Melvin Rivera	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY08-26	NY-08	House	NY	NY-08	0	NY-08 House winner?	NY-08	D: Hakeem Jeffries | R: Lewis Mizrahi	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY09-26	NY-09	House	NY	NY-09	0	NY-09 House winner?	NY-09	D: Yvette Clarke | R: Joel Anabilah-Azumah	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY10-26	NY-10	House	NY	NY-10	0	NY-10 House winner?	NY-10	D: Brad Lander | R: Jennifer Moore	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NY11-26	NY-11	House	NY	NY-11	0	NY-11 House winner?	NY-11	D: Michael DeCillis | R: Nicole Malliotakis	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-NY12-26	NY-12	House	NY	NY-12	0	NY-12 House winner?	NY-12	D: Micah Lasher | R: Caroline Shinkle	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY13-26	NY-13	House	NY	NY-13	0	NY-13 House winner?	NY-13	D: Darializa Avila Chevalier | R: Jomo Williams	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY14-26	NY-14	House	NY	NY-14	0	NY-14 House winner?	NY-14	D: Alexandria Ocasio-Cortez | R: Diamant Hysenaj	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-NY15-26	NY-15	House	NY	NY-15	0	NY-15 House winner?	NY-15	D: Ritchie Torres | R: Stylo Sapaskis	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY16-26	NY-16	House	NY	NY-16	0	NY-16 House winner?	NY-16	D: George Latimer | R: Joseph Cinquemani	D=yes R=no	1	1	1	1	1
+HOUSENY17-26	NY-17	House	NY	NY-17	0	NY-17 House winner?	NY-17	D: Cait Conley | R: Mike Lawler	R=no D=yes	1	1	1	1	1
+HOUSENY18-26	NY-18	House	NY	NY-18	0	NY-18 House winner?	NY-18	D: Pat Ryan | R: Jacqueline Auringer	R=no D=yes	1	1	1	1	1
+HOUSENY19-26	NY-19	House	NY	NY-19	0	NY-19 House winner?	NY-19	D: Josh Riley | R: Peter Oberacker	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY20-26	NY-20	House	NY	NY-20	0	NY-20 House winner?	NY-20	D: Paul Tonko | R: Ralph Ambrosio	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY21-26	NY-21	House	NY	NY-21	0	NY-21 House winner?	NY-21	D: Blake Gendebien | R: Anthony Constantino	D=no R=yes	1	1	1	1	1
+HOUSENY22-26	NY-22	House	NY	NY-22	0	NY-22 House winner?	NY-22	D: John Mannion | R: Kailee Buller	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY23-26	NY-23	House	NY	NY-23	0	NY-23 House winner?	NY-23	D: Aaron Gies | R: Nick Langworthy	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-NY24-26	NY-24	House	NY	NY-24	0	NY-24 House winner?	NY-24	D: Alissa Ellman | R: Claudia Tenney	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-NY25-26	NY-25	House	NY	NY-25	0	NY-25 House winner?	NY-25	D: Joseph Morelle | R: Virginia McIntyre	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-NY26-26	NY-26	House	NY	NY-26	0	NY-26 House winner?	NY-26	D: Tim Kennedy | R: Dennis Hannon	D=yes R=no	1	1	1	1	1
+HOUSEOH1-26	OH-01	House	OH	OH-01	0	OH-01 House winner?	OH-01 OH-1	D: Greg Landsman | R: Eric Conroy	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-OH02-26	OH-02	House	OH	OH-02	0	OH-02 House winner?	OH-02	D: Jennifer Mazzuckelli | R: David Taylor	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-OH03-26	OH-03	House	OH	OH-03	0	OH-03 House winner?	OH-03	D: Joyce Beatty | R: Cleophus Dulaney	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-OH04-26	OH-04	House	OH	OH-04	0	OH-04 House winner?	OH-04	D: Joshua Kolasinski | R: Jim Jordan	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-OH05-26	OH-05	House	OH	OH-05	0	OH-05 House winner?	OH-05	D: Brian Shaver | R: Bob Latta	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-OH06-26	OH-06	House	OH	OH-06	0	OH-06 House winner?	OH-06	D: Elizabeth Kirtley | R: Michael Rulli	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-OH07-26	OH-07	House	OH	OH-07	0	OH-07 House winner?	OH-07	D: Brian Poindexter | R: Max Miller	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-OH08-26	OH-08	House	OH	OH-08	0	OH-08 House winner?	OH-08	D: Vanessa Enoch | R: Warren Davidson	D=no R=yes	1	1	1	1	1
+HOUSEOH9-26	OH-09	House	OH	OH-09	0	OH-09 House winner?	OH-09 OH-9	D: Marcy Kaptur | R: Derek Merrin	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-OH10-26	OH-10	House	OH	OH-10	0	OH-10 House winner?	OH-10	D: Kristina Knickerbocker | R: Mike Turner	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-OH11-26	OH-11	House	OH	OH-11	0	OH-11 House winner?	OH-11	D: Shontel Brown | R: Mike Kirchner	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-OH12-26	OH-12	House	OH	OH-12	0	OH-12 House winner?	OH-12	D: Jerrad Christian | R: Troy Balderson	D=no R=yes	1	1	1	1	1
+HOUSEOH13-26	OH-13	House	OH	OH-13	0	OH-13 House winner?	OH-13	D: Emilia Sykes | R: Carey Coleman	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-OH14-26	OH-14	House	OH	OH-14	0	OH-14 House winner?	OH-14	D: Maria Jukic | R: David Joyce	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-OH15-26	OH-15	House	OH	OH-15	0	OH-15 House winner?	OH-15	D: Don Leonard | R: Mike Carey	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-OK01-26	OK-01	House	OK	OK-01	0	OK-01 House winner?	OK-01	D: John Croisant | R: Mark Tedford	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-OK02-26	OK-02	House	OK	OK-02	0	OK-02 House winner?	OK-02	D: Brandon Wade | R: Josh Brecheen	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-OK03-26	OK-03	House	OK	OK-03	0	OK-03 House winner?	OK-03	D: Suzie Byrd | R: Frank Lucas	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-OK04-26	OK-04	House	OK	OK-04	0	OK-04 House winner?	OK-04	D: Mitchell Jacob | R: Tom Cole	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-OK05-26	OK-05	House	OK	OK-05	0	OK-05 House winner?	OK-05	D: Jena Nelson | R: Stephanie Bice	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-OR01-26	OR-01	House	OR	OR-01	0	OR-01 House winner?	OR-01	D: Suzanne Bonamici | R: Barbara Kahl	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-OR02-26	OR-02	House	OR	OR-02	0	OR-02 House winner?	OR-02	D: Chris Beck | R: Cliff Bentz	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-OR03-26	OR-03	House	OR	OR-03	0	OR-03 House winner?	OR-03	D: Maxine Dexter | R: Loran Ayles	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-OR04-26	OR-04	House	OR	OR-04	0	OR-04 House winner?	OR-04	D: Val Hoyle | R: Monique DeSpain	D=yes R=no	1	1	1	1	1
+HOUSEOR5-26	OR-05	House	OR	OR-05	0	OR-05 House winner?	OR-05 OR-5	D: Janelle Bynum | R: Patti Adair	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-OR06-26	OR-06	House	OR	OR-06	0	OR-06 House winner?	OR-06	D: Andrea Salinas | R: David Russ	D=yes R=no	1	1	1	1	1
+HOUSEPA1-26	PA-01	House	PA	PA-01	0	PA-01 House winner?	PA-01 PA-1	D: Bob Harvie | R: Brian Fitzpatrick	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-PA02-26	PA-02	House	PA	PA-02	0	PA-02 House winner?	PA-02	D: Brendan Boyle | R: Jessica Arriaga	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-PA03-26	PA-03	House	PA	PA-03	0	PA-03 House winner?	PA-03	D: Chris Rabb | R: Republican party	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-PA04-26	PA-04	House	PA	PA-04	0	PA-04 House winner?	PA-04	D: Madeleine Dean | R: Aurora Stuski	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-PA05-26	PA-05	House	PA	PA-05	0	PA-05 House winner?	PA-05	D: Mary Gay Scanlon | R: Nicholas Manganaro	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-PA06-26	PA-06	House	PA	PA-06	0	PA-06 House winner?	PA-06	D: Chrissy Houlahan | R: Marty Young	D=yes R=no	1	1	1	1	1
+HOUSEPA7-26	PA-07	House	PA	PA-07	0	PA-07 House winner?	PA-07 PA-7	D: Bob Brooks | R: Ryan Mackenzie	R=no D=yes	1	1	1	1	1
+HOUSEPA8-26	PA-08	House	PA	PA-08	0	PA-08 House winner?	PA-08 PA-8	D: Paige Cognetti | R: Rob Bresnahan	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-PA09-26	PA-09	House	PA	PA-09	0	PA-09 House winner?	PA-09	D: Rachel Wallace | R: Dan Meuser	R=yes D=no	1	1	1	1	1
+HOUSEPA10-26	PA-10	House	PA	PA-10	0	PA-10 House winner?	PA-10	D: Janelle Stelson | R: Scott Perry	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-PA11-26	PA-11	House	PA	PA-11	0	PA-11 House winner?	PA-11	D: Nancy Mannion | R: Lloyd Smucker	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-PA12-26	PA-12	House	PA	PA-12	0	PA-12 House winner?	PA-12	D: Summer Lee | R: James Hayes	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-PA13-26	PA-13	House	PA	PA-13	0	PA-13 House winner?	PA-13	D: Beth Farnham | R: John Joyce	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-PA14-26	PA-14	House	PA	PA-14	0	PA-14 House winner?	PA-14	D: Alan Bradstock | R: Guy Reschenthaler	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-PA15-26	PA-15	House	PA	PA-15	0	PA-15 House winner?	PA-15	D: Ray Bilger | R: Glenn Thompson	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-PA16-26	PA-16	House	PA	PA-16	0	PA-16 House winner?	PA-16	D: Justin Wagner | R: Mike Kelly	D=no R=yes	1	1	1	1	1
+HOUSEPA17-26	PA-17	House	PA	PA-17	0	PA-17 House winner?	PA-17	D: Chris Deluzio | R: Tony Guy	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-RI01-26	RI-01	House	RI	RI-01	0	RI-01 House winner?	RI-01	D: Gabe Amo | R: Kellie Keenan	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-RI02-26	RI-02	House	RI	RI-02	0	RI-02 House winner?	RI-02	D: Seth Magaziner | R: Victor Mellor	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-SC01-26	SC-01	House	SC	SC-01	0	SC-01 House winner?	SC-01	D: Nancy S. Lacore | R: Jenny Costa Honeycutt	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-SC02-26	SC-02	House	SC	SC-02	0	SC-02 House winner?	SC-02	D: Zyon Khalifa | R: Joe Wilson	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-SC03-26	SC-03	House	SC	SC-03	0	SC-03 House winner?	SC-03	D: Eunice Lehmacher | R: Sheri Biggs	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-SC04-26	SC-04	House	SC	SC-04	0	SC-04 House winner?	SC-04	D: Courtney McClain | R: William Timmons	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-SC05-26	SC-05	House	SC	SC-05	0	SC-05 House winner?	SC-05	D: Mallory Dittmer | R: Wes Climer	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-SC06-26	SC-06	House	SC	SC-06	0	SC-06 House winner?	SC-06	D: Jim Clyburn | R: John Peterson	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-SC07-26	SC-07	House	SC	SC-07	0	SC-07 House winner?	SC-07	D: John Vincent | R: Russell Fry	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-SDAL-26	SD-AL	House	SD	SD-AL	0	SD-AL House winner?	SD-AL	D: Nicole Gronli | R: Marty Jackley	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-TN01-26	TN-01	House	TN	TN-01	0	TN-01 House winner?	TN-01	D: Kristi Burke | R: Diana Harshbarger	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TN02-26	TN-02	House	TN	TN-02	0	TN-02 House winner?	TN-02	D: Michaela Barnett | R: Tim Burchett	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TN03-26	TN-03	House	TN	TN-03	0	TN-03 House winner?	TN-03	D: Anna Golladay | R: Chuck Fleischmann	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TN04-26	TN-04	House	TN	TN-04	0	TN-04 House winner?	TN-04	D: Victoria Broderick | R: Scott DesJarlais	R=- D=-	1	1	1	1	1
+KXHOUSERACE-TN05-26	TN-05	House	TN	TN-05	0	TN-05 House winner?	TN-05	D: Chaz Molder | R: Charlie Hatcher	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-TN06-26	TN-06	House	TN	TN-06	0	TN-06 House winner?	TN-06	D: Mike Croley | R: Johnny Garrett	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TN07-26	TN-07	House	TN	TN-07	0	TN-07 House winner?	TN-07	D: Darden Copeland | R: Matt Van Epps	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-TN08-26	TN-08	House	TN	TN-08	0	TN-08 House winner?	TN-08	D: Heidi Kuhn | R: David Kustoff	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-TN09-26	TN-09	House	TN	TN-09	0	TN-09 House winner?	TN-09	D: Justin J. Pearson | R: Brent Taylor	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX01-26	TX-01	House	TX	TX-01	0	TX-01 House winner?	TX-01	D: Yolanda R. Prince | R: Nathaniel Moran	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX02-26	TX-02	House	TX	TX-02	0	TX-02 House winner?	TX-02	D: Shaun Finnie | R: Steve Toth	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX03-26	TX-03	House	TX	TX-03	0	TX-03 House winner?	TX-03	D: Evan Hunt | R: Keith Self	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX04-26	TX-04	House	TX	TX-04	0	TX-04 House winner?	TX-04	D: Jason Pearce | R: Pat Fallon	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX05-26	TX-05	House	TX	TX-05	0	TX-05 House winner?	TX-05	D: Chelsey Hockett | R: Lance Gooden	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX06-26	TX-06	House	TX	TX-06	0	TX-06 House winner?	TX-06	D: Danny Minton | R: Jake Ellzey	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX07-26	TX-07	House	TX	TX-07	0	TX-07 House winner?	TX-07	D: Lizzie Fletcher | R: Alexander Hale	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-TX08-26	TX-08	House	TX	TX-08	0	TX-08 House winner?	TX-08	D: Laura Jones | R: Jessica Steinmann	D=no R=yes	1	1	1	1	1
+KXHOUSETX9-26	TX-09	House	TX	TX-09	0	TX-09 House winner?	TX-09	D: Leticia Gutierrez | R: Alex Mealer	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-TX10-26	TX-10	House	TX	TX-10	0	TX-10 House winner?	TX-10	D: Caitlin Rourk | R: Chris Gober	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX11-26	TX-11	House	TX	TX-11	0	TX-11 House winner?	TX-11	D: Claire Reynolds | R: August Pfluger	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX12-26	TX-12	House	TX	TX-12	0	TX-12 House winner?	TX-12	D: Angela Rodriguez Prilliman | R: Craig Goldman	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-TX13-26	TX-13	House	TX	TX-13	0	TX-13 House winner?	TX-13	D: Mark Nair | R: Ronny Jackson	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX14-26	TX-14	House	TX	TX-14	0	TX-14 House winner?	TX-14	D: Thurman Bartie | R: Randy Weber	R=yes D=no	1	1	1	1	1
+HOUSETX15-26	TX-15	House	TX	TX-15	0	TX-15 House winner?	TX-15	D: Bobby Pulido | R: Monica De La Cruz	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX16-26	TX-16	House	TX	TX-16	0	TX-16 House winner?	TX-16	D: Veronica Escobar | R: Adam Bauman	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX17-26	TX-17	House	TX	TX-17	0	TX-17 House winner?	TX-17	D: Casey Shepard | R: Pete Sessions	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX18-26	TX-18	House	TX	TX-18	0	TX-18 House winner?	TX-18	D: Christian Menefee | R: Ronald Whitfield	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX19-26	TX-19	House	TX	TX-19	0	TX-19 House winner?	TX-19	D: Kyle Rable | R: Tom Sell	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-TX20-26	TX-20	House	TX	TX-20	0	TX-20 House winner?	TX-20	D: Joaquin Castro | R: Edgardo Baez	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX21-26	TX-21	House	TX	TX-21	0	TX-21 House winner?	TX-21	D: Kristin Hook | R: Mark Teixeira	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX22-26	TX-22	House	TX	TX-22	0	TX-22 House winner?	TX-22	D: Marquette Greene-Scott | R: Trever Nehls	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX23-26	TX-23	House	TX	TX-23	0	TX-23 House winner?	TX-23	D: Katy Padilla Stout | R: Brandon Herrera	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX24-26	TX-24	House	TX	TX-24	0	TX-24 House winner?	TX-24	D: Kevin Burge | R: Beth Van Duyne	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-TX25-26	TX-25	House	TX	TX-25	0	TX-25 House winner?	TX-25	D: Dione Sims | R: Roger Williams	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX26-26	TX-26	House	TX	TX-26	0	TX-26 House winner?	TX-26	D: Steven Shook | R: Brandon Gill	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX27-26	TX-27	House	TX	TX-27	0	TX-27 House winner?	TX-27	D: Tanya Lloyd | R: Michael Cloud	D=no R=yes	1	1	1	1	1
+HOUSETX28-26	TX-28	House	TX	TX-28	0	TX-28 House winner?	TX-28	D: Henry Cuellar | R: Tano Tijerina	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX29-26	TX-29	House	TX	TX-29	0	TX-29 House winner?	TX-29	D: Sylvia Garcia | R: Martha Fierro	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX30-26	TX-30	House	TX	TX-30	0	TX-30 House winner?	TX-30	D: Frederick Haynes III | R: Everett Jackson	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX31-26	TX-31	House	TX	TX-31	0	TX-31 House winner?	TX-31	D: Justin Early | R: John Carter	D=no R=yes	1	1	1	1	1
+KXHOUSETX32-26	TX-32	House	TX	TX-32	0	TX-32 House winner?	TX-32	D: Dan Barrios | R: Jace Yarbrough	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-TX33-26	TX-33	House	TX	TX-33	0	TX-33 House winner?	TX-33	D: Colin Allred | R: Patrick David Gillespie	D=yes R=no	1	1	1	1	1
+HOUSETX34-26	TX-34	House	TX	TX-34	0	TX-34 House winner?	TX-34	D: Vicente Gonzalez | R: Eric Flores	D=yes R=no	1	1	1	1	1
+KXHOUSETX35-26	TX-35	House	TX	TX-35	0	TX-35 House winner?	TX-35	D: Johnny C. Garcia | R: Carlos De La Cruz	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-TX36-26	TX-36	House	TX	TX-36	0	TX-36 House winner?	TX-36	D: Rhonda Hart | R: Brian Babin	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-TX37-26	TX-37	House	TX	TX-37	0	TX-37 House winner?	TX-37	D: Greg Casar | R: Lauren B. Peña	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-TX38-26	TX-38	House	TX	TX-38	0	TX-38 House winner?	TX-38	D: Melissa McDonough | R: Jon Bonck	R=yes D=no	1	1	1	1	1
+KXHOUSEUT01-26	UT-01	House	UT	UT-01	0	UT-01 House winner?	UT-01	D: Ben McAdams | R: Riley Owen	D=yes R=no	1	1	1	1	1
+KXHOUSEUT02-26	UT-02	House	UT	UT-02	0	UT-02 House winner?	UT-02	D: Peter Crosby | R: Blake Moore	D=no R=yes	1	1	1	1	1
+KXHOUSEUT03-26	UT-03	House	UT	UT-03	0	UT-03 House winner?	UT-03	D: Kent Udell | R: Celeste Maloy	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-UT04-26	UT-04	House	UT	UT-04	0	UT-04 House winner?	UT-04	D: Jonny Larsen | R: Mike Kennedy	D=no R=yes	1	1	1	1	1
+HOUSEVA1-26	VA-01	House	VA	VA-01	0	VA-01 House winner?	VA-01 VA-1	D: Shannon Taylor | R: Rob Wittman	D=yes R=no	1	1	1	1	1
+HOUSEVA2-26	VA-02	House	VA	VA-02	0	VA-02 House winner?	VA-02 VA-2	D: Elaine Luria | R: Jen Kiggans	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-VA03-26	VA-03	House	VA	VA-03	0	VA-03 House winner?	VA-03	D: Bobby Scott | R: Edwin Rivera	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-VA04-26	VA-04	House	VA	VA-04	0	VA-04 House winner?	VA-04	D: Jennifer McClellan | R: Robert Murray	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-VA05-26	VA-05	House	VA	VA-05	0	VA-05 House winner?	VA-05	D: Tom Perriello | R: John McGuire	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-VA06-26	VA-06	House	VA	VA-06	0	VA-06 House winner?	VA-06	D: Beth Macy | R: Ben Cline	D=no R=yes	1	1	1	1	1
+HOUSEVA7-26	VA-07	House	VA	VA-07	0	VA-07 House winner?	VA-07 VA-7	D: Eugene Vindman | R: Doug Ollivant	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-VA08-26	VA-08	House	VA	VA-08	0	VA-08 House winner?	VA-08	D: Don Beyer | R: Tony Sabio	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-VA09-26	VA-09	House	VA	VA-09	0	VA-09 House winner?	VA-09	D: Joy Powers | R: Morgan Griffith	D=no R=yes	1	1	1	1	1
+KXHOUSEVA10-26	VA-10	House	VA	VA-10	0	VA-10 House winner?	VA-10	D: Suhas Subramanyam | R: Dave Beckwith	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-VA11-26	VA-11	House	VA	VA-11	0	VA-11 House winner?	VA-11	D: James Walkinshaw | R: Arthur Purves	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-VTAL-26	VT-AL	House	VT	VT-AL	0	VT-AL House winner?	VT-AL	D: Becca Balint | R: Gerald Malloy	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-WA01-26	WA-01	House	WA	WA-01	0	WA-01 House winner?	WA-01	D: Suzan DelBene | R: Mary Silva	R=no D=yes	1	1	1	1	1
+KXHOUSERACE-WA02-26	WA-02	House	WA	WA-02	0	WA-02 House winner?	WA-02	D: Rick Larsen | R: Edwin H. Feller	R=no D=yes	1	1	1	1	1
+HOUSEWA3-26	WA-03	House	WA	WA-03	0	WA-03 House winner?	WA-03 WA-3	D: Marie Gluesenkamp Perez | R: John Braun	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-WA04-26	WA-04	House	WA	WA-04	0	WA-04 House winner?	WA-04	D: John Duresky | R: Amanda McKinney	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-WA05-26	WA-05	House	WA	WA-05	0	WA-05 House winner?	WA-05	D: Carmela Conroy | R: Michael Baumgartner	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-WA06-26	WA-06	House	WA	WA-06	0	WA-06 House winner?	WA-06	D: Emily Randall | R: Teresa Fox	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-WA07-26	WA-07	House	WA	WA-07	0	WA-07 House winner?	WA-07	D: Pramila Jayapal | R: Nirav Sheth	D=yes R=no	1	1	1	1	1
+KXHOUSEWA8-26	WA-08	House	WA	WA-08	0	WA-08 House winner?	WA-08	D: Kim Schrier | R: Spencer Meline	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-WA09-26	WA-09	House	WA	WA-09	0	WA-09 House winner?	WA-09	D: Adam Smith | R: Doug Basler	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-WA10-26	WA-10	House	WA	WA-10	0	WA-10 House winner?	WA-10	D: Marilyn Strickland | R: Chris D. Chung	D=yes R=no	1	1	1	1	1
+HOUSEWI1-26	WI-01	House	WI	WI-01	0	WI-01 House winner?	WI-01 WI-1	D: Mitchell Berman | R: Bryan Steil	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-WI02-26	WI-02	House	WI	WI-02	0	WI-02 House winner?	WI-02	D: Mark Pocan | R: Republican party	D=yes R=no	1	1	1	1	1
+HOUSEWI3-26	WI-03	House	WI	WI-03	0	WI-03 House winner?	WI-03 WI-3	D: Rebecca Cooke | R: Derrick Van Orden	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-WI04-26	WI-04	House	WI	WI-04	0	WI-04 House winner?	WI-04	D: Gwen Moore | R: Tim Rogers	D=yes R=no	1	1	1	1	1
+KXHOUSERACE-WI05-26	WI-05	House	WI	WI-05	0	WI-05 House winner?	WI-05	D: Andrew Beck | R: Scott Fitzgerald	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-WI06-26	WI-06	House	WI	WI-06	0	WI-06 House winner?	WI-06	D: Brad Smith | R: Glenn Grothman	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-WI07-26	WI-07	House	WI	WI-07	0	WI-07 House winner?	WI-07	D: Fred Clark | R: Michael Alfonso	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-WI08-26	WI-08	House	WI	WI-08	0	WI-08 House winner?	WI-08	D: Rick Crosson | R: Tony Wied	R=yes D=no	1	1	1	1	1
+KXHOUSERACE-WV01-26	WV-01	House	WV	WV-01	0	WV-01 House winner?	WV-01	D: Vince George | R: Carol Miller	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-WV02-26	WV-02	House	WV	WV-02	0	WV-02 House winner?	WV-02	D: Ace Parsi | R: Riley Moore	D=no R=yes	1	1	1	1	1
+KXHOUSERACE-WYAL-26	WY-AL	House	WY	WY-AL	0	WY-AL House winner?	WY-AL	D: Lisa Kinney | R: Chuck Gray	D=no R=yes	1	1	1	1	1
+SENATEAK-26	AK Senate	Senate	AK		0	Alaska Senate winner?	AK	D: Democratic party | R: Republican party	R=- D=-	1	1	1	1	1
+SENATEAL-26	AL Senate	Senate	AL		0	Alabama Senate winner?	AL	D: Everett Wess | R: Barry Moore	D=no R=yes	1	1	1	1	1
+SENATEAR-26	AR Senate	Senate	AR		0	Arkansas Senate winner?	AR	D: Hallie Shoffner | R: Tom Cotton	R=yes D=no	1	1	1	1	1
+SENATECO-26	CO Senate	Senate	CO		0	Colorado Senate winner?	CO	D: John Hickenlooper | R: Mark Baisley	R=no D=yes	1	1	1	1	1
+SENATEDE-26	DE Senate	Senate	DE		0	Delaware Senate winner?	DE	D: Chris Coons | R: Michael Katz	D=yes R=no	1	1	1	1	1
+SENATEFLS-26	FL Senate (special)	Senate	FL		1	Florida Senate winner?	FL	D: Angie Nixon | R: Ashley Moody	R=yes D=no	1	1		1	1
+SENATEGA-26	GA Senate	Senate	GA		0	Georgia Senate winner?	GA	D: Jon Ossoff | R: Mike Collins	D=yes R=no	1	1	1	1	1
+SENATEIA-26	IA Senate	Senate	IA		0	Iowa Senate winner?	IA	D: Josh Turek | R: Ashley Hinson	D=yes R=no	1	1	1	1	1
+SENATEID-26	ID Senate	Senate	ID		0	Idaho Senate winner?	ID	D: David Roth | R: Jim Risch | TACH: Todd Achilles	R=yes TACH=no D=no	1	1	1	1	1
+SENATEIL-26	IL Senate	Senate	IL		0	Illinois Senate winner?	IL	D: Juliana Stratton | R: Don Tracy	D=yes R=no	1	1	1	1	1
+SENATEKS-26	KS Senate	Senate	KS		0	Kansas Senate winner?	KS	D: Adam Hamilton | R: Roger Marshall	D=yes R=no	1	1	1	1	1
+SENATELA-26	KY Senate	Senate	KY		0	Kentucky Senate winner?	KY	D: Charles Booker | R: Andy Barr	D=no R=yes	1	1	1	1	1
+SENATEMA-26	MA Senate	Senate	MA		0	Massachusetts Senate winner?	MA	D: Ed Markey | R: John Deaton	D=yes R=no	1	1	1	1	1
+SENATEME-26	ME Senate	Senate	ME		0	Maine Senate winner?	ME	D: Troy Jackson | R: Susan Collins	D=yes R=no	1	1	1	1	1
+SENATEMI-26	MI Senate	Senate	MI		0	Michigan Senate winner?	MI	D: Abdul El-Sayed | R: Mike Rogers	D=yes R=no	1	1	1	1	1
+SENATEMN-26	MN Senate	Senate	MN		0	Minnesota Senate winner?	MN	D: Peggy Flanagan | R: Michele Tafoya	D=yes R=no	1	1	1	1	1
+SENATEMS-26	MS Senate	Senate	MS		0	Mississippi Senate winner?	MS	D: Scott Colom | R: Cindy Hyde-Smith	R=no D=yes	1	1	1	1	1
+SENATEMT-26	MT Senate	Senate	MT		0	Montana Senate winner?	MT	D: Alani Bankhead | IND: Seth Bodnar | R: Kurt Alme	D=no R=yes IND=no	1	1	1	1	1
+SENATENC-26	NC Senate	Senate	NC		0	North Carolina Senate winner?	NC	D: Roy Cooper | R: Michael Whatley	D=yes R=no	1	1	1	1	1
+SENATENE-26	NE Senate	Senate	NE		0	Nebraska Senate winner?	NE	D: Cindy Burbank | DOSB: Dan Osborn | R: Pete Ricketts	DOSB=no R=yes D=no	1	1	1	1	1
+SENATENH-26	NH Senate	Senate	NH		0	New Hampshire Senate winner?	NH	D: Chris Pappas | R: John E. Sununu	D=yes R=no	1	1	1	1	1
+SENATENJ-26	NJ Senate	Senate	NJ		0	New Jersey Senate winner?	NJ	D: Cory Booker | R: Justin Murphy	D=yes R=no	1	1	1	1	1
+SENATENM-26	NM Senate	Senate	NM		0	New Mexico Senate winner?	NM	D: Ben Ray Luján | R: Larry E. Marker	D=yes R=no	1	1	1	1	1
+SENATEOHS-26	OH Senate (special)	Senate	OH		1	Ohio Senate winner?	OH	D: Sherrod Brown | R: Jon Husted	D=yes R=no	1	1		1	1
+SENATEOK-26	OK Senate	Senate	OK		0	Oklahoma Senate winner?	OK	D: N’Kiyla Thomas | R: Kevin Hern	D=no R=yes	1	1	1	1	1
+SENATEOR-26	OR Senate	Senate	OR		0	Oregon Senate winner?	OR	D: Jeff Merkley | R: David Brock Smith	R=no D=yes	1	1	1	1	1
+SENATERI-26	RI Senate	Senate	RI		0	Rhode Island Senate winner?	RI	D: Jack Reed | R: Raymond McKay	D=yes R=no	1	1	1	1	1
+SENATESC-26	SC Senate	Senate	SC		0	South Carolina Senate winner?	SC	D: Annie Andrews | R: Darline Graham	D=yes R=no	1	1	1	1	1
+SENATESD-26	SD Senate	Senate	SD		0	South Dakota Senate winner?	SD	BBEN: Brian Bengs | D: Julian Beaudion | R: Mike Rounds	R=yes BBEN=no D=no	1	1	1	1	1
+SENATETN-26	TN Senate	Senate	TN		0	Tennessee Senate winner?	TN	D: Marquita Bradshaw | R: Bill Hagerty	D=no R=yes	1	1	1	1	1
+SENATETX-26	TX Senate	Senate	TX		0	Texas Senate winner?	TX	D: James Talarico | R: Ken Paxton	D=yes R=no	1	1	1	1	1
+SENATEVA-26	VA Senate	Senate	VA		0	Virginia Senate winner?	VA	D: Mark Warner | R: Bert Mizusawa	D=yes R=no	1	1	1	1	1
+SENATEWV-26	WV Senate	Senate	WV		0	West Virginia Senate winner?	WV	D: Rachel Fetty Anderson | R: Shelley Moore Capito	D=no R=yes	1	1	1	1	1
+SENATEWY-26	WY Senate	Senate	WY		0	Wyoming Senate winner?	WY	D: James Byrd | R: Harriet Hageman	D=no R=yes	1	1	1	1	1
+KXSENATELA-26NOV	LA Senate	Senate	LA		0	Louisiana Senate winner?	LA	D: Jamie Davis | R: Julia Letlow	R=yes D=no	1	1	1	1	1
+GOVPARTYKS-27	KS Governor	Governor	KS		0	Kansas Governor winner?	KS	D: Cindy Holscher | R: Ty Masterson	R=no D=yes	1	1	1	1	1
+GOVPARTYNH-28	NH Governor	Governor	NH		0	New Hampshire Governor winner?	NH	D: Cinde Warmington | R: Kelly Ayotte	D=no R=yes	1	1	1	1	1

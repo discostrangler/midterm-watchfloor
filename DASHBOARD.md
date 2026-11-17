@@ -442,6 +442,14 @@ Louisiana and Kentucky had no Senate race. Louisiana's real race is `KXSENATELA-
   or year mismatch; the list now matches the 2026 ballot: 35 Senate (33 + FL and OH specials), 36 Governor, 435 House + DC.
 - **507 races** (35 Senate, 36 Governor, 436 House). Every file built from the race list was rebuilt: crosswalk,
   `race_odds` / `heatmap` / `races` (new LA Senate heatmap row), `night_races` + `night_state`, `polls_kalshi`.
+- **Full audit against Kalshi's live API** (`tools/audit_races.py` → `crosswalk/race_audit.tsv`, one row per race):
+  for all 507 races the live market text names the race's state (House: its district code), office and the 2026
+  election, specials are flagged consistently, and the live contracts and results equal ours. The list matches the
+  2026 ballot (33 + 2 special Senate, 36 Governor, House seats per state = 2020 apportionment, DC). 0 failures.
+- **Late settlements:** five races settled after our Nov 12 catalog crawl (KS Governor D, CO-04 D, AK Governor D,
+  NC-07 R, CA-23 R). Their live status / result / settlement / close are in `raw/catalog/markets_refresh.jsonl`
+  (written by `audit_races.py --write-refresh`), which `build_crosswalk.py` and `build_races_night.py` apply on top of
+  the crawl; the crawl itself is unchanged. Trades after Nov 14 02:33 UTC are not pulled (outside every window shown).
 - `data/bets_state.json` (map "Bets" layer, state panel) is rebuilt from our trades by `tools/build_bets_state.py`
   with Watchfloor's definition, reverse-engineered: each race's own event, UTC hour, taker cost, one bet = fills of
   the same contract and side at the same millisecond. Every state other than KY and LA reproduces Watchfloor's file

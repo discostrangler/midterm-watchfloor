@@ -19,6 +19,8 @@ import ast, csv, gzip, json, os, statistics, sys
 from collections import defaultdict
 from datetime import datetime, timezone
 from multiprocessing import Pool
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from build_crosswalk import refreshed   # noqa: E402  later results from raw/catalog/markets_refresh.jsonl
 
 RAW = os.environ.get("KALSHI_RAW", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "raw"))   # our Kalshi API pull (Midterm_markets/raw)
 OUT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -138,7 +140,7 @@ def main():
     for ln in open(f"{RAW}/catalog/markets.jsonl"):
         if '"event_ticker": "' not in ln: continue
         e = ln.split('"event_ticker": "', 1)[1].split('"', 1)[0]
-        if e in want: ms[e].append(json.loads(ln))
+        if e in want: ms[e].append(refreshed(json.loads(ln)))
     missing = sorted(want - set(ms))
     with Pool(int(os.environ.get("SLURM_CPUS_PER_TASK", 4)), initializer=PARTY.update, initargs=(dict(PARTY),)) as pool:
         res = pool.map(one, [(r, ms[r["race_id"]]) for r in races], chunksize=4)
