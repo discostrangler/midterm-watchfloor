@@ -275,3 +275,4 @@ html, body { margin: 0; background: #0a0f15; }
 .wf-pk-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0; }
 .wf-pk [data-pk=read] { color: var(--wf-fg); margin-top: 6px; }
 .wf-pk [data-pk=chart] svg:focus-visible { outline: 2px solid var(--wf-amber); outline-offset: 2px; }
+.wf .is-o { color: var(--wf-muted); }   /* a NO bet in a race with a third candidate: against one side, not for the other */

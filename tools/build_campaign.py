@@ -81,14 +81,17 @@ def one(job):
 
 def main():
     races = json.load(open(f"{OUT}/data/races.json"))["rows"]
-    sides = {}
+    sides, winner = {}, {}
     for c in csv.DictReader(open(f"{OUT}/crosswalk/race_contracts.tsv"), delimiter="\t"):
         if c["side"] == "D": sides.setdefault(c["event"], c)
+        # the winner is whichever contract of the party event settled YES; never "the Democrat lost, so the
+        # Republican won" (15 races also list an independent / other candidate, e.g. Osborn in Nebraska)
+        if c["result"] == "yes": winner[c["event"]] = c["side"] if c["side"] in ("D", "R") else "O"
     jobs = []
     for r in races:
         c = sides[r["race_id"]]
         st = ts(c["settlement_ts"])
-        jobs.append((r["race_id"], c["ticker"], ts(c["open_time"]), ts(c["close_time"]), round(st) if st else None, {"yes": "D", "no": "R"}.get(c["result"], "")))
+        jobs.append((r["race_id"], c["ticker"], ts(c["open_time"]), ts(c["close_time"]), round(st) if st else None, winner.get(r["race_id"], "")))
     J = {j[0]: j for j in jobs}
     global H
     H = json.load(open(f"{OUT}/data/heatmap.json"))

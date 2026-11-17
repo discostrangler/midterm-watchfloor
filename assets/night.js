@@ -39,7 +39,9 @@
     const d = dash.data(k);
     if (d.status === 'ok' && d.raw.races[id]) evs.push(d.raw.races[id]);
     const sparse = r.open_minutes && r.quote_minutes < 0.25 * r.open_minutes ? `${r.label} had a two-sided quote (carried forward from its last observed candle) for only ${r.quote_minutes} of its ${r.open_minutes} open minutes tonight, with ${r.trades} trades; check the quote age and spread.` : '';
-    return {evs, note: d.status === 'error' ? `Could not load ${r.state}'s races.` : d.status !== 'ok' ? `Loading ${r.label}…` : STATUS_NOTE[r.status] || sparse};
+    const third = d.status === 'ok' && d.raw.races[id] && d.raw.races[id].binary === false
+      ? `${r.label} also has a contract on a third candidate, so a NO bet is against one side rather than for the other, and a Republican-contract price is not 1 − P(D): only Democratic-contract trades are drawn as P(D).` : '';
+    return {evs, note: d.status === 'error' ? `Could not load ${r.state}'s races.` : d.status !== 'ok' ? `Loading ${r.label}…` : [STATUS_NOTE[r.status] || sparse, third].filter(Boolean).join(' ')};
   }
   // the latest quote observed at or before the cursor: never one from a candle that had not ended yet
   function quoteAt(N, q, t) {
@@ -48,8 +50,13 @@
   }
   const tradesOf = (e) => e.trades || trades(e.event);
   const lowerBound = (rows, t) => { let lo = 0, hi = rows.length; while (lo < hi) { const m = (lo + hi) >> 1; if (rows[m][0] < t) lo = m + 1; else hi = m; } return lo; };
-  const pD = (r) => (r[1] === 0 ? r[3] : 1 - r[3]);                 // a trade's price as P(Democrats)
-  const backsD = (r) => (r[1] === 0) === (r[2] === 1);              // bought YES on D or NO on R
+  const pD = (r) => (r[1] === 0 ? r[3] : 1 - r[3]);                 // a trade's price as P(Democrats): two-way races only
+  const backsD = (r) => (r[1] === 0) === (r[2] === 1);              // bought YES on D or NO on R: two-way races only
+  // a race with a third contract (an independent such as Osborn in Nebraska): NO on one party is not a bet on the
+  // other and P(D) is not 1 - P(R), so only Democratic-contract trades are drawn as P(D) and NO bets are "against"
+  const two = (e) => e.binary !== false;
+  const usable = (e, r) => two(e) || r[1] === 0;
+  const betCls = (e, r) => (two(e) ? (backsD(r) ? 'is-d' : 'is-r') : r[2] === 1 ? (r[1] === 0 ? 'is-d' : 'is-r') : 'is-o');
   const el = (tag, cls, text) => { const x = document.createElement(tag); if (cls) x.className = cls; if (text != null) x.textContent = text; return x; };
   // quote at the cursor = the last minute candle that ENDED at or before it
   const qi = (N, t) => Math.floor((t - N.window[0]) / 60) - 1;
@@ -96,7 +103,7 @@
       pts.push(q.bid[i] > 0 && q.ask[i] < 1 ? [A + (i + 1) * 60, q.bid[i], q.ask[i]] : [A + (i + 1) * 60, null, null]);   // null = one-sided: lines break
     let lo = Infinity, hi = -Infinity;
     for (const p of pts) if (p[1] != null) { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[2]); }
-    for (let i = i0; i < i1; i++) { const v = pD(rows[i]); lo = Math.min(lo, v); hi = Math.max(hi, v); }
+    for (let i = i0; i < i1; i++) { if (!usable(e, rows[i])) continue; const v = pD(rows[i]); lo = Math.min(lo, v); hi = Math.max(hi, v); }
     g.font = `500 10.5px ${css('--wf-mono')}`; g.fillStyle = css('--wf-faint');
     if (!isFinite(lo)) { g.fillText('no quotes or trades within 10 min of the cursor', ml, H / 2); return 0; }
     const pad = Math.max(0.004, (hi - lo) * 0.12); lo -= pad; hi += pad;
@@ -105,7 +112,8 @@
     for (let k = 0; k <= 3; k++) { const v = lo + ((hi - lo) * k) / 3; g.beginPath(); g.moveTo(ml, Y(v)); g.lineTo(W - mr, Y(v)); g.stroke(); g.fillText(`${(v * 100).toFixed(1)}¢`, 2, Y(v) + 3); }
     for (let m = Math.ceil(a / 300) * 300; m <= b; m += 300) g.fillText(fT.format(D(m)), X(m) - 16, H - 4);
     for (let i = i0; i < i1; i++) {                                   // trades: one dot each, area ~ contracts
-      const r = rows[i]; g.fillStyle = backsD(r) ? css('--wf-dem') : css('--wf-rep'); g.globalAlpha = 0.55;
+      const r = rows[i]; if (!usable(e, r)) continue;
+      g.fillStyle = { 'is-d': css('--wf-dem'), 'is-r': css('--wf-rep'), 'is-o': css('--wf-muted') }[betCls(e, r)]; g.globalAlpha = 0.55;
       g.beginPath(); g.arc(X(r[0]), Y(pD(r)), Math.max(1, Math.min(7, Math.sqrt(r[4]) / 12)), 0, 6.3); g.fill();
     }
     g.globalAlpha = 1;
@@ -130,7 +138,7 @@
       const seen = qt ? `observed ${fT.format(D(qt.t))}, ${age(t - qt.t)} before the cursor` : 'no two-sided quote yet in this window';
       add('Bid / ask', open && qt ? `${cents(qt.bid)} / ${cents(qt.ask)}` : '— / —', open ? seen : qt ? `no quotes after trading stops · last was ${cents(qt.bid)} / ${cents(qt.ask)}, ${fT.format(D(qt.t))}` : 'trading has stopped');
       add('Quoted mid', open && qt && qt.two ? cents((qt.bid + qt.ask) / 2) : '—', open && qt ? (qt.two ? `spread ${cents(qt.ask - qt.bid)}` : 'one-sided book: no two-sided quote, so no midpoint') : '');
-      if (rows) { const j = lowerBound(rows, t + 1e-9) - 1, r = rows[j];
+      if (rows) { let j = lowerBound(rows, t + 1e-9) - 1; while (j >= 0 && !usable(e, rows[j])) j--; const r = rows[j];
         add('Last trade', r ? cents(pD(r)) : '—', r ? `${age(t - r[0])} before the cursor · ${fS.format(D(r[0]))}${r[1] ? ' · on the Republican contract, shown as 1 − price' : ''}` : 'none yet in this window'); }
       else add('Last trade', '…', 'loading trades');
       const st = (x) => (x ? fMD.format(D(x)) + (fY.format(D(x)) === '2026' ? '' : `, ${fY.format(D(x))}`) : 'not yet');
@@ -140,12 +148,13 @@
   }
   function nearby(ol, head, evs, t) {
     const out = [];
-    for (const e of evs) { const rows = tradesOf(e); if (!rows) continue; for (let i = lowerBound(rows, t - NEAR), n = lowerBound(rows, t + NEAR); i < n; i++) out.push([e.label, rows[i]]); }
+    for (const e of evs) { const rows = tradesOf(e); if (!rows) continue; for (let i = lowerBound(rows, t - NEAR), n = lowerBound(rows, t + NEAR); i < n; i++) out.push([e.label, rows[i], e]); }
     out.sort((p, q) => q[1][0] - p[1][0]);
     head.textContent = `${out.length.toLocaleString()} trades, ${Math.round(d3.sum(out, (d) => d[1][4])).toLocaleString()} contracts within ${NEAR} s of the cursor${out.length > 80 ? ' · largest 80 shown' : ''}`;
     const show = out.length > 80 ? out.slice().sort((p, q) => q[1][4] - p[1][4]).slice(0, 80).sort((p, q) => q[1][0] - p[1][0]) : out;
-    ol.replaceChildren(...show.map(([ch, r]) => { const li = el('li', `wf-nt-tr ${backsD(r) ? 'is-d' : 'is-r'}`);
-      li.append(el('span', 'wf-nt-tt', fS.format(D(r[0]))), el('span', null, ch), el('span', null, `${r[2] ? 'YES' : 'NO'} ${r[1] ? 'R' : 'D'}`), el('span', null, `P(D) ${cents(pD(r))}`), el('span', null, `${r[4].toLocaleString()} contracts`)); return li; }));
+    ol.replaceChildren(...show.map(([ch, r, e]) => { const li = el('li', `wf-nt-tr ${betCls(e, r)}`);
+      const price = usable(e, r) ? `P(D) ${cents(pD(r))}` : `R contract ${cents(r[3])}`;   // three-way race: an R price is not 1 - P(D)
+      li.append(el('span', 'wf-nt-tt', fS.format(D(r[0]))), el('span', null, ch), el('span', null, `${r[2] ? 'YES' : 'NO'} ${r[1] ? 'R' : 'D'}`), el('span', null, price), el('span', null, `${r[4].toLocaleString()} contracts`)); return li; }));
     if (!show.length) ol.append(el('li', 'wf-nt-empty', 'No trades this close to the cursor.'));
   }
   function onAir(box, N, t, all) {

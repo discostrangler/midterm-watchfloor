@@ -27,6 +27,28 @@ ST = {"Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "Calif
 ST_RX = re.compile("|".join(sorted(map(re.escape, ST), key=len, reverse=True)))
 
 
+TITLE_KEYS = [(re.compile(r"^(?P<st>[A-Z][a-z]+(?: [A-Z][a-z]+)?) Senate winner\?"), "Senate"),
+              (re.compile(r"^(?P<st>[A-Z][a-z]+(?: [A-Z][a-z]+)?) Governor winner\?"), "Governor"),
+              (re.compile(r"^(?P<code>[A-Z]{2})-(?P<d>\d\d)(?: House)? winner\?"), "House"),
+              (re.compile(r"^(?P<st>Alaska) U\.S\. House winner\?"), "House")]
+
+
+def key_from_title(title, ms):
+    """2026 winner events whose ticker no pattern knows (KXMISENATE-26, KXCAELECTION-2640, KXCA17PERSON-26,
+    KXALASKAHOUSE-26 ...): the race key from the event's own title; only when its markets say 2026"""
+    if "2026" not in " ".join(f"{m.get('title', '')} {m.get('rules_primary', '')}" for m in ms) or re.search(r"Lieutenant|Lt\. Gov", title): return None
+    for rx, office in TITLE_KEYS:
+        g = rx.match(title or "")
+        if not g: continue
+        gd = g.groupdict()
+        if office == "House" and gd.get("code"): return (office, gd["code"], gd["d"], False)
+        st = ST.get(gd.get("st"))
+        if not st: return None                                           # not a US state (Brazilian governors etc.)
+        if office == "House": return (office, st, "AL", False)
+        return (office, st, "", bool(re.search(r"\bspecial\b", title, re.I)))
+    return None
+
+
 def text_cycle(ms, cyc):
     """the election year the rules describe ("pursuant to the 2026 election"), as a 2-digit cycle; else the ticker's.
     GOVPARTYKS-27 and GOVPARTYNH-28 are the 2026 Kansas and New Hampshire governor races (ticker = another year)."""
@@ -67,16 +89,25 @@ def main():
     names = {}
     for ln in open(f"{RAW}/catalog/structured_targets.jsonl"):
         d = json.loads(ln); names[d["id"]] = d.get("name")
+    titles = {d["event_ticker"]: d.get("title", "") for d in map(json.loads, open(f"{RAW}/catalog/events.jsonl"))}
     ev = collections.defaultdict(list)                       # event -> contracts
     for ln in open(f"{RAW}/catalog/markets.jsonl"):
         if '"event_ticker": "' not in ln: continue
         e = ln.split('"event_ticker": "', 1)[1].split('"', 1)[0]
-        if key_of(e)[0]: ev[e].append(refreshed(json.loads(ln)))
+        if key_of(e)[0] or any(rx.match(titles.get(e, "")) for rx, _ in TITLE_KEYS): ev[e].append(refreshed(json.loads(ln)))
+    by_title = {}
+    for e in list(ev):
+        if key_of(e)[0]: continue
+        k = key_from_title(titles.get(e, ""), ev[e])
+        if k: by_title[e] = k
+        else: del ev[e]
+    print("winner events keyed from their title (ticker unknown to the patterns):", sorted(by_title))
     I = lambda t, f: int(float(cov.get(t, {}).get(f) or 0))
     contracts, events = [], {}
     fixed = []
     for e, ms in ev.items():
         k, cyc = key_of(e)
+        if not k: k, cyc = by_title[e], "26"
         c2 = text_cycle(ms, cyc)
         if c2 != cyc: fixed.append((e, f"cycle {cyc}", f"cycle {c2}", ms[0].get("title", ""))); cyc = c2
         ts_ = text_state(ms) if k[0] != "House" else None

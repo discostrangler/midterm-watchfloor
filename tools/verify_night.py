@@ -43,15 +43,16 @@ for e, t in zip(sys.argv[1::2], map(int, sys.argv[2::2])):
     for ln in rd(f"{RAW}/trades/{e}.jsonl.gz"):
         d = json.loads(ln)
         if d["trade_id"] in seen or d["ticker"] not in sides: continue
+        if ev.get("binary") is False and sides[d["ticker"]] != "D": continue      # three-way race: only D-contract trades are P(D)
         seen.add(d["trade_id"]); x = ts(d["created_time"])
         if x < A: continue
         p = float(d["yes_price_dollars"]); p = p if sides[d["ticker"]] == "D" else 1 - p
         if x < t and (last is None or x >= last[0]): last = (x, p)
         if t - 60 <= x < t + 60: near += 1; cnt += float(d["count_fp"])
     bq = quote_at(ev["quotes"]["D"], min(t, close))
-    bl = [r for r in rows if r[0] < t]; bl = bl[-1] if bl else None
+    bl = [r for r in rows if r[0] < t and (ev.get("binary") is not False or r[1] == 0)]; bl = bl[-1] if bl else None
     bp = None if bl is None else bl[3] if bl[1] == 0 else 1 - bl[3]
-    bn = [r for r in rows if t - 60 <= r[0] < t + 60]
+    bn = [r for r in rows if t - 60 <= r[0] < t + 60 and (ev.get("binary") is not False or r[1] == 0)]
     ok = (q is None and bq is None or q is not None and bq is not None and (q[0], round(q[1], 4), round(q[2], 4)) == (bq[0], round(bq[1], 4), round(bq[2], 4))) \
         and (last is None and bp is None or last is not None and bp is not None and abs(bp - last[1]) < 1e-9) and len(bn) == near and abs(sum(r[4] for r in bn) - cnt) < 1
     bad += not ok

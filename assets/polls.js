@@ -11,7 +11,8 @@
   const css = (v) => getComputedStyle(document.getElementById('watchfloor')).getPropertyValue(v).trim() || '#888';
   const el = (tag, cls, text) => { const x = document.createElement(tag); if (cls) x.className = cls; if (text != null) x.textContent = text; return x; };
   const usd = (v) => (v >= 1e6 ? `$${(v / 1e6).toFixed(1)}M` : v >= 1e3 ? `$${(v / 1e3).toFixed(0)}K` : `$${Math.round(v)}`);
-  const mg = (v) => (v == null ? '—' : Math.abs(v) < 0.05 ? 'tied' : `${v > 0 ? 'D' : 'R'} +${Math.abs(v).toFixed(1)}`);
+  let OPP = 'D';                                                     // the non-Republican side: 'I' where the Democrat withdrew (ID, NE, SD Senate)
+  const mg = (v) => (v == null ? '—' : Math.abs(v) < 0.05 ? 'tied' : `${v > 0 ? OPP : 'R'} +${Math.abs(v).toFixed(1)}`);
   const CTRL = ['CONTROLS-2026', 'CONTROLH-2026'];
   const SRC = ['Wikipedia', 'VoteHub', 'Wikipedia + VoteHub'];
   dash.load('pk:US', 'data/polls_kalshi/US.json');
@@ -50,7 +51,9 @@
 
   function draw(box, S, X, m) {
     const W = Math.max(320, box.clientWidth || 900), ml = 64, mr = 16, rows = [['margin', 110], ['polls', 46], ['trades', 46], ['usd', 46], ['mid', 70]];
-    const ROWLAB = {margin: S.kind === 'us' ? 'Generic ballot D − R' : 'Poll margin D − R', polls: 'Polls', trades: 'Kalshi trades', usd: 'Kalshi $', mid: S.kind === 'us' ? 'Control P(D)' : 'Quoted mid P(D)'};
+    const o = S.rec.opp, sur = o ? o.name.split(' ').pop() : '';
+    const ROWLAB = {margin: S.kind === 'us' ? 'Generic ballot D − R' : o ? `Poll margin ${sur} (${o.party}) − R` : 'Poll margin D − R', polls: 'Polls', trades: 'Kalshi trades', usd: 'Kalshi $',
+      mid: S.kind === 'us' ? 'Control P(D)' : o ? `Quoted mid P(${sur})` : 'Quoted mid P(D)'};
     let y0 = 34; const Y = {};   // the strip above the rows holds the poll-size key
     for (const [k, h] of rows) { Y[k] = {top: y0, h}; y0 += h + 8; }
     const H = y0 + 18, [a, b] = X.dom, x = d3.scaleLinear([a, b + 1], [ml, W - mr]);
@@ -169,7 +172,7 @@
     p.textContent = `${S.label}, up to ${lbl(cd - 1)} (the day before the cursor): ${before.length} poll${before.length === 1 ? '' : 's'}`
       + (last5.length ? `, latest ${last5.length} average ${mg(d3.mean(last5, (q) => q.m))} (latest: ${before[before.length - 1].p[4]}, ${mg(before[before.length - 1].m)}, ${X.mode === 'added' ? 'added' : 'field ended'} ${lbl(before[before.length - 1].d)})` : '')
       + `. Last 7 days: ${before.filter((q) => wk(q.d)).length} polls, ${d3.format(',')(d3.sum(k7, (r) => r[1]))} Kalshi trades, ${usd(d3.sum(k7, (r) => r[2]))}. `
-      + mids.map(([id, v]) => `${S.kind === 'us' ? (id === 'CONTROLS-2026' ? 'Senate control' : 'House control') : 'Quoted mid'} at the end of that day: ${typeof v === 'number' ? `${(v * 100).toFixed(1)}%` : v === 'closed' ? 'trading closed' : 'no quote'}`).join(' · ') + '.';
+      + mids.map(([id, v]) => `${S.kind === 'us' ? (id === 'CONTROLS-2026' ? 'Senate control' : 'House control') : S.rec.opp ? `Quoted mid of the ${S.rec.opp.name} contract` : 'Quoted mid'} at the end of that day: ${typeof v === 'number' ? `${(v * 100).toFixed(1)}%` : v === 'closed' ? 'trading closed' : 'no quote'}`).join(' · ') + '.';
   }
 
   dash.draw('pk', {
@@ -191,14 +194,15 @@
         q('[data-pk=read]').textContent = ''; m.note.textContent = ''; m.live.textContent = '';
         return;
       }
-      day0 = Date.parse(`${S.meta.day0}T00:00:00Z`);
+      day0 = Date.parse(`${S.meta.day0}T00:00:00Z`); OPP = S.rec.opp ? S.rec.opp.party : 'D';
       const X = series(S, m.mode); X.mode = m.mode;
       const firsts = [X.polls[0]?.d, X.k[0]?.[0], ...X.mids.map(({mid}) => mid[0]?.[0])].filter((v) => v != null);
       const b = S.meta.days - 1, a = Math.max(0, Math.min(b - 60, (firsts.length ? Math.min(...firsts) : 0) - 7));
       X.dom = [a, b]; X.bin = b - a + 1 <= 150 ? 1 : 7;
       q('[data-pk=sub]').textContent = `${S.label} · ${X.polls.length} ${S.kind === 'us' ? 'generic-ballot' : 'head-to-head'} poll${X.polls.length === 1 ? '' : 's'}${X.hidden ? ` (${X.hidden} without a usable VoteHub added date are hidden)` : ''} · ${X.bin === 1 ? 'per day' : 'per week'}`;
       const key = `${WF.race}|${m.mode}|${m.chart.clientWidth}`;
-      if (key !== m.key || !m.chart.isConnected || !m.chart.firstChild) { m.key = key; m.tip.hidden = true; m.ov = draw(m.chart, S, X, m); m.note.textContent = S.note || ''; }
+      const oNote = S.rec.opp ? `The Democratic nominee, ${S.rec.opp.withdrawn}, withdrew; the race was the Republican vs ${S.rec.opp.name} (independent). Polls here are Republican vs ${S.rec.opp.name}, the margin is ${S.rec.opp.party} − R, and the price row is Kalshi's ${S.rec.opp.name} contract. Polls that named only ${S.rec.opp.withdrawn} are left out. Kalshi still captions its Democratic contract with ${S.rec.opp.withdrawn}.` : '';
+      if (key !== m.key || !m.chart.isConnected || !m.chart.firstChild) { m.key = key; m.tip.hidden = true; m.ov = draw(m.chart, S, X, m); m.note.textContent = [S.note, oNote].filter(Boolean).join(' '); }
       const cd = dayOf(WF.t);
       m.ov.cur.attr('x1', m.ov.x(cd)).attr('x2', m.ov.x(cd)).style('display', cd >= m.ov.a && cd <= m.ov.b ? null : 'none');
       readout(q('[data-pk=read]'), S, X);

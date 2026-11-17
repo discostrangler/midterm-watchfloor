@@ -74,6 +74,62 @@ def main():
         if not b.get("race_id") and e in rid: b["race_id"] = e; n += 1
     json.dump(KB, open(f"{OUT}/data/kalshi_big.json", "w"), separators=(",", ":"))
     print(f"bets_state rows {len(rows):,}; kalshi_big rows linked to a race: {n}")
+    fix_party_labels(races)
+
+
+def fix_party_labels(races):
+    """Watchfloor's rule "a bet backs D when it buys YES on D or NO on R" only holds in a two-way race. 15 races also
+    list an independent / other contract (SENATENE-26-DOSB Osborn, SENATEID-26-TACH Achilles, ...): there a NO bet is
+    against one side, not for the other. big_bets.json: such NO bets -> backs "O". bets_flow.json (national flow):
+    those NO bets move from d / rr to o, and the three 2026 races Watchfloor's list lacked (KXSENATELA-26NOV,
+    GOVPARTYKS-27, GOVPARTYNH-28) are added with the same rule, trade by trade, into the existing bins."""
+    import csv
+    rc = list(csv.DictReader(open(f"{OUT}/crosswalk/race_contracts.tsv"), delimiter="\t"))
+    rid = {r["race_id"] for r in races}
+    third = {c["event"] for c in rc if c["event"] in rid and c["side"] not in ("D", "R")}
+    side = {c["ticker"]: c["side"] for c in rc}
+    # big bets
+    orig = f"{OUT}/private/big_bets.lawrence.json"
+    if not os.path.exists(orig): shutil.copy(f"{OUT}/data/big_bets.json", orig)
+    BB = json.load(open(orig)); n = 0
+    for b in BB["rows"]:
+        if b["race_id"] in third and b["taker"] == "no" and b["backs"] in ("D", "R"): b["backs"] = "O"; n += 1
+    BB.setdefault("meta", {})["party_rule"] = "backs D/R = YES on that party's contract, or NO on the other's in a two-way race; in the 15 races with a third contract a NO bet backs O"
+    json.dump(BB, open(f"{OUT}/data/big_bets.json", "w"), separators=(",", ":"))
+    print(f"big_bets: {n} NO bets in three-way races relabeled O")
+    # national flow
+    orig = f"{OUT}/private/bets_flow.lawrence.json"
+    if not os.path.exists(orig): shutil.copy(f"{OUT}/data/bets_flow.json", orig)
+    FL = json.load(open(orig)); bins = {r["t"]: r for r in FL["rows"]}
+    N0, N1 = 1793743200, 1793808000                       # 1-minute bins inside the election-night detail window
+    def row(t):
+        b = int(t // 60 * 60) if N0 <= t < N1 else int(t // 600 * 600)
+        return bins.get(b) or bins.setdefault(b, {"t": b, "r": 60 if N0 <= t < N1 else 600, "d": 0.0, "rr": 0.0, "o": 0.0, "bets": 0})
+    moved, added, t0, t1 = 0.0, 0.0, min(bins), max(r["t"] + r["r"] for r in bins.values())
+    for e in sorted(third | {"KXSENATELA-26NOV", "GOVPARTYKS-27", "GOVPARTYNH-28"}):
+        new = e in ("KXSENATELA-26NOV", "GOVPARTYKS-27", "GOVPARTYNH-28")
+        seen, orders = set(), set()
+        for ln in gzip.open(f"{RAW}/trades/{e}.jsonl.gz", "rt"):
+            d = json.loads(ln)
+            if d["trade_id"] in seen: continue
+            seen.add(d["trade_id"])
+            t = datetime.fromisoformat(d["created_time"].replace("Z", "+00:00")).timestamp()
+            if not t0 <= t < t1: continue
+            sd, yes = side.get(d["ticker"], ""), d["taker_side"] == "yes"
+            usd = float(d["count_fp"]) * float(d["yes_price_dollars"] if yes else d["no_price_dollars"])
+            r = row(t)
+            if new:                                       # missing race: add it (two-way: NO on one party backs the other)
+                k = ("d" if (sd == "D") == yes else "rr") if sd in ("D", "R") else "o"
+                r[k] += usd; added += usd
+                o = (d["ticker"], d["taker_side"], round(t, 3))
+                if o not in orders: orders.add(o); r["bets"] += 1
+            elif sd in ("D", "R") and not yes:            # three-way race: this NO bet was credited to the other party
+                r["rr" if sd == "D" else "d"] -= usd; r["o"] += usd; moved += usd
+    FL["rows"] = [{**r, "d": round(r["d"], 2), "rr": round(r["rr"], 2), "o": round(r["o"], 2)} for _, r in sorted(bins.items())]
+    FL["meta"]["corrections"] = ("tools/build_bets_state.py: NO bets in the 15 three-way races moved from d/rr to o; "
+                                 "KXSENATELA-26NOV, GOVPARTYKS-27, GOVPARTYNH-28 added (missing from Watchfloor's race list)")
+    json.dump(FL, open(f"{OUT}/data/bets_flow.json", "w"), separators=(",", ":"))
+    print(f"bets_flow: ${moved:,.0f} of NO bets in three-way races moved to other; ${added:,.0f} of the three added races")
 
 
 if __name__ == "__main__":

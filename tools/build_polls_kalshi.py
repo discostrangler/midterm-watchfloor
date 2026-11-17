@@ -51,6 +51,15 @@ STOP = {"the", "of", "and", "university", "college", "research", "polling", "pol
 pkey = lambda p: next((t for t in norm(re.sub(r"\(.*?\)", "", str(p))).split() if t not in STOP), norm(p)[:8])
 
 
+# Races where the Democratic nominee withdrew and the general election was Republican vs an independent. Kalshi still
+# captions its D contract with the withdrawn Democrat. Here the opponent is the independent: polls are R vs that
+# independent ("I - R" margin) and the price row is the independent's contract. Polls that only name the withdrawn
+# Democrat are left out (counted), never relabeled. Sources: crosswalk audit 2026-11-16 (Audit/api-race-audit-20261116),
+# SD SoS candidate list (Beaudion withdrew Aug 4), East Idaho News (Roth withdrew), Nebraska official ballots (Osborn, petition).
+FINAL_OPP = {"SENATEID-26": ("Todd Achilles", "I", "David Roth"), "SENATENE-26": ("Dan Osborn", "I", "Cindy Burbank"),
+             "SENATESD-26": ("Brian Bengs", "I", "Julian Beaudion")}
+
+
 def races():
     """race_id -> key, label pieces, Kalshi events, D/R nominee last names, D contract of the party event."""
     R = {}
@@ -67,6 +76,14 @@ def races():
         if nm and last(nm): R[rid][c["side"]].add(last(nm))
         if c["event"] == rid and c["side"] == "D":
             R[rid]["dtk"] = (c["ticker"], ts(c["close_time"]), ts(c["settlement_ts"]), {"yes": "D", "no": "R"}.get(c["result"], ""))
+    for c in csv.DictReader(open(f"{OUT}/crosswalk/race_contracts.tsv"), delimiter="\t"):
+        if c["event"] in FINAL_OPP and last(c["politician"] or c["yes_sub_title"]) == last(FINAL_OPP[c["event"]][0]):
+            x = R[c["event"]]
+            x["withdrawn"] = {last(FINAL_OPP[c["event"]][2])}
+            x["D"] = {last(FINAL_OPP[c["event"]][0])}                        # the opponent slot: the independent
+            x["dtk"] = (c["ticker"], ts(c["close_time"]), ts(c["settlement_ts"]), {"yes": "D", "no": "R"}.get(c["result"], ""))   # "D" = this contract won
+            x["opp"] = {"name": FINAL_OPP[c["event"]][0], "party": FINAL_OPP[c["event"]][1], "withdrawn": FINAL_OPP[c["event"]][2]}
+    assert all("opp" in R[k] for k in FINAL_OPP), "independent contract not found for " + str([k for k in FINAL_OPP if "opp" not in R[k]])
     return R
 
 
@@ -98,6 +115,8 @@ def polls(R):
         if not rid: continue
         d = next((p for c, p in zip(g.candidate, g.pct) if any(n and n in norm(c).split() for n in R[rid]["D"])), None)
         rr = next((p for c, p in zip(g.candidate, g.pct) if any(n and n in norm(c).split() for n in R[rid]["R"])), None)
+        if d is None and rr is not None and R[rid].get("withdrawn") and any(n in norm(c).split() for c in g.candidate for n in R[rid]["withdrawn"]):
+            dropped["named the withdrawn Democrat, not the independent"].append((rid, str(r0.end.date()), str(r0.pollster))); continue
         if d is None or rr is None or pd.isna(r0.end): continue
         if not DAY0 <= r0.end.date() <= DAY1: dropped["outside the cycle"].append((rid, str(r0.end.date()), str(r0.pollster))); continue
         tag = re.search(r"\((D|R)\)", str(r0.pollster))
@@ -136,6 +155,8 @@ def polls(R):
         if not rid: continue
         d = next((x["pct"] for x in ans if last(x.get("choice", "")) in R[rid]["D"]), None)
         rr = next((x["pct"] for x in ans if last(x.get("choice", "")) in R[rid]["R"]), None)
+        if d is None and rr is not None and R[rid].get("withdrawn") and names & R[rid]["withdrawn"]:
+            dropped["named the withdrawn Democrat, not the independent"].append((rid, str(p.end.date()), str(p.pollster))); continue
         if d is None or rr is None: continue
         n_vh += 1
         row = {"end": p.end.date(), "created": p.created.date() if pd.notna(p.created) else None, "D": float(d), "R": float(rr), "pollster": str(p.pollster),
@@ -220,7 +241,7 @@ def main():
     os.makedirs(f"{OUT}/data/polls_kalshi", exist_ok=True)
     by_st = defaultdict(dict)
     for rid, x in R.items():
-        by_st[x["state"]][rid] = {"polls": [prow(p) for p in sorted(P.get(rid, []), key=lambda p: p["end"])], **K[rid]}
+        by_st[x["state"]][rid] = {"polls": [prow(p) for p in sorted(P.get(rid, []), key=lambda p: p["end"])], **K[rid], **({"opp": x["opp"]} if "opp" in x else {})}
     for st, races_ in by_st.items():
         json.dump({"races": races_, "meta": meta}, open(f"{OUT}/data/polls_kalshi/{st}.json", "w"), separators=(",", ":"))
     us = {"polls": [prow(p) + [p["pop"]] for p in G], "markets": {rid: K[rid] for rid in nc}}

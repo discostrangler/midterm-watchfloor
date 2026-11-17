@@ -455,6 +455,26 @@ Louisiana and Kentucky had no Senate race. Louisiana's real race is `KXSENATELA-
   the same contract and side at the same millisecond. Every state other than KY and LA reproduces Watchfloor's file
   exactly (25,917 of 25,917 state-hours outside KY, LA, KS, NH). `kalshi_big.json` rows on a race event now carry its race_id.
 - Election-night readout for both markets matches a recount from raw (`tools/verify_night.py`).
+- **Second audit (Audit/api-race-audit-20261116), all five findings checked and handled:**
+  1. *New Hampshire minute candles* were never pulled (its `-28` ticker kept it out of the linked set). Added to the
+     linked lists and fetched with `scrape.py`'s own fetchers (`Midterm_markets/backfill_20261116.py`): 5,986 window rows,
+     115,010 full-life rows; its night readout now has quotes (checked against raw).
+  2. *15 candidate-style winner events* (`KXMISENATE-26`, `KXAKSENATE-26NOV03`, `KXMESENATEPERSON-26`, `KXIASENATE-26`,
+     `KXALASKAHOUSE-26`, `KXCA11PERSON-26`, `KXCA17PERSON-26`, `KXCAELECTION-26xx` ×8) are now keyed from their event
+     titles and listed in their race's `kalshi_events`, so the Polls vs Kalshi trade and dollar totals include them.
+     Prices still come from the party event; `bets_state` still counts each race's own event only (Watchfloor's definition).
+  3. *Three-way races:* 15 races list a third contract (an independent or other candidate). There a NO bet is not a
+     bet on the other party and P(D) ≠ 1 − P(R). Winners now come from the contract that settled YES; the night export
+     marks `binary: false` and the panel draws only Democratic-contract trades as P(D), NO bets as "against";
+     `big_bets.json` relabels the two such NO bets (NE Senate $129,518, NE-01 $41,212) as other; `bets_flow.json` moves
+     $2.19M of such NO bets to other and adds the three races Watchfloor's list lacked ($3.51M). Originals in `private/`.
+  4. *Withdrawn Democrats:* in ID (David Roth), NE (Cindy Burbank) and SD (Julian Beaudion) Senate the race was
+     Republican vs an independent (Achilles, Osborn, Bengs). The polls panel uses the independent as the opponent
+     (margin "I − R", price row = the independent's contract); each of the seven earlier Democrat polls also polled
+     the independent, so it now shows that number from the same survey. Nothing is relabeled.
+  5. *Volume shortfalls* on 11 finalized contracts: a complete fresh re-fetch from the API (`raw/trades_refetch_20261116/`)
+     returns exactly the trades we hold (0 new trade IDs). Kalshi's volume figure exceeds the trades its API serves by
+     0.002–0.26%; this is on Kalshi's side, not a gap in our pull.
 - **Still open:** (1) `KXSENATELA-26NOV`, `GOVPARTYKS-27` and `GOVPARTYNH-28` have no market-card file (`data/race/`, `data/trades/`): those come from
   Watchfloor's build script, which is not in the repo; its card says the copy does not include the file. (2) Kentucky
   Senate has no polls: Subhrajit's `polls_full.py` builds its race list from tickers too, so it fetched Louisiana's

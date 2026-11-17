@@ -65,9 +65,10 @@ def one(job):
     opened = round(ts(dm["open_time"])) if dm else None
     open_min = max(0, (min(B, close or B) - max(A, opened or A)) // 60) if dm else 0   # minutes of the window the D contract was trading
     settle = round(ts(dm.get("settlement_ts"))) if dm and dm.get("settlement_ts") else None
-    result = ""
-    if "D" in sides and sides["D"].get("result") in ("yes", "no"): result = "D" if sides["D"]["result"] == "yes" else "R"
-    elif "R" in sides and sides["R"].get("result") in ("yes", "no"): result = "R" if sides["R"]["result"] == "yes" else "D"
+    # the winner is the contract that settled YES (an independent's contract counts as "O"), never inferred from D = no
+    won = next((m for m in ms if m.get("result") == "yes"), None)
+    result = "" if not won else next((s for s, m in sides.items() if m["ticker"] == won["ticker"]), "O")
+    binary = len(ms) == 2 and set(sides) == {"D", "R"}   # only then is NO on one side a bet on the other, and P(D) = 1 - P(R)
     q = {k: [None] * N for k in ("bid", "ask", "last")}
     qR, seed = 0, None                     # seed: the D book last observed at or before the window start
     tk = {m["ticker"]: s for s, m in sides.items()}
@@ -125,7 +126,7 @@ def one(job):
            "minutes_with_trade_D": sum(1 for v in q["last"] if v is not None), "trades_in_window": len(trades), "contracts_in_window": round(sum(r[4] for r in trades)),
            "first_trade_et": et_str(trades[0][0]) if trades else "", "last_trade_et": et_str(trades[-1][0]) if trades else ""}
     exp = {"open_minutes": open_min, "event": e, "label": race["label"], "office": race["office"], "state": race["state"], "district": race["district"], "special": race["special"],
-           "close_ts": close, "settle_ts": settle, "result": result, "status": status, "sides": {s: m["ticker"] for s, m in sides.items()},
+           "close_ts": close, "settle_ts": settle, "result": result, "status": status, "sides": {s: m["ticker"] for s, m in sides.items()}, "binary": binary,
            "quotes": {"D": q}, "trades": trades}
     return race["state"], cov, exp
 
