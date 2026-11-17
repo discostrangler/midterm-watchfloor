@@ -476,9 +476,7 @@ Louisiana and Kentucky had no Senate race. Louisiana's real race is `KXSENATELA-
      returns exactly the trades we hold (0 new trade IDs). Kalshi's volume figure exceeds the trades its API serves by
      0.002–0.26%; this is on Kalshi's side, not a gap in our pull.
 - **Still open:** (1) `KXSENATELA-26NOV`, `GOVPARTYKS-27` and `GOVPARTYNH-28` have no market-card file (`data/race/`, `data/trades/`): those come from
-  Watchfloor's build script, which is not in the repo; its card says the copy does not include the file. (2) Kentucky
-  Senate has no polls: Subhrajit's `polls_full.py` builds its race list from tickers too, so it fetched Louisiana's
-  Wikipedia page for `SENATELA-26` and never Kentucky's; VoteHub has no Kentucky Senate polls. (3) Watchfloor's
+  Watchfloor's build script, which is not in the repo; its card says the copy does not include the file. (2) ~~Kentucky Senate has no polls~~ fixed 2026-11-17, see below. (3) Watchfloor's
   national `bets_flow.json` and `big_bets.json` still lack these three markets (national totals only). (4) New Hampshire's
   governor market has no minute candles in our pull, so its election night has only the hourly book. (5) Several races
   also have a candidate-style "who wins" market the crosswalk does not list (e.g. `KXMISENATE-26`, `KXAKSENATE-26NOV03`,
@@ -515,3 +513,18 @@ as empty (fault-injection tested); the night export no longer carries Kalshi's c
 `raw/provider_anomalies.jsonl` lists the provider inconsistencies (candle volume vs trades, minute vs hour candle
 volume, traded hours with no candle, trades after catalog close, catalog volume above the trades the API serves),
 each with whether a fresh request reproduced it. Traded quantity and dollars everywhere come from deduplicated trades.
+
+## 21. Kentucky Senate polls: fixed collector (2026-11-17)
+
+Subhrajit's `collect/polls_full.py` builds its race list from Kalshi tickers (`polls_wikipedia.races()`), so it sent
+`SENATELA-26` (Kentucky) to Louisiana's Wikipedia page and never fetched Kentucky's; it also skipped the House pages of
+the five at-large states (DE, ND, SD, VT, WY). A copy with one change lives in `Midterm_markets/polls/collect/` (his
+tree is untouched; not in this public repo): `races()` reads the audited race list (`data/races.json`,
+`crosswalk/race_crosswalk.tsv`, `crosswalk/race_contracts.tsv`). It reuses his 115 cached pages and fetched the 6
+missing ones. `build_polls_kalshi.py` now reads `POLLS_FULL=Midterm_markets/polls/data/polls/full` (his VoteHub table,
+our Wikipedia table). Result: 1,671 head-to-heads in 178 races (was 1,657 in 174). Kentucky Senate has its two
+general-election polls on Wikipedia (PPP Dec 19 2025: Barr 49, Booker 38; Global Strategy Group Aug 27 2026: Barr 49,
+Booker 40); its other 25 are primaries. No race lost a poll; five others gained (KS Governor +7, MN-01 +2, LA-06,
+NC-07, NC-10 +1) because candidate names now come from our contracts. DC's delegate race has no state page and, as
+in the original, is not collected.
+
