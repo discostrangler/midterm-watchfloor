@@ -251,7 +251,8 @@ def main():
     withp = [rid for rid in R if P.get(rid)]
     print(f"races with head-to-head polls: {len(withp)} of {len(R)}; polls {sum(len(P[r]) for r in withp)}; with an added date "
           f"{sum(1 for r in withp for p in P[r] if p['created'])}; with a sample size {sum(1 for r in withp for p in P[r] if p['n'])}; generic with a sample size {sum(1 for g in G if g['n'])} of {len(G)}")
-    print(f"Kalshi: {sum(len(K[r]['k']) for r in K)} race-days with trades, {sum(t[1] for r in K for t in K[r]['k']):,} trades, ${sum(t[2] for r in K for t in K[r]['k']):,.0f}")
+    for name, ids in [("race markets", [r for r in K if r in R]), ("chamber control (national view only)", [r for r in K if r not in R])]:   # K also holds the two control markets
+        print(f"Kalshi {name}: {sum(len(K[r]['k']) for r in ids)} days with trades, {sum(t[1] for r in ids for t in K[r]['k']):,} trades, ${sum(t[2] for r in ids for t in K[r]['k']):,.0f}")
     top = sorted(withp, key=lambda r: -len(P[r]))[:8]
     for r in top: print(f"   {r:24s} polls {len(P[r]):3d}  first {min(p['end'] for p in P[r])}  trades {sum(t[1] for t in K[r]['k']):,}")
     size = sum(os.path.getsize(f"{OUT}/data/polls_kalshi/{f}") for f in os.listdir(f"{OUT}/data/polls_kalshi"))
