@@ -17,7 +17,7 @@ from multiprocessing import Pool
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_campaign import RAW, OUT   # noqa: E402
 
-CHANGED = {"KY", "LA"}
+CHANGED = {"KY", "LA", "KS", "NH"}   # states whose race list build_crosswalk.py corrected (SENATELA-26 is KY; KXSENATELA-26NOV, GOVPARTYKS-27, GOVPARTYNH-28 added)
 
 
 def one(r):

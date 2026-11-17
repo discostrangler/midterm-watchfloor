@@ -5,7 +5,9 @@ Key = (office, state, district, special), cycle 2026. The state comes from the t
 rules name a different one: SENATELA-26 is titled "Kentucky Senate winner?" (Andy Barr vs Charles Booker, "sworn in as a
 Senator of Kentucky") although LA is Louisiana's code; Louisiana's race is KXSENATELA-26NOV (Julia Letlow vs Jamie Davis).
 data/races.json (Watchfloor's list) is corrected here the same way: a race's state follows its event's text, and a race
-that only we have, with a D/R pair traded on election night, is added. Every change is printed and kept in races.json meta.
+that only we have, with a D/R pair traded on election night, is added. The election year likewise comes from the rules
+("pursuant to the 2026 election") when the ticker's differs: GOVPARTYKS-27 and GOVPARTYNH-28 are 2026 governor races.
+Every change is printed and kept in races.json meta.
 Writes crosswalk/race_crosswalk.tsv (one row per race),
 crosswalk/race_contracts.tsv (one row per contract) and prints a summary. Nothing is dropped: ambiguous races
 (more than one Kalshi event) keep every event, and races on only one side are listed.
@@ -23,6 +25,14 @@ ST = {"Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "Calif
       "Oregon": "OR", "Pennsylvania": "PA", "Rhode Island": "RI", "South Carolina": "SC", "South Dakota": "SD", "Tennessee": "TN", "Texas": "TX", "Utah": "UT",
       "Vermont": "VT", "Virginia": "VA", "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY"}   # Washington left out: it also names DC
 ST_RX = re.compile("|".join(sorted(map(re.escape, ST), key=len, reverse=True)))
+
+
+def text_cycle(ms, cyc):
+    """the election year the rules describe ("pursuant to the 2026 election"), as a 2-digit cycle; else the ticker's.
+    GOVPARTYKS-27 and GOVPARTYNH-28 are the 2026 Kansas and New Hampshire governor races (ticker = another year)."""
+    ys = set(re.findall(r"pursuant to the (20\d\d)|(20\d\d) (?:general |special )?election", " ".join(m.get("rules_primary") or "" for m in ms)))
+    ys = {a or b for a, b in ys}
+    return ys.pop()[2:] if len(ys) == 1 else cyc
 
 
 def text_state(ms):
@@ -57,6 +67,8 @@ def main():
     fixed = []
     for e, ms in ev.items():
         k, cyc = key_of(e)
+        c2 = text_cycle(ms, cyc)
+        if c2 != cyc: fixed.append((e, f"cycle {cyc}", f"cycle {c2}", ms[0].get("title", ""))); cyc = c2
         ts_ = text_state(ms) if k[0] != "House" else None
         if ts_ and ts_ != k[1]:
             fixed.append((e, k[1], ts_, ms[0].get("title", ""))); k = (k[0], ts_, k[2], k[3])
@@ -99,7 +111,7 @@ def main():
     if changes:
         RJ.setdefault("meta", {})["corrections"] = sorted(set(RJ["meta"].get("corrections", [])) | set(changes))
         json.dump(RJ, open(f"{OUT}/data/races.json", "w"), separators=(",", ":"))
-    print("events whose Kalshi text names another state than the ticker:", fixed)
+    print("events whose Kalshi text names another state or election year than the ticker:", fixed)
     print("races.json changes:", changes or "none")
     wkey = {}
     for r in wf:
