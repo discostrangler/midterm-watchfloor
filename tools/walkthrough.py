@@ -21,11 +21,13 @@ def run(mode):
         b = p.chromium.launch(); pg = b.new_page(viewport={"width": 1500, "height": 1000})
         if mode == "public": pg.route("**/private/**", lambda r: r.fulfill(status=404, body="not published"))
         pg.route("**/data/race/KXHOUSERACE-NC02-26.json", lambda r: r.fulfill(status=404, body="missing"))   # a copy without this file
+        mi_down = {"on": True}                                                                                    # MI's poll/Kalshi file fails until "restored"
+        pg.route("**/data/polls_kalshi/MI.json", lambda r: r.fulfill(status=503, body="down") if mi_down["on"] else r.continue_())
         pg.route("**/data/trades/SENATETX-26/2026-11-02.json", lambda r: r.fulfill(status=503, body="down"))   # one trade day fails
         pg.on("pageerror", lambda e: errs.append(f"pageerror {e}"))
         # errors that dash.draw catches and logs (a failed resource is already counted by the response listener)
         pg.on("console", lambda m: m.type == "error" and "Failed to load resource" not in m.text and errs.append(f"console {m.text[:160]}"))
-        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and "SENATETX-26/2026-11-02" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
+        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and "polls_kalshi/MI.json" not in r.url and "SENATETX-26/2026-11-02" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
         pg.goto(BASE); pg.wait_for_timeout(9000)
         ev = pg.evaluate
         txt = lambda sel: pg.locator(sel).first.inner_text()
@@ -97,11 +99,24 @@ def run(mode):
         # polls vs Kalshi: TX Senate polls + trades on one timeline; added-date toggle; national view for control
         pg.wait_for_timeout(1500)
         npolls = pg.locator(".wf-pk svg circle").count(); rd = txt("[data-pk=read]")
-        check("polls vs Kalshi panel: TX Senate polls and trades", npolls > 10 and "Kalshi trades" in rd and "Up to" in rd, f"{npolls} polls drawn; {rd[:140]}")
+        check("polls vs Kalshi panel: TX Senate polls and trades", npolls > 10 and "Kalshi trades" in rd and "TX Senate, up to" in rd, f"{npolls} polls drawn; {rd[:140]}")
         pg.click("[data-pkmode=added]"); pg.wait_for_timeout(800)
         check("poll date toggle: added to VoteHub", "added" in txt("[data-pk=read]") or "hidden" in txt("[data-pk=sub]"), txt("[data-pk=sub]")[:140])
         pg.click("[data-pkmode=end]")
         pg.locator(".wf-pk").screenshot(path=f"{out}/{mode}_02b_polls_kalshi.png")
+        # audit 2026-11-16: keyboard inspection (A08), failed load + retry + return (A05/A06), empty series (A10), stale tip (A09)
+        pg.locator(".wf-pk [data-pk=chart] svg").focus(); pg.keyboard.press("Shift+ArrowLeft"); pg.wait_for_timeout(400)
+        ktip = pg.locator(".wf-pk .wf-tip")
+        check("polls panel keyboard: visible tip with a poll", ktip.is_visible() and "people" in ktip.inner_text() and pg.locator("[data-pk=live]").text_content() != "", ktip.inner_text()[:110] if ktip.is_visible() else "hidden")
+        ev(pick, "SENATEMI-26"); pg.wait_for_timeout(1500)
+        check("polls panel: failed file clears the old race and offers Retry", txt("[data-pk=read]") == "" and pg.locator(".wf-pk [data-pk=sub] button").count() == 1
+              and not ktip.is_visible(), txt("[data-pk=sub]")[:100])
+        ev(pick, "SENATETX-26"); pg.wait_for_timeout(1200)
+        check("polls panel: returning to a loaded race redraws the chart", pg.locator(".wf-pk svg circle").count() > 10, f"{pg.locator('.wf-pk svg circle').count()} circles")
+        mi_down["on"] = False; ev(pick, "SENATEMI-26"); pg.wait_for_timeout(800); pg.locator(".wf-pk [data-pk=sub] button").click(); pg.wait_for_timeout(1500)
+        check("polls panel: Retry loads the race", "MI Senate, up to" in txt("[data-pk=read]"), txt("[data-pk=read]")[:80])
+        ev(pick, "KXHOUSERACE-CA37-26"); pg.wait_for_timeout(1500)
+        check("polls panel: empty poll series says none, not max 1", pg.locator(".wf-pk svg text", has_text="none").count() >= 1 and pg.locator(".wf-pk svg text", has_text="max 1 ").count() == 0, txt("[data-pk=sub]")[:80])
         ev(pick, "CONTROLS-2026"); pg.wait_for_timeout(1500)
         check("polls vs Kalshi panel: national view for control", "generic ballot" in txt("[data-pk=sub]") and pg.locator(".wf-pk svg circle").count() > 50, txt("[data-pk=sub]")[:120])
         ev(pick, "SENATETX-26"); pg.wait_for_timeout(1000)
@@ -137,6 +152,11 @@ def run(mode):
         pg.screenshot(path=f"{out}/{mode}_04_full.png", full_page=True)
         pg.set_viewport_size({"width": 320, "height": 800}); pg.wait_for_timeout(1500)
         sw = ev("document.documentElement.scrollWidth")
+        ev(pick, "SENATETX-26"); pg.wait_for_timeout(1500)
+        olap = ev("""() => { const t = [...document.querySelectorAll('.wf-pk svg text')].map((e) => e.getBoundingClientRect()).filter((r) => r.width);
+          let n = 0; for (let i = 0; i < t.length; i++) for (let j = i + 1; j < t.length; j++) { const a = t[i], b = t[j];
+            if (a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1) n++; } return n; }""")
+        check("polls panel labels don't overlap at 320 px", olap == 0, f"{olap} overlapping label pairs")
         check("no sideways scroll at 320 px", sw <= 320, f"page width {sw} px")
         pg.screenshot(path=f"{out}/{mode}_05_320px.png", full_page=True)
         b.close()

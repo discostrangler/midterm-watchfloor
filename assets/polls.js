@@ -24,7 +24,8 @@
 
   function source() {                                                 // {kind, rec, label, note} for the selected market
     const id = WF.race, I = dash.data('night_races');
-    const national = () => { const d = dash.data('pk:US'); return d.status === 'ok' ? {kind: 'us', rec: d.raw.us, meta: d.raw.meta, label: 'National: generic ballot polls · Senate + House control markets'} : {status: d.status}; };
+    const national = () => { const d = dash.data('pk:US'); return d.status === 'ok' ? {kind: 'us', rec: d.raw.us, meta: d.raw.meta, label: 'National: generic ballot polls · Senate + House control markets'}
+      : {status: d.status, retry: d.status === 'error' ? () => dash.load('pk:US', 'data/polls_kalshi/US.json') : null, label: 'National view'}; };
     if (!id || CTRL.includes(id)) return national();
     if (I.status !== 'ok') return {status: I.status};
     const r = I.raw.races[id];
@@ -32,7 +33,7 @@
     const k = `pk:${r.state}`;
     if (dash.data(k).status === 'idle') dash.load(k, `data/polls_kalshi/${r.state}.json`);
     const d = dash.data(k);
-    if (d.status !== 'ok') return {status: d.status};
+    if (d.status !== 'ok') return {status: d.status, retry: d.status === 'error' ? () => dash.load(k, `data/polls_kalshi/${r.state}.json`) : null, label: r.label};
     const rec = d.raw.races[id];
     return rec ? {kind: 'race', rec, meta: d.raw.meta, label: r.label} : {status: 'error'};
   }
@@ -92,9 +93,10 @@
     for (const p of X.polls) if (p.d >= a && p.d <= b) bins[bi(p.d)].p++;
     for (const [d, n, u] of X.k) if (d >= a && d <= b) { bins[bi(d)].n += n; bins[bi(d)].u += u; }
     const bar = (key, f, col, fmt) => {
-      const mx = d3.max(bins, f) || 1, yb = d3.scaleSqrt([0, mx], [0, Y[key].h - 12]);   // square root: the last week is ~100x the first months
+      const real = d3.max(bins, f) || 0, yb = d3.scaleSqrt([0, real || 1], [0, Y[key].h - 12]);   // square root: the last week is ~100x the first months
       bins.forEach((q, i) => { const v = f(q); if (v) g.append('rect').attr('x', x(a + i * X.bin)).attr('width', Math.max(1, x(a + X.bin) - x(a) - 1)).attr('y', Y[key].top + Y[key].h - yb(v)).attr('height', yb(v)).attr('fill', col).attr('opacity', 0.8); });
-      g.append('text').attr('x', W - mr).attr('y', Y[key].top + 9).attr('text-anchor', 'end').attr('class', 'wf-nt-ax').text(`max ${fmt(mx)} per ${X.bin === 1 ? 'day' : 'week'} · square-root scale`);
+      g.append('text').attr('x', W - mr).attr('y', Y[key].top + 9).attr('text-anchor', 'end').attr('class', 'wf-nt-ax')
+        .text(!real ? 'none' : W < 640 ? `max ${fmt(real)}/${X.bin === 1 ? 'day' : 'wk'}` : `max ${fmt(real)} per ${X.bin === 1 ? 'day' : 'week'} · square-root scale`);
     };
     bar('polls', (q) => q.p, css('--wf-ind'), (v) => v);
     bar('trades', (q) => q.n, css('--wf-muted'), (v) => d3.format(',')(v));
@@ -112,7 +114,7 @@
     });
     // time axis: months
     for (let i = a; i <= b; i++) { const dt = new Date(dayUTC(i)); if (dt.getUTCDate() !== 1) continue;
-      const span = b - a, every = span > 400 ? 3 : span > 150 ? 1 : 1, mo = dt.getUTCMonth();
+      const pxMonth = (W - ml - mr) / ((b - a + 1) / 30.44), every = [1, 2, 3, 4, 6, 12].find((k) => pxMonth * k >= 58) || 12, mo = dt.getUTCMonth();
       if (mo % every) continue;
       g.append('line').attr('x1', x(i)).attr('x2', x(i)).attr('y1', 34).attr('y2', H - 16).attr('stroke', css('--wf-grid'));
       g.append('text').attr('x', x(i)).attr('y', H - 4).attr('text-anchor', x(i) > W - mr - 30 ? 'end' : 'middle').attr('class', 'wf-nt-ax').text(dt.toLocaleString('en-US', {timeZone: 'UTC', month: 'short', ...(mo === 0 ? {year: 'numeric'} : {})})); }
@@ -122,20 +124,41 @@
     const cur = svg.append('line').attr('y1', 34).attr('y2', H - 16).attr('stroke', css('--wf-amber')).attr('stroke-width', 1.5).style('pointer-events', 'none');
     const hov = svg.append('line').attr('y1', 34).attr('y2', H - 16).attr('stroke', css('--wf-fg')).attr('stroke-opacity', 0.35).attr('stroke-dasharray', '2 3').style('display', 'none').style('pointer-events', 'none');
     const dayAt = (ev) => Math.max(a, Math.min(b, Math.floor(x.invert(d3.pointer(ev, svg.node())[0]))));
-    svg.on('pointermove', (ev) => {
-      const d = dayAt(ev), i = bi(d), q = bins[i], s = a + i * X.bin, e = Math.min(b, s + X.bin - 1);
+    const show = (d, poll, px, py) => {                                  // the values for day d's bin (and one poll), as a visible tip + live text
+      const i = bi(d), q = bins[i], s = a + i * X.bin, e = Math.min(b, s + X.bin - 1);
       const inBin = X.polls.filter((p) => p.d >= s && p.d <= e);
       hov.style('display', null).attr('x1', x(d + 0.5)).attr('x2', x(d + 0.5));
-      m.tipB.textContent = X.bin === 1 ? lbl(s) : `${lbl(s)} – ${lbl(e)}`;
-      m.tipS.textContent = `${q.p} poll${q.p === 1 ? '' : 's'}${inBin.length ? ` (average ${mg(d3.mean(inBin, (p) => p.m))})` : ''} · ${d3.format(',')(q.n)} trades · ${usd(q.u)}`
+      m.tipB.textContent = `${S.label} · ${X.bin === 1 ? lbl(s) : `${lbl(s)} – ${lbl(e)}`}`;
+      m.tipS.textContent = (poll ? `${tt(poll)} — ` : '') + `${q.p} poll${q.p === 1 ? '' : 's'}${inBin.length ? ` (average ${mg(d3.mean(inBin, (p) => p.m))})` : ''} · ${d3.format(',')(q.n)} trades · ${usd(q.u)}`
         + X.mids.map(({id, mid}) => { const v = midAt(mid, e); return ` · ${S.kind === 'us' ? (id === 'CONTROLS-2026' ? 'Senate' : 'House') : 'quoted mid'} ${typeof v === 'number' ? `${(v * 100).toFixed(1)}%` : v === 'closed' ? 'closed' : '—'}`; }).join('');
-      const [px, py] = d3.pointer(ev, box); m.tip.hidden = false; m.tip.style.left = `${Math.max(0, Math.min(px + 12, box.clientWidth - 280))}px`; m.tip.style.top = `${Math.max(0, py - 54)}px`;
-    }).on('pointerleave', () => { hov.style('display', 'none'); m.tip.hidden = true; })
-      .on('click', (ev) => {                                           // move the page cursor there when the dashboard's campaign window covers it
-        const t = tOfDay(dayAt(ev)), [c0, c1] = [Date.UTC(2026, 9, 4, 4) / 1000, Date.UTC(2026, 10, 12, 5) / 1000];
-        if (t < c0 || t > c1) { m.note.textContent = 'The page cursor only covers Oct 4 – Nov 12, 2026; hover for values elsewhere.'; return; }
-        if (t < WF.range[0] || t > WF.range[1]) document.querySelector('.wf [data-range=campaign]').click();
-        const s = document.getElementById('wf-scrub'); s.value = t; s.dispatchEvent(new Event('input'));
+      m.tip.hidden = false; m.tip.style.left = `${Math.max(0, Math.min(px + 12, box.clientWidth - 280))}px`; m.tip.style.top = `${Math.max(0, py - 54)}px`;
+      m.live.textContent = `${m.tipB.textContent}: ${m.tipS.textContent}`;
+    };
+    const moveCursor = (d) => {                                          // the page cursor, when the dashboard's campaign window covers day d
+      const t = tOfDay(d), [c0, c1] = [Date.UTC(2026, 9, 4, 4) / 1000, Date.UTC(2026, 10, 12, 5) / 1000];
+      if (t < c0 || t > c1) { m.note.textContent = 'The page cursor only covers Oct 4 – Nov 12, 2026; hover or use the arrow keys for values elsewhere.'; return; }
+      if (t < WF.range[0] || t > WF.range[1]) document.querySelector('.wf [data-range=campaign]').click();
+      const sc = document.getElementById('wf-scrub'); sc.value = t; sc.dispatchEvent(new Event('input'));
+    };
+    const hide = () => { hov.style('display', 'none'); m.tip.hidden = true; };
+    let kd = null, kp = -1;                                                  // keyboard position: day and poll index
+    svg.attr('tabindex', 0).attr('aria-label', `${svg.attr('aria-label')} Keyboard: Left and Right step one ${X.bin === 1 ? 'day' : 'week'}, Shift with Left or Right jumps to the previous or next poll, Home and End go to the ends, Enter moves the page cursor there.`)
+      .on('pointermove', (ev) => { const [px, py] = d3.pointer(ev, box); show(dayAt(ev), null, px, py); })
+      .on('pointerleave blur', hide)
+      .on('click', (ev) => moveCursor(dayAt(ev)))
+      .on('keydown', (ev) => {
+        if (kd == null) { kd = Math.max(a, Math.min(b, dayOf(WF.t))); kp = X.polls.findLastIndex((p) => p.d <= kd); }
+        if (ev.key === 'Enter') { ev.preventDefault(); moveCursor(kd); return; }
+        if (ev.shiftKey && (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight')) {
+          kp = ev.key === 'ArrowLeft' ? (X.polls.findLastIndex((p) => p.d < kd) ?? -1) : X.polls.findIndex((p) => p.d > kd);
+          if (kp < 0) { m.live.textContent = 'No more polls in that direction.'; ev.preventDefault(); return; }
+          kd = X.polls[kp].d;
+        } else if (ev.key === 'ArrowLeft') kd -= X.bin; else if (ev.key === 'ArrowRight') kd += X.bin;
+        else if (ev.key === 'Home') kd = a; else if (ev.key === 'End') kd = b;
+        else return;
+        ev.preventDefault(); kd = Math.max(a, Math.min(b, kd));
+        const poll = ev.shiftKey && kp >= 0 ? X.polls[kp] : null;
+        show(kd, poll, x(kd + 0.5), poll ? ym(poll.m) : Y.margin.top + 20);
       });
     return {cur, x, a, b};
   }
@@ -143,7 +166,7 @@
   function readout(p, S, X) {                                          // up to the cursor: whole days before the cursor's day only
     const cd = dayOf(WF.t), before = X.polls.filter((q) => q.d < cd), last5 = before.slice(-5), wk = (d) => d >= cd - 7 && d < cd;
     const k7 = X.k.filter(([d]) => wk(d)), mids = X.mids.map(({id, mid}) => [id, midAt(mid, cd - 1)]);
-    p.textContent = `Up to ${lbl(cd - 1)} (the day before the cursor): ${before.length} poll${before.length === 1 ? '' : 's'}`
+    p.textContent = `${S.label}, up to ${lbl(cd - 1)} (the day before the cursor): ${before.length} poll${before.length === 1 ? '' : 's'}`
       + (last5.length ? `, latest ${last5.length} average ${mg(d3.mean(last5, (q) => q.m))} (latest: ${before[before.length - 1].p[4]}, ${mg(before[before.length - 1].m)}, ${X.mode === 'added' ? 'added' : 'field ended'} ${lbl(before[before.length - 1].d)})` : '')
       + `. Last 7 days: ${before.filter((q) => wk(q.d)).length} polls, ${d3.format(',')(d3.sum(k7, (r) => r[1]))} Kalshi trades, ${usd(d3.sum(k7, (r) => r[2]))}. `
       + mids.map(([id, v]) => `${S.kind === 'us' ? (id === 'CONTROLS-2026' ? 'Senate control' : 'House control') : 'Quoted mid'} at the end of that day: ${typeof v === 'number' ? `${(v * 100).toFixed(1)}%` : v === 'closed' ? 'trading closed' : 'no quote'}`).join(' · ') + '.';
@@ -151,7 +174,7 @@
 
   dash.draw('pk', {
     mount(root) {
-      const m = {mode: 'end', key: '', chart: root.querySelector('[data-pk=chart]'), note: root.querySelector('[data-pk=note]'), tip: root.querySelector('.wf-tip')};
+      const m = {mode: 'end', key: '', chart: root.querySelector('[data-pk=chart]'), note: root.querySelector('[data-pk=note]'), tip: root.querySelector('.wf-tip'), live: root.querySelector('[data-pk=live]')};
       m.tipB = m.tip.querySelector('b'); m.tipS = m.tip.querySelector('span');
       root.querySelectorAll('[data-pkmode]').forEach((bt) => bt.addEventListener('click', () => {
         m.mode = bt.dataset.pkmode; root.querySelectorAll('[data-pkmode]').forEach((z) => z.setAttribute('aria-pressed', String(z === bt))); m.key = ''; dash.draw('pk');
@@ -160,15 +183,22 @@
     },
     update(root, m) {
       const S = source(), q = (s) => root.querySelector(s);
-      if (!S.rec) { q('[data-pk=sub]').textContent = S.status === 'error' ? 'Poll/Kalshi timeline data is not available.' : 'Loading…'; m.chart.replaceChildren(); return; }
+      if (!S.rec) {
+        const sub = q('[data-pk=sub]');
+        sub.textContent = S.status === 'error' ? `${S.label ? `${S.label}: ` : ''}the poll / Kalshi timeline file did not load. ` : `Loading${S.label ? ` ${S.label}` : ''}…`;
+        if (S.retry) { const bt = el('button', 'wf-btn', 'Retry'); bt.type = 'button'; bt.addEventListener('click', () => { S.retry(); dash.draw('pk'); }); sub.append(bt); }
+        m.chart.replaceChildren(); m.key = ''; m.ov = null; m.tip.hidden = true;
+        q('[data-pk=read]').textContent = ''; m.note.textContent = ''; m.live.textContent = '';
+        return;
+      }
       day0 = Date.parse(`${S.meta.day0}T00:00:00Z`);
       const X = series(S, m.mode); X.mode = m.mode;
       const firsts = [X.polls[0]?.d, X.k[0]?.[0], ...X.mids.map(({mid}) => mid[0]?.[0])].filter((v) => v != null);
       const b = S.meta.days - 1, a = Math.max(0, Math.min(b - 60, (firsts.length ? Math.min(...firsts) : 0) - 7));
       X.dom = [a, b]; X.bin = b - a + 1 <= 150 ? 1 : 7;
-      q('[data-pk=sub]').textContent = `${S.label} · ${X.polls.length} ${S.kind === 'us' ? 'generic-ballot' : 'head-to-head'} poll${X.polls.length === 1 ? '' : 's'}${X.hidden ? ` (${X.hidden} Wikipedia-only polls have no VoteHub added date and are hidden)` : ''} · ${X.bin === 1 ? 'per day' : 'per week'}`;
+      q('[data-pk=sub]').textContent = `${S.label} · ${X.polls.length} ${S.kind === 'us' ? 'generic-ballot' : 'head-to-head'} poll${X.polls.length === 1 ? '' : 's'}${X.hidden ? ` (${X.hidden} without a usable VoteHub added date are hidden)` : ''} · ${X.bin === 1 ? 'per day' : 'per week'}`;
       const key = `${WF.race}|${m.mode}|${m.chart.clientWidth}`;
-      if (key !== m.key) { m.key = key; m.ov = draw(m.chart, S, X, m); m.note.textContent = S.note || ''; }
+      if (key !== m.key || !m.chart.isConnected || !m.chart.firstChild) { m.key = key; m.tip.hidden = true; m.ov = draw(m.chart, S, X, m); m.note.textContent = S.note || ''; }
       const cd = dayOf(WF.t);
       m.ov.cur.attr('x1', m.ov.x(cd)).attr('x2', m.ov.x(cd)).style('display', cd >= m.ov.a && cd <= m.ov.b ? null : 'none');
       readout(q('[data-pk=read]'), S, X);

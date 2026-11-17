@@ -399,21 +399,27 @@ non-midterm market) a national view.
 
 - **Polls:** from Subhrajit's `collect/polls_full.py` (Wikipedia race pages, CC BY-SA 4.0; VoteHub, CC BY 4.0).
   Only general-election polls that name **both** actual nominees (names from our catalog's D/R contracts).
-  The same poll in both sources (same race, pollster, field end within a day) is kept once. Result: 1,593
-  polls in 171 of 504 races (1,389 from Wikipedia, 903 from VoteHub, 699 in both); 1,565 have a sample size
-  (VoteHub's number, or Wikipedia's "1,000 (LV)" text); 404 of the 422 generic-ballot polls do. NBC exit polls are not used
+  The same poll in both sources (same race, pollster, field end within a day) is kept once; a poll VoteHub lists
+  twice (same race, pollster, field end, result and sample: 7 cases) is kept once with its earliest added date;
+  polls ending before Nov 5 2024 are left out (2 from 2023). Result: 1,584
+  polls in 171 of 504 races (1,387 from Wikipedia, 903 from VoteHub, 699 in both); 1,556 have a sample size
+  (VoteHub's number, or Wikipedia's "1,000 (LV)" text); 405 of the 423 generic-ballot polls do. NBC exit polls are not used
   (research only, not for republication).
-- **National:** 422 VoteHub generic-ballot polls (likely voters over registered over adults when a pollster
-  released several for the same dates), against the Senate and House control markets (trades summed; two
+- **National:** 423 VoteHub generic-ballot polls (likely voters over registered over adults when a pollster —
+  matched on its FULL name, so "YouGov" and "YouGov Blue" stay separate — released several for the same dates), against the Senate and House control markets (trades summed; two
   quoted-mid lines). Kalshi's own generic-ballot series (`KXVHGCB`, daily markets on an aggregator's margin)
   covers only Oct–Nov 2026 and is not used.
 - **Poll date toggle:** field **end** date (earliest it could be public) or the date VoteHub **added** it
   (latest bound; median 5 days after the end). Wikipedia-only polls have no added date and are hidden in that
-  mode, with the count shown. Any lead/lag shorter than the end→added gap is inside the release uncertainty.
+  mode, with the count shown. Two VoteHub polls list an added date BEFORE their field end (MI Governor/Guidant,
+  NY Governor/Siena); that contradiction is in the source, so their added date is dropped. Any lead/lag shorter than the end→added gap is inside the release uncertainty.
 - **Bins:** daily if the shown span is ≤ 150 days, else weekly; the same bins for polls and Kalshi. Bars use a
   square-root scale. The x-axis starts a week before the race's first poll, trade or quote.
 - **Readout under the chart** uses only whole days **before** the cursor's day: polls so far, the latest five's
   average, the last 7 days' polls / trades / dollars, and the quoted mid at the end of the previous day.
 - **Click** moves the page cursor when the day is inside Oct 4 – Nov 12, 2026 (the dashboard's campaign window).
+- **Keyboard:** focus the chart; Left/Right step a bin, Shift+Left/Right jump between polls (pollster, size),
+  Home/End, Enter moves the page cursor; values show in a visible tip and an aria-live line.
+- **Failures:** a state file that does not load clears the previous race's numbers and offers Retry.
 - Spot-check: TX Senate, Oct 20 2026: 3,004 trades, $717,593 in both the built file and a recount from raw.
 - Rebuild: `POLLS_FULL=<polls_full output dir> python3 tools/build_polls_kalshi.py` (pandas + pyarrow; ~25 s).

@@ -86,7 +86,7 @@ def nsample(v):
 
 
 def polls(R):
-    out = defaultdict(list)
+    out, dropped = defaultdict(list), defaultdict(list)
     # Wikipedia: one row per poll x candidate column; a head-to-head = a general-election poll with both nominee columns
     w = pd.read_parquet(f"{POLLS}/wikipedia_long.parquet")
     w = w[w.stage.eq("general")]
@@ -99,6 +99,7 @@ def polls(R):
         d = next((p for c, p in zip(g.candidate, g.pct) if any(n and n in norm(c).split() for n in R[rid]["D"])), None)
         rr = next((p for c, p in zip(g.candidate, g.pct) if any(n and n in norm(c).split() for n in R[rid]["R"])), None)
         if d is None or rr is None or pd.isna(r0.end): continue
+        if not DAY0 <= r0.end.date() <= DAY1: dropped["outside the cycle"].append((rid, str(r0.end.date()), str(r0.pollster))); continue
         tag = re.search(r"\((D|R)\)", str(r0.pollster))
         out[rid].append({"end": r0.end.date(), "created": None, "D": float(d), "R": float(rr), "pollster": re.sub(r"\s*\((D|R)\)\s*$", "", str(r0.pollster)).strip(),
                          "partisan": tag.group(1) if tag else "", "src": "wikipedia", "url": "", "n": nsample(r0["sample"])})
@@ -139,6 +140,12 @@ def polls(R):
         n_vh += 1
         row = {"end": p.end.date(), "created": p.created.date() if pd.notna(p.created) else None, "D": float(d), "R": float(rr), "pollster": str(p.pollster),
                "partisan": {"DEM": "D", "REP": "R"}.get(str(p.partisan), ""), "src": "votehub", "url": p.url or "", "n": nsample(p.sample_size)}
+        same = next((q for q in out[rid] if q["src"] in ("votehub", "both") and q["end"] == row["end"] and (q["D"], q["R"], q["n"]) == (row["D"], row["R"], row["n"])
+                     and pkey(q["pollster"]) == pkey(row["pollster"])), None)
+        if same:
+            dropped["VoteHub listed it twice"].append((rid, str(row["end"]), row["pollster"]))
+            if row["created"] and (not same["created"] or row["created"] < same["created"]): same["created"] = row["created"]
+            continue
         twin = next((q for q in out[rid] if q["src"] == "wikipedia" and pkey(q["pollster"]) == pkey(row["pollster"]) and abs((q["end"] - row["end"]).days) <= 1), None)
         if twin: out[rid].remove(twin); row["src"] = "both"; row["partisan"] = row["partisan"] or twin["partisan"]; row["n"] = row["n"] or twin["n"]; merged += 1
         out[rid].append(row)
@@ -146,8 +153,13 @@ def polls(R):
     rank = {"lv": 0, "rv": 1, "a": 2}
     best = {}
     for g in gen:
-        k = (pkey(g["pollster"]), g["end"])
+        k = (norm(g["pollster"]), g["end"])
         if k not in best or rank.get(g["pop"], 3) < rank.get(best[k]["pop"], 3): best[k] = g
+    for rid, rows in list(out.items()) + [("national", list(best.values()))]:
+        for q in rows:
+            if q["created"] and q["created"] < q["end"]:
+                dropped["added before field end: added date dropped"].append((rid, str(q["end"]), str(q["created"]), q["pollster"])); q["created"] = None
+    for why, xs in dropped.items(): print(f"  {why}: {len(xs)}", *xs[:12], sep="\n    ")
     print(f"polls: wikipedia head-to-heads {n_wiki}, votehub head-to-heads {n_vh} ({merged} also on Wikipedia, kept once); "
           f"{sum(len(v) for v in out.values())} polls in {len(out)} races; generic ballot {len(best)} (of {len(gen)} rows)", flush=True)
     return out, sorted(best.values(), key=lambda g: g["end"])
