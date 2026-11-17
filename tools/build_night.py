@@ -41,11 +41,10 @@ def quotes(event):
     for ln in gzip.open(f"{RAW}/candles_1m_linked/{event}.jsonl.gz", "rt"):
         c = json.loads(ln); i = (c["end_period_ts"] - A) // 60 - 1      # bin i ends at A + (i+1)*60
         if not 0 <= i < n: continue
-        s = q.setdefault(c["ticker"][-1], {k: [None] * n for k in ("bid", "ask", "last", "lo", "hi", "vol")})
+        s = q.setdefault(c["ticker"][-1], {k: [None] * n for k in ("bid", "ask", "last", "lo", "hi")})   # no candle volume: Kalshi's minute and hour candle volumes contradict each other (raw/provider_anomalies.jsonl); traded quantity comes from trades
         p = c.get("price") or {}
         s["bid"][i], s["ask"][i] = f(c.get("yes_bid"), "close_dollars"), f(c.get("yes_ask"), "close_dollars")
         s["last"][i], s["lo"][i], s["hi"][i] = f(p, "close_dollars"), f(p, "low_dollars"), f(p, "high_dollars")
-        s["vol"][i] = round(float(c.get("volume_fp") or 0), 2)
     return q
 
 

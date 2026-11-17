@@ -483,3 +483,35 @@ Louisiana and Kentucky had no Senate race. Louisiana's real race is `KXSENATELA-
   governor market has no minute candles in our pull, so its election night has only the hourly book. (5) Several races
   also have a candidate-style "who wins" market the crosswalk does not list (e.g. `KXMISENATE-26`, `KXAKSENATE-26NOV03`,
   `KXMESENATEPERSON-26`, `KXCAELECTION-26xx` for the nine California districts); their trades are not in the race totals.
+
+## 20. Exhaustive audit fixes (Audit/exhaustive-65e9295, 2026-11-16)
+
+Every confirmed defect is fixed; Kalshi-side inconsistencies are recorded, and no consumer depends on them.
+
+1. **Glued ticker in the linked lists** (`SENATEMN-26-DGOVPARTYNH-28-D`, from the NH backfill appending to a file
+   without a final newline): `build_linked.py` now writes all three lists from one table, newline-terminated, and
+   asserts they agree and are in the catalog.
+2. **Selector still excluded NH:** `build_linked.py` uses the election year the rules state ("pursuant to the 2026
+   election"); the ticker year only when they name none. Asserts KS, NH and both LA/KY Senate events are selected.
+   Six 2027 governor contracts (KY, LA, MS) correctly drop out.
+3. **Market cards for LA Senate, KS and NH Governor:** `tools/build_market_cards.py` builds every race card, its
+   per-day bet files, `big_bets.json` and `bets_flow.json` from our raw trades. Its `--check` mode (Watchfloor's
+   rules and race list) reproduces Watchfloor's files: **498 of 498 cards**, all 6,535 national flow bins, and the
+   1,500-row big-bets list (two rows differ by 10¢ of float rounding). Remaining tolerances, all checked: a bin
+   price may differ only where several fills share one millisecond at different prices; bet times within 1 s
+   (truncated to the second here); money within 1¢ (exact decimal half-up here, Watchfloor used floats).
+   510 cards written (507 races + 2 control + balance of power). The walkthrough no longer exempts any 404.
+4. **Big bets from the added races:** the rebuilt list includes KS Governor $130,715.52 and LA Senate $49,804.39
+   and $20,937.17, as the audit found.
+5. **Three-way races in cards:** the per-bin D / R / other split now follows the two-way rule; all 71 bins the
+   audit flagged hold its independently computed values.
+6. **Contract volume shown with a dollar sign:** the market card says "N contracts traded"; the notes explain that
+   Kalshi's "$ volume" is a contract count, not money.
+7. **Bins from rounded timestamps:** bins use native fill times (rounding only for display / grouping keys). All
+   14 national bins the audit flagged now carry its bet counts; dollars agree to the cent or within 4¢ of float sums.
+
+Also: `scrape.py` fails on error responses, missing collection lists and repeating cursors instead of treating them
+as empty (fault-injection tested); the night export no longer carries Kalshi's candle volume; and
+`raw/provider_anomalies.jsonl` lists the provider inconsistencies (candle volume vs trades, minute vs hour candle
+volume, traded hours with no candle, trades after catalog close, catalog volume above the trades the API serves),
+each with whether a fresh request reproduced it. Traded quantity and dollars everywhere come from deduplicated trades.

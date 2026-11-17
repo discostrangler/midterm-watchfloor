@@ -816,7 +816,7 @@
       else parts.push('Open at the cursor');
       el.textContent = parts.join(' · '); return;
     }
-    if (r.volume) parts.push(`${usd(r.volume)} vol`);
+    if (r.volume) parts.push(`${fmtN(r.volume)} contracts traded`);   // a contract count, not dollars (each pays $1 if right)
     parts.push(statusLine(WF.race, WF.t));
     el.textContent = parts.join(' · ');
   });

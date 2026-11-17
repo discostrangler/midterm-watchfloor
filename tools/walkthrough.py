@@ -27,7 +27,7 @@ def run(mode):
         pg.on("pageerror", lambda e: errs.append(f"pageerror {e}"))
         # errors that dash.draw catches and logs (a failed resource is already counted by the response listener)
         pg.on("console", lambda m: m.type == "error" and "Failed to load resource" not in m.text and errs.append(f"console {m.text[:160]}"))
-        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and not any(f"data/race/{x}.json" in r.url for x in ("KXSENATELA-26NOV", "GOVPARTYKS-27", "GOVPARTYNH-28")) and "polls_kalshi/MI.json" not in r.url and "SENATETX-26/2026-11-02" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
+        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and "polls_kalshi/MI.json" not in r.url and "SENATETX-26/2026-11-02" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
         pg.goto(BASE); pg.wait_for_timeout(9000)
         ev = pg.evaluate
         txt = lambda sel: pg.locator(sel).first.inner_text()
@@ -65,6 +65,10 @@ def run(mode):
         ev(pick, "GOVPARTYKS-27"); pg.wait_for_timeout(1200)   # 2026 governor races whose ticker year is not 26
         ks = txt("[data-draw=st-races]")
         ev(pick, "GOVPARTYNH-28"); pg.wait_for_timeout(1200)
+        for rid in ("KXSENATELA-26NOV", "GOVPARTYKS-27", "GOVPARTYNH-28"):   # the three races added on Nov 16 have market cards
+            ev(pick, rid); pg.wait_for_timeout(1800)
+            check(f"market card for {rid}", pg.locator("[data-draw=mkt-chart] svg path").count() > 0 and "contracts traded" in txt("[data-draw=mkt-vol]")
+                  and "does not include" not in txt("[data-draw=mkt-head]"), txt("[data-draw=mkt-vol]")[:80])
         check("Kansas and New Hampshire governor races are on the dashboard", "Governor" in ks and "Governor" in txt("[data-draw=st-races]") and txt("[data-draw=st-name]") == "New Hampshire", ks.replace("\n", " ")[:80])
         ev(pick, "SENATENE-26"); pg.wait_for_timeout(1800)   # three-way race (Osborn, independent; the Democrat withdrew)
         check("Nebraska Senate: three-way note and R vs independent polls", "third candidate" in txt("[data-nt=status]")

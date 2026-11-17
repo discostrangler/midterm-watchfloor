@@ -1,1 +1,1 @@
-{"rows":[[1792595020,0,1,0.028,0.01,0.0],[1792624515,0,0,0.972,20.99,20.4]],"meta":{"inputs":"Kalshi trades for this race, grouped into bets (one taker order each)","built_by":"build_site_data.py"}}
+{"rows":[[1792595020,1,1,0.028,0.01,0.0],[1792624515,1,0,0.972,20.99,20.4]],"meta":{"inputs":"Kalshi trades for this race, grouped into bets (one taker order each)","built_by":"tools/build_market_cards.py"}}
