@@ -392,7 +392,7 @@ non-midterm market) a national view.
 
 | Row | Reads | How |
 |---|---|---|
-| Poll margin D − R | `polls_kalshi/<ST>.json` `polls` | one dot per nominee head-to-head poll (blue D lead, red R lead, hollow = party-sponsored); line = mean of the latest five |
+| Poll margin D − R | `polls_kalshi/<ST>.json` `polls` | one circle per nominee head-to-head poll (blue D lead, red R lead, hollow = party-sponsored); circle **area ∝ people polled** (largest 5% in the view drawn at the top size; square = sample size not published; key above the chart; hover for pollster, date, margin, size); line = unweighted mean of the latest five |
 | Polls | same | polls per bin |
 | Kalshi trades / Kalshi $ | `k` = `[day, trades, dollars]` | every trade in **all** the race's Kalshi events (party + candidate markets, from `crosswalk/race_crosswalk.tsv`); dollars = what the taker paid |
 | Quoted mid P(D) | `mid` | quoted mid of the party event's Democratic contract at the end of each ET day (same reader as `race_odds`); gaps = one-sided book; stops at trading close; 1/0 after settlement |
@@ -400,7 +400,8 @@ non-midterm market) a national view.
 - **Polls:** from Subhrajit's `collect/polls_full.py` (Wikipedia race pages, CC BY-SA 4.0; VoteHub, CC BY 4.0).
   Only general-election polls that name **both** actual nominees (names from our catalog's D/R contracts).
   The same poll in both sources (same race, pollster, field end within a day) is kept once. Result: 1,593
-  polls in 171 of 504 races (1,389 from Wikipedia, 903 from VoteHub, 699 in both). NBC exit polls are not used
+  polls in 171 of 504 races (1,389 from Wikipedia, 903 from VoteHub, 699 in both); 1,565 have a sample size
+  (VoteHub's number, or Wikipedia's "1,000 (LV)" text); 404 of the 422 generic-ballot polls do. NBC exit polls are not used
   (research only, not for republication).
 - **National:** 422 VoteHub generic-ballot polls (likely voters over registered over adults when a pollster
   released several for the same dates), against the Senate and House control markets (trades summed; two

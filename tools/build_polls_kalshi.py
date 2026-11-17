@@ -77,6 +77,14 @@ def find_race(R, office, state, dist, names):
     return cands[0] if len(cands) == 1 else None
 
 
+def nsample(v):
+    """people polled: VoteHub's number, or Wikipedia's text such as '1,000 (LV)'; None when missing or zero"""
+    if v is None or (isinstance(v, float) and v != v): return None
+    m = re.search(r"\d[\d,]*", str(v))
+    n = int(m.group(0).replace(",", "")) if m else 0
+    return n or None
+
+
 def polls(R):
     out = defaultdict(list)
     # Wikipedia: one row per poll x candidate column; a head-to-head = a general-election poll with both nominee columns
@@ -93,7 +101,7 @@ def polls(R):
         if d is None or rr is None or pd.isna(r0.end): continue
         tag = re.search(r"\((D|R)\)", str(r0.pollster))
         out[rid].append({"end": r0.end.date(), "created": None, "D": float(d), "R": float(rr), "pollster": re.sub(r"\s*\((D|R)\)\s*$", "", str(r0.pollster)).strip(),
-                         "partisan": tag.group(1) if tag else "", "src": "wikipedia", "url": ""})
+                         "partisan": tag.group(1) if tag else "", "src": "wikipedia", "url": "", "n": nsample(r0["sample"])})
     n_wiki = sum(len(v) for v in out.values())
     # VoteHub: answers are candidate names; senator/governor subject "2026 <State>", house seat_name "<ST>-<NN>"
     st_of = {"Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA", "Colorado": "CO", "Connecticut": "CT", "Delaware": "DE", "Florida": "FL",
@@ -111,7 +119,8 @@ def polls(R):
             a = {x.get("choice"): x.get("pct") for x in ans}
             if a.get("Dem") is not None and a.get("Rep") is not None:
                 gen.append({"end": p.end.date(), "created": p.created.date() if pd.notna(p.created) else None, "D": float(a["Dem"]), "R": float(a["Rep"]),
-                            "pollster": str(p.pollster), "partisan": {"DEM": "D", "REP": "R"}.get(str(p.partisan), ""), "src": "votehub", "url": p.url or "", "pop": str(p.population or "")})
+                            "pollster": str(p.pollster), "partisan": {"DEM": "D", "REP": "R"}.get(str(p.partisan), ""), "src": "votehub", "url": p.url or "", "pop": str(p.population or ""),
+                            "n": nsample(p.sample_size)})
             continue
         if p.poll_type not in ("us-senator", "governor", "us-representative"): continue
         names = {last(x.get("choice", "")) for x in ans}
@@ -129,9 +138,9 @@ def polls(R):
         if d is None or rr is None: continue
         n_vh += 1
         row = {"end": p.end.date(), "created": p.created.date() if pd.notna(p.created) else None, "D": float(d), "R": float(rr), "pollster": str(p.pollster),
-               "partisan": {"DEM": "D", "REP": "R"}.get(str(p.partisan), ""), "src": "votehub", "url": p.url or ""}
+               "partisan": {"DEM": "D", "REP": "R"}.get(str(p.partisan), ""), "src": "votehub", "url": p.url or "", "n": nsample(p.sample_size)}
         twin = next((q for q in out[rid] if q["src"] == "wikipedia" and pkey(q["pollster"]) == pkey(row["pollster"]) and abs((q["end"] - row["end"]).days) <= 1), None)
-        if twin: out[rid].remove(twin); row["src"] = "both"; row["partisan"] = row["partisan"] or twin["partisan"]; merged += 1
+        if twin: out[rid].remove(twin); row["src"] = "both"; row["partisan"] = row["partisan"] or twin["partisan"]; row["n"] = row["n"] or twin["n"]; merged += 1
         out[rid].append(row)
     # generic ballot: one version per pollster and dates (LV > RV > A)
     rank = {"lv": 0, "rv": 1, "a": 2}
@@ -181,7 +190,7 @@ def kalshi(job):
 
 def prow(p):
     return [dayof(p["end"]), dayof(p["created"]) if p["created"] and p["created"] >= DAY0 else None, p["D"], p["R"], p["pollster"],
-            {"wikipedia": 0, "votehub": 1, "both": 2}[p["src"]], p["partisan"]]
+            {"wikipedia": 0, "votehub": 1, "both": 2}[p["src"]], p["partisan"], p["n"]]
 
 
 def main():
@@ -193,7 +202,7 @@ def main():
     jobs = [(rid, ev, dtk if rid not in nc else (f"{rid}-D", nc[rid]["close_ts"], nc[rid]["settle_ts"], nc[rid]["result"])) for rid, ev, dtk in jobs]
     with Pool(int(os.environ.get("SLURM_CPUS_PER_TASK", 4))) as pool:
         K = dict(pool.map(kalshi, jobs, chunksize=2))
-    meta = {"day0": DAY0.isoformat(), "days": NDAYS, "poll_row": ["end_day", "added_day (VoteHub; null = Wikipedia only)", "D %", "R %", "pollster", "source 0=Wikipedia 1=VoteHub 2=both", "partisan sponsor D/R"],
+    meta = {"day0": DAY0.isoformat(), "days": NDAYS, "poll_row": ["end_day", "added_day (VoteHub; null = Wikipedia only)", "D %", "R %", "pollster", "source 0=Wikipedia 1=VoteHub 2=both", "partisan sponsor D/R", "sample size (null = not published)"],
             "k_row": ["day", "trades", "dollars (taker cost)"], "mid": "[day, quoted mid of the D contract at the end of the ET day] change-only; null = one-sided book; 'closed' = trading closed, not settled",
             "built_by": "tools/build_polls_kalshi.py", "polls_from": "Subhrajit's collect/polls_full.py (Wikipedia CC BY-SA 4.0, VoteHub CC BY 4.0)"}
     os.makedirs(f"{OUT}/data/polls_kalshi", exist_ok=True)
@@ -208,7 +217,7 @@ def main():
     # summary
     withp = [rid for rid in R if P.get(rid)]
     print(f"races with head-to-head polls: {len(withp)} of {len(R)}; polls {sum(len(P[r]) for r in withp)}; with an added date "
-          f"{sum(1 for r in withp for p in P[r] if p['created'])}")
+          f"{sum(1 for r in withp for p in P[r] if p['created'])}; with a sample size {sum(1 for r in withp for p in P[r] if p['n'])}; generic with a sample size {sum(1 for g in G if g['n'])} of {len(G)}")
     print(f"Kalshi: {sum(len(K[r]['k']) for r in K)} race-days with trades, {sum(t[1] for r in K for t in K[r]['k']):,} trades, ${sum(t[2] for r in K for t in K[r]['k']):,.0f}")
     top = sorted(withp, key=lambda r: -len(P[r]))[:8]
     for r in top: print(f"   {r:24s} polls {len(P[r]):3d}  first {min(p['end'] for p in P[r])}  trades {sum(t[1] for t in K[r]['k']):,}")

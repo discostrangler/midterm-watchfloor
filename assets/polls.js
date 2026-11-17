@@ -48,9 +48,10 @@
   const midAt = (mid, d) => { let v; for (const [i, x] of mid) { if (i > d) break; v = x; } return v; };   // value in effect at the end of day d
 
   function draw(box, S, X, m) {
-    const W = Math.max(320, box.clientWidth || 900), ml = 64, mr = 16, rows = [['margin', 86], ['polls', 46], ['trades', 46], ['usd', 46], ['mid', 70]];
+    const W = Math.max(320, box.clientWidth || 900), ml = 64, mr = 16, rows = [['margin', 110], ['polls', 46], ['trades', 46], ['usd', 46], ['mid', 70]];
     const ROWLAB = {margin: S.kind === 'us' ? 'Generic ballot D − R' : 'Poll margin D − R', polls: 'Polls', trades: 'Kalshi trades', usd: 'Kalshi $', mid: S.kind === 'us' ? 'Control P(D)' : 'Quoted mid P(D)'};
-    let y0 = 6; const Y = {}; for (const [k, h] of rows) { Y[k] = {top: y0, h}; y0 += h + 8; }
+    let y0 = 34; const Y = {};   // the strip above the rows holds the poll-size key
+    for (const [k, h] of rows) { Y[k] = {top: y0, h}; y0 += h + 8; }
     const H = y0 + 18, [a, b] = X.dom, x = d3.scaleLinear([a, b + 1], [ml, W - mr]);
     const svg = d3.select(box).html('').append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('width', '100%').style('display', 'block').attr('role', 'img')
       .attr('aria-label', `${S.label}: ${X.polls.length} polls and Kalshi trades, dollars and quoted midpoint from ${lbl(a)} to ${lbl(b)}, ${X.bin === 1 ? 'per day' : 'per week'}. The text below the chart gives the values up to the cursor.`);
@@ -60,13 +61,31 @@
       g.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', Y[k].top + Y[k].h + 0.5).attr('y2', Y[k].top + Y[k].h + 0.5).attr('stroke', css('--wf-grid'));
     }
     // 1. each poll's margin; the line = average of the latest five polls up to that day
-    const mmax = Math.max(5, d3.max(X.polls, (p) => Math.abs(p.m)) || 5), ym = d3.scaleLinear([-mmax, mmax], [Y.margin.top + Y.margin.h, Y.margin.top]);
+    const mmax = Math.max(5, d3.max(X.polls, (p) => Math.abs(p.m)) || 5), ym = d3.scaleLinear([-mmax, mmax], [Y.margin.top + Y.margin.h - 8, Y.margin.top + 8]);   // room for the largest circles
     g.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', ym(0)).attr('y2', ym(0)).attr('stroke', css('--wf-line2')).attr('stroke-dasharray', '3 3');
     [mmax, -mmax].forEach((v) => g.append('text').attr('x', ml - 6).attr('y', ym(v) + (v > 0 ? 9 : -2)).attr('text-anchor', 'end').attr('class', 'wf-nt-ax').text(mg(v)));
     const avg = X.polls.map((p, i) => ({d: p.d, v: d3.mean(X.polls.slice(Math.max(0, i - 4), i + 1), (q) => q.m)}));
     g.append('path').datum(avg).attr('d', d3.line().x((p) => x(p.d + 0.5)).y((p) => ym(p.v)).curve(d3.curveStepAfter)).attr('fill', 'none').attr('stroke', css('--wf-fg')).attr('stroke-width', 1.3).attr('opacity', 0.8);
-    g.append('g').selectAll('circle').data(X.polls).join('circle').attr('cx', (p) => x(p.d + 0.5)).attr('cy', (p) => ym(p.m)).attr('r', 2.6)
-      .attr('fill', (p) => (p.p[6] ? 'none' : p.m >= 0 ? css('--wf-dem') : css('--wf-rep'))).attr('stroke', (p) => (p.m >= 0 ? css('--wf-dem') : css('--wf-rep'))).attr('stroke-width', 1).attr('opacity', 0.85);
+    // circle AREA proportional to the number of people polled (p[7]); the largest 5% are capped so one huge online
+    // panel doesn't shrink every other dot; no published sample size -> a small square
+    const ns = X.polls.map((p) => p.p[7]).filter(Boolean).sort(d3.ascending), cap = Math.max(1000, d3.quantile(ns, 0.95) || 1000);
+    const rs = d3.scaleSqrt([0, cap], [0, 8]).clamp(true), col = (p) => (p.m >= 0 ? css('--wf-dem') : css('--wf-rep'));
+    const sized = X.polls.filter((p) => p.p[7]).sort((p, q) => q.p[7] - p.p[7]);   // big first, so small dots stay on top
+    const tt = (p) => `${p.p[4]} · ${lbl(p.d)} · ${mg(p.m)} · ${p.p[7] ? `${d3.format(',')(p.p[7])} people` : 'sample size not published'}${p.p[6] ? ` · sponsored by the ${p.p[6] === 'D' ? 'Democratic' : 'Republican'} side` : ''}`;
+    g.append('g').selectAll('circle').data(sized).join('circle').attr('cx', (p) => x(p.d + 0.5)).attr('cy', (p) => ym(p.m)).attr('r', (p) => Math.max(1.2, rs(p.p[7])))
+      .attr('fill', (p) => (p.p[6] ? 'none' : col(p))).attr('fill-opacity', 0.45).attr('stroke', col).attr('stroke-width', 1)
+      .append('title').text(tt);
+    g.append('g').selectAll('rect').data(X.polls.filter((p) => !p.p[7])).join('rect').attr('x', (p) => x(p.d + 0.5) - 2).attr('y', (p) => ym(p.m) - 2).attr('width', 4).attr('height', 4)
+      .attr('fill', 'none').attr('stroke', col).attr('stroke-width', 1).append('title').text(tt);
+    // size key, top right of the row
+    const keyN = [500, 1000, cap].filter((v, i, arr) => arr.indexOf(v) === i && v <= cap);
+    let kx = W - mr - 8;
+    for (const v of keyN.slice().reverse()) {
+      const r = rs(v); g.append('circle').attr('cx', kx - r).attr('cy', 13).attr('r', r).attr('fill', 'none').attr('stroke', css('--wf-muted'));
+      g.append('text').attr('x', kx - r).attr('y', 31).attr('text-anchor', 'middle').attr('class', 'wf-nt-ax').text(v >= 1000 ? `${+(v / 1000).toFixed(1)}k${v === cap && ns.length && ns[ns.length - 1] > cap ? '+' : ''}` : v);
+      kx -= 2 * r + 14;
+    }
+    g.append('text').attr('x', kx).attr('y', 17).attr('text-anchor', 'end').attr('class', 'wf-nt-ax').text(`people polled${X.polls.some((p) => !p.p[7]) ? ' · □ = not published' : ''}`);
     // 2-4. counts per bin (same bins for polls and Kalshi)
     const nb = Math.ceil((b - a + 1) / X.bin), bins = Array.from({length: nb}, () => ({p: 0, n: 0, u: 0}));
     const bi = (d) => Math.floor((d - a) / X.bin);
@@ -95,13 +114,13 @@
     for (let i = a; i <= b; i++) { const dt = new Date(dayUTC(i)); if (dt.getUTCDate() !== 1) continue;
       const span = b - a, every = span > 400 ? 3 : span > 150 ? 1 : 1, mo = dt.getUTCMonth();
       if (mo % every) continue;
-      g.append('line').attr('x1', x(i)).attr('x2', x(i)).attr('y1', 4).attr('y2', H - 16).attr('stroke', css('--wf-grid'));
+      g.append('line').attr('x1', x(i)).attr('x2', x(i)).attr('y1', 34).attr('y2', H - 16).attr('stroke', css('--wf-grid'));
       g.append('text').attr('x', x(i)).attr('y', H - 4).attr('text-anchor', x(i) > W - mr - 30 ? 'end' : 'middle').attr('class', 'wf-nt-ax').text(dt.toLocaleString('en-US', {timeZone: 'UTC', month: 'short', ...(mo === 0 ? {year: 'numeric'} : {})})); }
     // election day, cursor, hover
     const eday = Math.round((Date.UTC(2026, 10, 3) - day0) / 86400000);
-    if (eday >= a && eday <= b) g.append('line').attr('x1', x(eday)).attr('x2', x(eday)).attr('y1', 4).attr('y2', H - 16).attr('stroke', css('--wf-faint')).attr('stroke-dasharray', '2 3');
-    const cur = svg.append('line').attr('y1', 4).attr('y2', H - 16).attr('stroke', css('--wf-amber')).attr('stroke-width', 1.5).style('pointer-events', 'none');
-    const hov = svg.append('line').attr('y1', 4).attr('y2', H - 16).attr('stroke', css('--wf-fg')).attr('stroke-opacity', 0.35).attr('stroke-dasharray', '2 3').style('display', 'none').style('pointer-events', 'none');
+    if (eday >= a && eday <= b) g.append('line').attr('x1', x(eday)).attr('x2', x(eday)).attr('y1', 34).attr('y2', H - 16).attr('stroke', css('--wf-faint')).attr('stroke-dasharray', '2 3');
+    const cur = svg.append('line').attr('y1', 34).attr('y2', H - 16).attr('stroke', css('--wf-amber')).attr('stroke-width', 1.5).style('pointer-events', 'none');
+    const hov = svg.append('line').attr('y1', 34).attr('y2', H - 16).attr('stroke', css('--wf-fg')).attr('stroke-opacity', 0.35).attr('stroke-dasharray', '2 3').style('display', 'none').style('pointer-events', 'none');
     const dayAt = (ev) => Math.max(a, Math.min(b, Math.floor(x.invert(d3.pointer(ev, svg.node())[0]))));
     svg.on('pointermove', (ev) => {
       const d = dayAt(ev), i = bi(d), q = bins[i], s = a + i * X.bin, e = Math.min(b, s + X.bin - 1);
