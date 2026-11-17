@@ -34,7 +34,7 @@
     const I = dash.data('night_races');
     if (I.status !== 'ok') return {evs, note: I.status === 'error' ? 'The race index (data/night_races.json) is missing.' : 'Loading the race index…'};
     const r = I.raw.races[id];
-    if (!r) return {evs, note: 'This market is not one of the 504 midterm races, so it has no election-night export here.'};
+    if (!r) return {evs, note: 'This market is not one of the midterm races, so it has no election-night export here.'};
     const k = `ns:${r.state}`; if (dash.data(k).status === 'idle') dash.load(k, `data/night_state/${r.state}.json`);
     const d = dash.data(k);
     if (d.status === 'ok' && d.raw.races[id]) evs.push(d.raw.races[id]);

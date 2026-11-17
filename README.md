@@ -10,7 +10,7 @@ election-night stream, poll and Bluesky data from Subhrajit's
 
 ## What this edition adds
 - **Election night panel** (Nov 3 6 PM – Nov 4 8 AM ET), following the page cursor: Senate and House control
-  plus any of the 504 races picked on the map, the dropdown or the heatmap. Bid, ask and quoted midpoint at
+  plus any of the 505 races picked on the map, the dropdown or the heatmap. Bid, ask and quoted midpoint at
   each minute's end, with the quote's age; every trade at its exact execution time; Kalshi's trading close
   and settlement shown separately (neither is a media call); the streams on air, each with a link to the
   original video at that moment and its chat messages per minute.
@@ -60,7 +60,7 @@ Open `index.html` through any static web server (this repository is served with 
   - **Election night:** the chamber-control settlements, the biggest race calls, 15-minute swings and the largest bets.
   - **After:** races Kalshi settled later.
   - Each moment can show the public posts made around it, through Bluesky's, Reddit's and X's own embeds.
-- **Every race · 120 days.** A heatmap of the Kalshi chance the Democrat wins for all 504 races (34 Senate, 34 Governor, all 435 House seats plus DC's delegate) on a log time axis, ending at each race's settlement or at Nov 10. Hover a row to see the race, click it to open its market, and see the 20 races where the election-eve favorite lost.
+- **Every race · 120 days.** A heatmap of the Kalshi chance the Democrat wins for all 505 races (35 Senate, 34 Governor, all 435 House seats plus DC's delegate) on a log time axis, ending at each race's settlement or at Nov 10. Hover a row to see the race, click it to open its market, and see the 20 races where the election-eve favorite lost.
 - **Polls.** Each race's market card lists its public polls up to the cursor, with the average margin of the latest five, next to the market's odds.
 - **Market card.** Laid out the way Kalshi shows a market: each outcome's chance over time, Yes/No prices, volume and settlement. Besides every midterm race, it opens the most-traded Kalshi events in each category: sports games (election night was Tuesday-night college football, tennis, cricket and the Champions League), crypto, stock indexes, other elections such as the Los Angeles mayor's race, finance, weather and more.
 - **Trades.** Every bet in the chosen market up to the cursor, the largest midterm bets, or the largest bets anywhere on Kalshi.
@@ -71,7 +71,7 @@ Each JSON file is `{rows: [...], meta: {inputs}}`. Times are UTC Unix seconds; t
 
 | file | what |
 |---|---|
-| `races`, `race_odds`, `milestones`, `control` | Kalshi 2026 Senate, Governor and House race markets (34 Senate, 34 Governor, all 435 House seats plus DC's delegate; Kentucky's Senate race had no winner market): winner, settlement time, hourly odds (per minute on election night, from 1-minute bid/ask candles); chamber-control odds (per minute on election night) |
+| `races`, `race_odds`, `milestones`, `control` | Kalshi 2026 Senate, Governor and House race markets (35 Senate, 34 Governor, all 435 House seats plus DC's delegate; Kentucky's Senate market is Kalshi's SENATELA-26, mislabeled with Louisiana's code, and Louisiana's is KXSENATELA-26NOV): winner, settlement time, hourly odds (per minute on election night, from 1-minute bid/ask candles); chamber-control odds (per minute on election night) |
 | `bets_flow`, `bets_state`, `big_bets`, `race/<id>` | Kalshi trades, Oct 4 – Nov 12, grouped into bets (one taker order = all its fills at one instant), by which party the bet backs (midterm markets include chamber control and the House + Senate balance-of-power market); each race file also has every outcome's last traded price per minute (election night) or per 10 minutes |
 | `trades/<race>/<day>` | Every bet in that race's markets on that Eastern-time day: `[time, outcome, Yes=1/No=0, price paid, contracts, $ paid]` |
 | `heatmap` | Every race's Kalshi chance the Democrat wins over 120 days at 360 log-spaced times, in two views (ending at each race's settlement, or at Nov 10 12 AM ET), from per-minute bid/ask candles; one byte per cell, base64. Also the 20 races where the 6 PM ET Nov 3 favorite lost. |

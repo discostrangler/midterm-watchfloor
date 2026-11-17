@@ -423,3 +423,27 @@ non-midterm market) a national view.
 - **Failures:** a state file that does not load clears the previous race's numbers and offers Retry.
 - Spot-check: TX Senate, Oct 20 2026: 3,004 trades, $717,593 in both the built file and a recount from raw.
 - Rebuild: `POLLS_FULL=<polls_full output dir> python3 tools/build_polls_kalshi.py` (pandas + pyarrow; ~25 s).
+
+## 19. Kentucky / Louisiana Senate correction (2026-11-16)
+
+Kalshi listed the **Kentucky** Senate race under a **Louisiana** ticker: `SENATELA-26` is titled "Kentucky Senate
+winner?", its contracts are Andy Barr (R) and Charles Booker (D), and both resolve on who is "sworn in as a Senator of
+Kentucky". Watchfloor (and this edition, until now) read the state from the ticker, so the map showed Kentucky's race on
+Louisiana and Kentucky had no Senate race. Louisiana's real race is `KXSENATELA-26NOV` (Julia Letlow R vs Jamie Davis D,
+3.3M contracts), which no list had because its ticker ends in `26NOV`.
+
+- `tools/build_crosswalk.py` now takes a statewide event's state from Kalshi's own titles and rules when they name a
+  different state than the ticker, accepts ticker years like `26NOV`, and corrects `data/races.json` in the same pass
+  (changes listed in its `meta.corrections`). Checked across all 513 race events: this is the only mislabeled one.
+- **505 races** (35 Senate, 34 Governor, 436 House). Every file built from the race list was rebuilt: crosswalk,
+  `race_odds` / `heatmap` / `races` (new LA Senate heatmap row), `night_races` + `night_state`, `polls_kalshi`.
+- `data/bets_state.json` (map "Bets" layer, state panel) is rebuilt from our trades by `tools/build_bets_state.py`
+  with Watchfloor's definition, reverse-engineered: each race's own event, UTC hour, taker cost, one bet = fills of
+  the same contract and side at the same millisecond. Every state other than KY and LA reproduces Watchfloor's file
+  exactly (27,265 of 27,265 state-hours). `kalshi_big.json` rows on a race event now carry its race_id.
+- Election-night readout for both markets matches a recount from raw (`tools/verify_night.py`).
+- **Still open:** (1) `KXSENATELA-26NOV` has no market-card file (`data/race/`, `data/trades/`): those come from
+  Watchfloor's build script, which is not in the repo; its card says the copy does not include the file. (2) Kentucky
+  Senate has no polls: Subhrajit's `polls_full.py` builds its race list from tickers too, so it fetched Louisiana's
+  Wikipedia page for `SENATELA-26` and never Kentucky's; VoteHub has no Kentucky Senate polls. (3) Watchfloor's
+  national `bets_flow.json` and `big_bets.json` still lack Louisiana's market (national totals only).

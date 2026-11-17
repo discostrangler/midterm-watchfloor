@@ -29,7 +29,7 @@
     if (!id || CTRL.includes(id)) return national();
     if (I.status !== 'ok') return {status: I.status};
     const r = I.raw.races[id];
-    if (!r) return {...national(), note: 'This market is not one of the 504 races, so the national view is shown.'};
+    if (!r) return {...national(), note: 'This market is not one of the midterm races, so the national view is shown.'};
     const k = `pk:${r.state}`;
     if (dash.data(k).status === 'idle') dash.load(k, `data/polls_kalshi/${r.state}.json`);
     const d = dash.data(k);

@@ -92,6 +92,12 @@ def main():
     J = {j[0]: j for j in jobs}
     global H
     H = json.load(open(f"{OUT}/data/heatmap.json"))
+    known = {x["id"]: x for x in H["races"]}
+    for r in races:                       # races.json is the list (build_crosswalk.py corrects it): labels follow it, new races get a row
+        if r["race_id"] in known: known[r["race_id"]].update(label=r["label"], office=r["office"])
+        else:
+            H["races"].append({"id": r["race_id"], "label": r["label"], "office": r["office"], "winner": "", "called_ts": None})
+            H["views"]["settle"]["anchors"].append(None); print("heatmap: new row", r["race_id"], r["label"])
     mins, cols = H["mins"], H["cols"]
     rid_at = [x["id"] for x in H["races"]]
     # result and settlement time from the D/R contracts of the party event (not from any other contract in the event:

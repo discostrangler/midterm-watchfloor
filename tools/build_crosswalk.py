@@ -1,16 +1,34 @@
 #!/usr/bin/env python3
 """Race crosswalk (default dashboard event = Watchfloor's race_id, the party event; candidate events are kept as extra events): Watchfloor's race list (data/races.json) vs every 2026 race-winner event in our Kalshi catalog.
 
-Key = (office, state, district, special), cycle 2026. Writes crosswalk/race_crosswalk.tsv (one row per race),
+Key = (office, state, district, special), cycle 2026. The state comes from the ticker unless Kalshi's own titles and
+rules name a different one: SENATELA-26 is titled "Kentucky Senate winner?" (Andy Barr vs Charles Booker, "sworn in as a
+Senator of Kentucky") although LA is Louisiana's code; Louisiana's race is KXSENATELA-26NOV (Julia Letlow vs Jamie Davis).
+data/races.json (Watchfloor's list) is corrected here the same way: a race's state follows its event's text, and a race
+that only we have, with a D/R pair traded on election night, is added. Every change is printed and kept in races.json meta.
+Writes crosswalk/race_crosswalk.tsv (one row per race),
 crosswalk/race_contracts.tsv (one row per contract) and prints a summary. Nothing is dropped: ambiguous races
 (more than one Kalshi event) keep every event, and races on only one side are listed.
 """
 import ast, collections, csv, json, os, re
 RAW = os.environ.get("KALSHI_RAW", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "raw"))   # our Kalshi API pull (Midterm_markets/raw)
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-PATS = [("Senate", re.compile(r"^(?:SENATEPARTY-?|KXSENATE|SENATE)([A-Z]{2})(S?)-(\d\d)$")),
-        ("Governor", re.compile(r"^(?:KXGOVPARTY|GOVPARTY|KXGOV)([A-Z]{2})()-(\d\d)$")),
-        ("House", re.compile(r"^(?:KXHOUSERACE-|KXHOUSE|HOUSE)([A-Z]{2})(\d+|AL)-(\d\d)$"))]
+PATS = [("Senate", re.compile(r"^(?:SENATEPARTY-?|KXSENATE|SENATE)([A-Z]{2})(S?)-(\d\d)(?:[A-Z]{3})?$")),           # "-26" or "-26NOV"
+        ("Governor", re.compile(r"^(?:KXGOVPARTY|GOVPARTY|KXGOV)([A-Z]{2})()-(\d\d)(?:[A-Z]{3})?$")),
+        ("House", re.compile(r"^(?:KXHOUSERACE-|KXHOUSE|HOUSE)([A-Z]{2})(\d+|AL)-(\d\d)(?:[A-Z]{3})?$"))]
+ST = {"Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA", "Colorado": "CO", "Connecticut": "CT", "Delaware": "DE", "Florida": "FL",
+      "Georgia": "GA", "Hawaii": "HI", "Idaho": "ID", "Illinois": "IL", "Indiana": "IN", "Iowa": "IA", "Kansas": "KS", "Kentucky": "KY", "Louisiana": "LA", "Maine": "ME",
+      "Maryland": "MD", "Massachusetts": "MA", "Michigan": "MI", "Minnesota": "MN", "Mississippi": "MS", "Missouri": "MO", "Montana": "MT", "Nebraska": "NE", "Nevada": "NV",
+      "New Hampshire": "NH", "New Jersey": "NJ", "New Mexico": "NM", "New York": "NY", "North Carolina": "NC", "North Dakota": "ND", "Ohio": "OH", "Oklahoma": "OK",
+      "Oregon": "OR", "Pennsylvania": "PA", "Rhode Island": "RI", "South Carolina": "SC", "South Dakota": "SD", "Tennessee": "TN", "Texas": "TX", "Utah": "UT",
+      "Vermont": "VT", "Virginia": "VA", "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY"}   # Washington left out: it also names DC
+ST_RX = re.compile("|".join(sorted(map(re.escape, ST), key=len, reverse=True)))
+
+
+def text_state(ms):
+    """the one state a statewide event's own titles and rules name, or None"""
+    named = {ST[x] for m in ms for x in ST_RX.findall(f"{m.get('title', '')} {m.get('rules_primary', '')}")}
+    return named.pop() if len(named) == 1 else None
 
 
 def key_of(event):
@@ -36,8 +54,12 @@ def main():
         if key_of(e)[0]: ev[e].append(json.loads(ln))
     I = lambda t, f: int(float(cov.get(t, {}).get(f) or 0))
     contracts, events = [], {}
+    fixed = []
     for e, ms in ev.items():
         k, cyc = key_of(e)
+        ts_ = text_state(ms) if k[0] != "House" else None
+        if ts_ and ts_ != k[1]:
+            fixed.append((e, k[1], ts_, ms[0].get("title", ""))); k = (k[0], ts_, k[2], k[3])
         for m in ms:
             cs = m.get("custom_strike") or {}
             if isinstance(cs, str):
@@ -57,7 +79,28 @@ def main():
         kinds = sorted({c["contract_kind"] for c in cs_})
         events[e] = {"key": k, "cycle": cyc, "kinds": "+".join(kinds), "n": len(cs_), "night": max(c["tradable_election_day"] for c in cs_), "linked": max(c["in_linked_set"] for c in cs_),
                      "q": sum(c["minute_quote_rows"] for c in cs_), "tr": sum(c["trades"] for c in cs_), "has_DR": int({"D", "R"} <= {c["side"] for c in cs_})}
-    wf = json.load(open(f"{OUT}/data/races.json"))["rows"]
+    RJ = json.load(open(f"{OUT}/data/races.json")); wf = RJ["rows"]
+    changes = []
+    for r in wf:                                                         # a race's state follows its event's own text
+        x = events.get(r["race_id"])
+        if x and r["office"] != "House" and x["key"][1] != r["state"]:
+            changes.append(f"{r['race_id']}: state {r['state']} -> {x['key'][1]} (Kalshi titles it for {x['key'][1]})")
+            r["label"] = r["label"].replace(r["state"], x["key"][1], 1); r["state"] = x["key"][1]
+    have = {(r["office"], r["state"], r["district"].split("-")[-1] if r["office"] == "House" else "", bool(r["special"])) for r in wf}
+    vol = collections.Counter()
+    for e, ms in ev.items(): vol[e] = sum(float(m.get("volume_fp") or 0) for m in ms)
+    for e, x in sorted(events.items()):                                  # a race only we have: D/R pair traded on election night
+        k = x["key"]
+        if x["cycle"] != "26" or k in have or not (x["night"] and x["has_DR"] and x["tr"] > 0): continue
+        lab = f"{k[1]}-{k[2]}" if k[0] == "House" else f"{k[1]} {k[0]}{' (special)' if k[3] else ''}"
+        wf.append({"race_id": e, "office": k[0], "state": k[1], "district": f"{k[1]}-{k[2]}" if k[0] == "House" else "", "special": k[3], "label": lab,
+                   "winner": "", "called_ts": None, "volume": round(vol[e]), "p_dem_eve": None, "has_odds": True})
+        have.add(k); changes.append(f"{e}: added as {lab} (not in Watchfloor's list)")
+    if changes:
+        RJ.setdefault("meta", {})["corrections"] = sorted(set(RJ["meta"].get("corrections", [])) | set(changes))
+        json.dump(RJ, open(f"{OUT}/data/races.json", "w"), separators=(",", ":"))
+    print("events whose Kalshi text names another state than the ticker:", fixed)
+    print("races.json changes:", changes or "none")
     wkey = {}
     for r in wf:
         d = r["district"].split("-")[-1] if r["office"] == "House" else ""

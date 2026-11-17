@@ -27,7 +27,7 @@ def run(mode):
         pg.on("pageerror", lambda e: errs.append(f"pageerror {e}"))
         # errors that dash.draw catches and logs (a failed resource is already counted by the response listener)
         pg.on("console", lambda m: m.type == "error" and "Failed to load resource" not in m.text and errs.append(f"console {m.text[:160]}"))
-        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and "polls_kalshi/MI.json" not in r.url and "SENATETX-26/2026-11-02" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
+        pg.on("response", lambda r: r.status >= 400 and "/private/" not in r.url and "KXHOUSERACE-NC02-26.json" not in r.url and "data/race/KXSENATELA-26NOV.json" not in r.url and "polls_kalshi/MI.json" not in r.url and "SENATETX-26/2026-11-02" not in r.url and errs.append(f"HTTP {r.status} {r.url}"))
         pg.goto(BASE); pg.wait_for_timeout(9000)
         ev = pg.evaluate
         txt = lambda sel: pg.locator(sel).first.inner_text()
@@ -56,6 +56,13 @@ def run(mode):
         ev(setT, 1793754360); pg.wait_for_timeout(500)
         pg.locator('path.wf-st[aria-label^="Texas:"]').click(force=True); pg.wait_for_timeout(1500)
         check("map click -> state panel", txt("[data-draw=st-name]") == "Texas", txt("[data-draw=st-races]").replace("\n", " ")[:120])
+        # Kalshi's SENATELA-26 is the Kentucky Senate race (mislabeled ticker); Louisiana's is KXSENATELA-26NOV
+        ev(pick, "SENATELA-26"); pg.wait_for_timeout(1200)
+        check("SENATELA-26 is shown as Kentucky's Senate race", txt("[data-draw=st-name]") == "Kentucky" and "Senate" in txt("[data-draw=st-races]"), txt("[data-draw=st-races]").replace("\n", " ")[:90])
+        ev(pick, "KXSENATELA-26NOV"); pg.wait_for_timeout(1500)
+        check("KXSENATELA-26NOV is Louisiana's Senate race, with a night card", txt("[data-draw=st-name]") == "Louisiana" and pg.locator(".wf-nt-card").count() == 3
+              and "LA Senate" in txt("[data-pk=sub]"), txt("[data-draw=st-races]").replace("\n", " ")[:90])
+        ev(pick, "SENATETX-26")
         # hourly bins that run past the cursor are labelled as full hours (Kentucky at 6:18 PM ET, Nov 3)
         ev(setT, 1793747880); pg.locator('path.wf-st[aria-label^="Kentucky:"]').click(force=True); pg.wait_for_timeout(1200)
         kb, ks = txt("[data-draw=st-bets]"), txt("[data-draw=st-social]")
