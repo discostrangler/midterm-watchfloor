@@ -18,6 +18,7 @@ Days are ET calendar days numbered from DAY0 = Nov 5 2024 (the day after the 202
 Run: sbatch tools/build_polls_kalshi.sbatch (needs pandas + pyarrow).
 """
 import bisect, csv, gzip, json, os, re, sys, unicodedata
+from decimal import Decimal, ROUND_HALF_UP
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from multiprocessing import Pool
@@ -189,7 +190,7 @@ def polls(R):
 def kalshi(job):
     """daily trades / dollars over the race's events, and the daily end-of-day quoted mid of its D contract"""
     rid, events, dtk = job
-    n, usd, seen = defaultdict(int), defaultdict(float), set()
+    n, usd, seen = defaultdict(int), defaultdict(Decimal), set()          # exact decimal dollars
     for e in events:
         f = f"{RAW}/trades/{e}.jsonl.gz"
         if not os.path.exists(f): continue
@@ -201,7 +202,7 @@ def kalshi(job):
             if not DAY0 <= day <= DAY1: continue
             i = dayof(day)
             n[i] += 1
-            usd[i] += float(d["count_fp"]) * float(d["yes_price_dollars"] if d["taker_side"] == "yes" else d["no_price_dollars"])
+            usd[i] += Decimal(d["count_fp"]) * Decimal(d["yes_price_dollars"] if d["taker_side"] == "yes" else d["no_price_dollars"])
     mid = []
     if dtk:
         tk, close, settle, result = dtk
@@ -218,7 +219,7 @@ def kalshi(job):
                 v = q[ends[j]][0] if q[ends[j]] else None
             if v != last_v: mid.append([i, v]); last_v = v                 # change-only, like race_odds
     days = sorted(n)
-    return rid, {"k": [[i, n[i], round(usd[i])] for i in days], "mid": mid}
+    return rid, {"k": [[i, n[i], float(usd[i].quantize(Decimal("0.01"), ROUND_HALF_UP))] for i in days], "mid": mid}   # dollars to the cent
 
 
 def prow(p):
@@ -236,7 +237,7 @@ def main():
     with Pool(int(os.environ.get("SLURM_CPUS_PER_TASK", 4))) as pool:
         K = dict(pool.map(kalshi, jobs, chunksize=2))
     meta = {"day0": DAY0.isoformat(), "days": NDAYS, "poll_row": ["end_day", "added_day (VoteHub; null = Wikipedia only)", "D %", "R %", "pollster", "source 0=Wikipedia 1=VoteHub 2=both", "partisan sponsor D/R", "sample size (null = not published)"],
-            "k_row": ["day", "trades", "dollars (taker cost)"], "mid": "[day, quoted mid of the D contract at the end of the ET day] change-only; null = one-sided book; 'closed' = trading closed, not settled",
+            "k_row": ["day", "trades", "dollars paid by the takers, exact to the cent"], "mid": "[day, quoted mid of the D contract at the end of the ET day] change-only; null = one-sided book; 'closed' = trading closed, not settled",
             "built_by": "tools/build_polls_kalshi.py", "polls_from": "Subhrajit's collect/polls_full.py (Wikipedia CC BY-SA 4.0, VoteHub CC BY 4.0)"}
     os.makedirs(f"{OUT}/data/polls_kalshi", exist_ok=True)
     by_st = defaultdict(dict)
